@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 
-const usersController = require("./controllers/userController");
+const usersController = require("./controllers/usersController");
 
 require("dotenv").config();
 
