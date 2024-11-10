@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 
 const usersController = require("./controllers/usersController");
+const habbitsController = require("./controllers/habbitsController");
 
 require("dotenv").config();
 
@@ -26,6 +27,9 @@ app.use(express.json());
 
 // === Account Routes === \\
 app.use("/users", usersController);
+
+// === Habbit Routes === \\
+app.use("/habbits", habbitsController);
 
 app.get("/", (req, res) => {
   res.send(`

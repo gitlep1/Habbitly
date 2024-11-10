@@ -1,16 +1,14 @@
 const db = require("../db/dbConfig.js");
 
 const getAllUsers = async () => {
-  const users = await db.any(
-    "SELECT profileimg, username, theme, last_online FROM users"
-  );
+  const query = "SELECT profileimg, username, theme, last_online FROM users";
+  const users = await db.any(query);
   return users;
 };
 
 const getUserByID = async (id) => {
-  const user = await db.oneOrNone("SELECT * FROM users WHERE users.id = $1", [
-    id,
-  ]);
+  const query = "SELECT * FROM users WHERE id = $1";
+  const user = await db.oneOrNone(query, [id]);
 
   if (!user) {
     return null;
@@ -20,31 +18,29 @@ const getUserByID = async (id) => {
 };
 
 const createUser = async (newUserData) => {
-  const newUser = await db.oneOrNone(
-    "INSERT INTO users (profileimg, username, password, email) VALUES($1, $2, $3, $4) RETURNING *",
-    [
-      newUserData.profileimg,
-      newUserData.username,
-      newUserData.password,
-      newUserData.email,
-    ]
-  );
+  const query =
+    "INSERT INTO users (profileimg, username, password, email, created_at) VALUES ($1, $2, $3, $4, NOW())  RETURNING id, profileimg, username, theme, last_online";
+  const newUser = await db.oneOrNone(query, [
+    newUserData.profileimg,
+    newUserData.username,
+    newUserData.password,
+    newUserData.email,
+  ]);
   return newUser;
 };
 
 const updateUser = async (id, updatedUserData) => {
-  const updateUser = await db.oneOrNone(
-    "UPDATE users SET profileimg = $1, username = $2, password = $3, email = $4, theme = $5, last_online = $13 WHERE id = $14 RETURNING *",
-    [
-      updatedUserData.profileimg,
-      updatedUserData.username,
-      updatedUserData.password,
-      updatedUserData.email,
-      updatedUserData.theme,
-      updatedUserData.last_online,
-      id,
-    ]
-  );
+  const query =
+    "UPDATE users SET profileimg = $1, username = $2, password = $3, email = $4, theme = $5, updated_at = NOW(), last_online = $6 WHERE id = $7 RETURNING id, profileimg, username, theme, last_online";
+  const updateUser = await db.oneOrNone(query, [
+    updatedUserData.profileimg,
+    updatedUserData.username,
+    updatedUserData.password,
+    updatedUserData.email,
+    updatedUserData.theme,
+    updatedUserData.last_online,
+    id,
+  ]);
   return updateUser;
 };
 
@@ -53,23 +49,21 @@ const deleteUser = async (id) => {
     return false;
   }
 
-  const deletedUser = await db.oneOrNone("DELETE FROM users WHERE id = $1", id);
+  const query =
+    "DELETE FROM users WHERE id = $1 RETURNING id, profileimg, username";
+  const deletedUser = await db.oneOrNone(query, id);
   return deletedUser;
 };
 
 const checkUserCredentials = async (email, username) => {
-  const userCredentials = await db.oneOrNone(
-    "SELECT id FROM users WHERE email = $1 AND username = $2",
-    [email, username]
-  );
-  return userCredentials ? true : false;
+  const query = `SELECT id FROM users WHERE email = $1 OR username = $2`;
+  const userCredentials = await db.oneOrNone(query, [email, username]);
+  return !!userCredentials;
 };
 
 const checkIfUserExists = async (email, password) => {
-  const userExists = await db.oneOrNone(
-    "SELECT id FROM users WHERE email = $1 AND password = $2",
-    [email, password]
-  );
+  const query = `SELECT id FROM users WHERE email = $1 AND password = $2`;
+  const userExists = await db.oneOrNone(query, [email, password]);
   return userExists;
 };
 

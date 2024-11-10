@@ -42,11 +42,11 @@ const requireAuth = () => {
               );
             } catch (error) {
               console.error("Error generating new token:", { error });
-              return res.sendStatus(403);
+              return res.sendStatus(500);
             }
           } else {
             console.error("JWT verification error:", err);
-            return res.sendStatus(403);
+            return res.sendStatus(400);
           }
         } else {
           req.user = {
@@ -58,6 +58,7 @@ const requireAuth = () => {
         }
       });
     } else {
+      console.log("No authorization header found");
       res.sendStatus(401);
     }
   };
