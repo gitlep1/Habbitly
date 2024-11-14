@@ -2,8 +2,8 @@ import "./Navbar.scss";
 import { useNavigate } from "react-router-dom";
 import { Button, Image } from "react-bootstrap";
 
-import StellyHappy from "../../../public/images/StellyHappy.png";
-import StellyAngry from "../../../public/images/StellyAngry.png";
+import StellyHappy from "../../assets/images/StellyHappy.png";
+import StellyAngry from "../../assets/images/StellyAngry.png";
 
 const Navbar = () => {
   const navigate = useNavigate();
