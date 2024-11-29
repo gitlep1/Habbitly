@@ -1,17 +1,36 @@
-import { useState, useEffect } from "react";
-import { Route, Routes } from "react-router-dom";
+import { useState, useEffect, createContext } from "react";
+// import * as THREE from "three"; add animated 3D cloud background later
 import "./app.scss";
 
-import Navbar from "./components/Navbar/Navbar";
+import DetectScreenSize from "./CustomFunctions/DetectScreenSize";
+
+import { screenVersionContext } from "./Contexts";
+
+import Desktop from "./Desktop/Desktop";
+import Mobile from "./Mobile/Mobile";
 
 const App = () => {
+  const [screenVersion, setScreenVersion] = useState("desktop");
+
+  useEffect(() => {
+    const checkScreenVersion = setInterval(() => {
+      if (DetectScreenSize().width >= 800) {
+        setScreenVersion("desktop");
+      } else {
+        setScreenVersion("mobile");
+      }
+    }, 500);
+
+    return () => {
+      clearInterval(checkScreenVersion);
+    };
+  }, []);
+
   return (
     <section className="App">
-      <Routes>
-        <Route path="/">
-          <Route index element={<Navbar />}></Route>
-        </Route>
-      </Routes>
+      <screenVersionContext.Provider value={screenVersion}>
+        {screenVersion === "desktop" ? <Desktop /> : <Mobile />}
+      </screenVersionContext.Provider>
     </section>
   );
 };
