@@ -2,6 +2,17 @@
   position: relative;
   height: 100dvh;
   width: 100dvw;
-  overflow: hidden;
-  margin: 0 auto;
+  overflow: auto;
+}
+
+.darkmode {
+  color: white;
+  background-color: #191c26;
+  transition: 1s;
+}
+
+.lightmode {
+  color: black;
+  background-color: whitesmoke;
+  transition: 1s;
 }
