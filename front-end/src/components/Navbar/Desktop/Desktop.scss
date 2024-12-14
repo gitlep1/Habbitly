@@ -1,0 +1,52 @@
+.desktop-navbar-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 35px;
+
+  .desktop-navbar-logo {
+    width: 75px;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
+
+.desktop-navbar-links {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  align-items: center;
+  justify-content: center;
+  gap: 1em;
+
+  .desktop-homepage-button {
+    // @include bubbly-button(#ff8a65, #e71a46, #db8f15);
+    justify-self: center;
+
+    &:hover {
+      cursor: pointer;
+      color: #27e560; // change for lightmode later
+    }
+  }
+
+  .desktop-habit-page-button {
+    // @include bubbly-button(#27e560, #6314e1, #10d8c7);
+    justify-self: center;
+
+    &:hover {
+      cursor: pointer;
+      color: #27e560;
+    }
+  }
+
+  .desktop-account-page-button {
+    // @include bubbly-button(#f47e8a, #88d4f1, #2c2439);
+    justify-self: center;
+
+    &:hover {
+      cursor: pointer;
+      color: #27e560;
+    }
+  }
+}
