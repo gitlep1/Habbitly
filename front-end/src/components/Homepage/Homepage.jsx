@@ -5,6 +5,9 @@ import {
   themeContext,
 } from "../../CustomContexts/Contexts";
 
+import { Desktop } from "./Desktop/Desktop";
+import { Mobile } from "./Mobile/Mobile";
+
 const Homepage = () => {
   const screenVersion = useContext(screenVersionContext);
   const { themeState } = useContext(themeContext);
@@ -16,9 +19,7 @@ const Homepage = () => {
       ${themeState === "dark" ? "dark" : "light"}
       `}
     >
-      <div className={`${screenVersion}-homepage-content`}>
-        <h1>Homepage</h1>
-      </div>
+      {screenVersion === "desktop" ? <Desktop /> : <Mobile />}
     </section>
   );
 };
