@@ -9,9 +9,9 @@ const {
   createHabbit,
   updateHabbit,
   deleteHabbit,
-} = require("../queries/habbitsQuerie");
+} = require("../queries/habbitsQueries");
 
-const { getUserByID } = require("../queries/usersQuerie");
+const { getUserByID } = require("../queries/usersQueries");
 
 const { requireAuth } = require("../validation/requireAuth");
 const { scopeAuth } = require("../validation/scopeAuth");

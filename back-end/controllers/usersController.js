@@ -9,16 +9,13 @@ const {
   updateUser,
   deleteUser,
   checkUserCredentials,
-  checkIfUserExists,
-} = require("../queries/usersQuerie");
+} = require("../queries/usersQueries");
 
 const { checkValues } = require("../validation/userValidation");
 const { requireAuth } = require("../validation/requireAuth");
 const { scopeAuth } = require("../validation/scopeAuth");
 
 const JSK = process.env.JWT_SECRET;
-
-const DefaultProfImg = "../public/images/DefaultProfImg.png";
 
 users.get("/", requireAuth(), scopeAuth(["read:user"]), async (req, res) => {
   try {
@@ -31,7 +28,7 @@ users.get("/", requireAuth(), scopeAuth(["read:user"]), async (req, res) => {
       res.status(404).send("Cannot find any users");
     }
   } catch (error) {
-    console.error("users.GET /", { error });
+    console.error("ERROR users.GET /", { error });
     res.status(500).send("Internal Server Error");
   }
 });
@@ -41,12 +38,7 @@ users.get(
   requireAuth(),
   scopeAuth(["read:user", "write:user"]),
   async (req, res) => {
-    let token = req.user.token || req.headers.authorization;
-
-    if (token && token.startsWith("Bearer ")) {
-      token = token.split(" ")[1];
-    }
-
+    const { token } = req.user;
     const decoded = jwt.decode(token);
 
     try {
@@ -82,11 +74,15 @@ users.post("/signup", checkValues, async (req, res) => {
     email: req.body.email,
   };
 
+  console.log("=== POST (newUserData)", newUserData, "===");
+
   try {
     const checkCreds = await checkUserCredentials(
-      newUserData.email,
-      newUserData.username
+      newUserData,
+      "email&username"
     );
+
+    console.log("=== POST user signup (checkCreds)", checkCreds, "===");
 
     if (checkCreds) {
       res.status(409).send("Email/Username already taken!");
@@ -115,7 +111,7 @@ users.post("/signup", checkValues, async (req, res) => {
           last_online: createdUser.last_online,
         };
 
-        res.status(201).json({ payload: userData, token });
+        res.status(200).json({ payload: userData, token });
       } else {
         res.status(404).send("user not created");
       }
@@ -127,10 +123,16 @@ users.post("/signup", checkValues, async (req, res) => {
 });
 
 users.post("/signin", async (req, res) => {
-  const { email, password } = req.body;
+  const existingUserData = {
+    email: req.body.email,
+    password: req.body.password,
+  };
 
   try {
-    const checkUser = await checkIfUserExists(email, password);
+    const checkUser = await checkUserCredentials(
+      existingUserData,
+      "email&password"
+    );
 
     if (checkUser) {
       const getUserData = await getUserByID(checkUser.id);
@@ -157,7 +159,7 @@ users.post("/signin", async (req, res) => {
           last_online: getUserData.last_online,
         };
 
-        res.status(201).json({ payload: userData, token });
+        res.status(200).json({ payload: userData, token });
       } else {
         res.status(404).send(`Data for: ${checkUser.id} not found`);
       }
@@ -175,24 +177,21 @@ users.put(
   requireAuth(),
   scopeAuth(["read:user", "write:user"]),
   async (req, res) => {
-    let token = req.user.token || req.headers.authorization;
-
-    if (token && token.startsWith("Bearer ")) {
-      token = token.split(" ")[1];
-    }
-
+    const { token } = req.user;
     const decoded = jwt.decode(token);
+    const { profileimg, username, password, email, theme, last_online } =
+      req.body;
 
     try {
       const checkIfUserExists = await getUserByID(decoded.user.id);
 
       const updatedUserData = {
-        profileimg: req.body.profileimg || checkIfUserExists.profileimg,
-        username: req.body.username || checkIfUserExists.username,
-        password: req.body.password || checkIfUserExists.password,
-        email: req.body.email || checkIfUserExists.email,
-        theme: req.body.theme || checkIfUserExists.theme,
-        last_online: req.body.last_online || checkIfUserExists.last_online,
+        profileimg: profileimg || checkIfUserExists.profileimg,
+        username: username || checkIfUserExists.username,
+        password: password || checkIfUserExists.password,
+        email: email || checkIfUserExists.email,
+        theme: theme || checkIfUserExists.theme,
+        last_online: last_online || checkIfUserExists.last_online,
       };
 
       const updatedUser = await updateUser(
@@ -218,12 +217,7 @@ users.delete(
   requireAuth(),
   scopeAuth(["read:user", "write:user"]),
   async (req, res) => {
-    let token = req.user.token || req.headers.authorization;
-
-    if (token && token.startsWith("Bearer ")) {
-      token = token.split(" ")[1];
-    }
-
+    const { token } = req.user;
     const decoded = jwt.decode(token);
 
     try {

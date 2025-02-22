@@ -23,7 +23,10 @@ const scopeAuth = (requiredScopes) => {
         return res.status(403).json({ message: "Insufficient privileges" });
       }
 
-      req.user = decoded.user;
+      req.user = {
+        ...decoded,
+        token,
+      };
       next();
     });
   };

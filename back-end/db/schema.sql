@@ -1,11 +1,19 @@
-DROP DATABASE IF EXISTS habbitly;
-CREATE DATABASE habbitly;
+DROP DATABASE IF EXISTS habbitly_db;
+CREATE DATABASE habbitly_db;
 
-\c habbitly;
+\c habbitly_db;
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TYPE habit_interval AS ENUM ('hourly', 'daily', 'weekly', 'monthly', 'yearly');
+
+DROP TABLE IF EXISTS email_verification;
+CREATE TABLE email_verification (
+  id UUID DEFAULT uuid_generate_v4() NOT NULL PRIMARY KEY,
+  email TEXT NOT NULL UNIQUE,
+  code TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT NOW()
+);
 
 DROP TABLE IF EXISTS users;
 CREATE TABLE users (
@@ -35,4 +43,11 @@ CREATE TABLE habbits (
   end_date DATE,
   is_active BOOLEAN DEFAULT TRUE,
   completed BOOLEAN DEFAULT FALSE
+);
+
+DROP TABLE IF EXISTS timed_account_deletions;
+CREATE TABLE timed_account_deletions (
+  id UUID DEFAULT uuid_generate_v4() NOT NULL PRIMARY KEY,
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  deletion_date TIMESTAMP NOT NULL
 );

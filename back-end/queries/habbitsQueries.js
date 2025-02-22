@@ -1,4 +1,4 @@
-const db = require("../db/dbConfig.js");
+const { db } = require("../db/dbConfig.js");
 
 const getAllHabbits = async () => {
   const query = "SELECT * FROM habbits";

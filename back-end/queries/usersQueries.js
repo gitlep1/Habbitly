@@ -1,4 +1,4 @@
-const db = require("../db/dbConfig.js");
+const { db } = require("../db/dbConfig.js");
 
 const getAllUsers = async () => {
   const query = "SELECT profileimg, username, theme, last_online FROM users";
@@ -55,16 +55,31 @@ const deleteUser = async (id) => {
   return deletedUser;
 };
 
-const checkUserCredentials = async (email, username) => {
-  const query = `SELECT id FROM users WHERE email = $1 OR username = $2`;
-  const userCredentials = await db.oneOrNone(query, [email, username]);
-  return !!userCredentials;
-};
+// prettier-ignore
+const checkUserCredentials = async (userData, checker) => {
+  if (checker === "email") {
+    const query = `SELECT id FROM users WHERE email = $1`;
+    const userCredentials = await db.oneOrNone(query, userData.email);
+    return userCredentials;
 
-const checkIfUserExists = async (email, password) => {
-  const query = `SELECT id FROM users WHERE email = $1 AND password = $2`;
-  const userExists = await db.oneOrNone(query, [email, password]);
-  return userExists;
+  } else if (checker === "email&username") {
+    console.log("=== checkUserCredentials", { userData, checker }, "===");
+
+    const query = `SELECT id FROM users WHERE email = $1 OR username = $2`;
+    const userCredentials = await db.oneOrNone(query, [
+      userData.email,
+      userData.username,
+    ]);
+    return userCredentials;
+
+  } else if (checker === "email&password") {
+    const query = `SELECT id FROM users WHERE email = $1 AND password = $2`;
+    const userCredentials = await db.oneOrNone(query, [
+      userData.email,
+      userData.password
+    ]);
+    return userCredentials;
+  }
 };
 
 module.exports = {
@@ -74,5 +89,4 @@ module.exports = {
   updateUser,
   deleteUser,
   checkUserCredentials,
-  checkIfUserExists,
 };

@@ -4,10 +4,12 @@ const JSK = process.env.JWT_SECRET;
 const requireAuth = () => {
   return async (req, res, next) => {
     const authHeader = req.headers.authorization;
+
     if (authHeader) {
       const token = authHeader.split(" ")[1];
       jwt.verify(token, JSK, async (err, decoded) => {
         if (err) {
+          console.log("inside if err");
           if (err.message === "jwt expired") {
             console.log(
               `${decoded?.user?.username || "Unknown user"}'s token expired`
@@ -53,7 +55,6 @@ const requireAuth = () => {
             token,
             decodedUser: decoded?.user,
           };
-
           next();
         }
       });

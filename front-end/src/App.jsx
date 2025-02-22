@@ -10,6 +10,10 @@ const App = () => {
   const { screenVersion } = useContext(screenVersionContext);
   const { themeState } = useContext(themeContext);
 
+  // app doesn't actually use screenVersion (it's undefined)
+  // it only switches cause of navbar's desktop & mobile
+  // and homepage's
+
   return (
     <section
       className={`App ${themeState === "dark" ? "darkmode" : "lightmode"}`}
