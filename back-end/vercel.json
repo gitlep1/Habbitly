@@ -1,14 +1,14 @@
 {
   "builds": [
     {
-      "src": "/back-end/index.js",
+      "src": "/index.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/(.*)", 
-      "dest": "/back-end/index.js", 
+      "dest": "/index.js", 
       "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
       "headers": {
         "Access-Control-Allow-Origin": "*"
