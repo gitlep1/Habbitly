@@ -2,7 +2,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 35px;
+  font-size: 40px;
 
   .desktop-navbar-logo {
     width: 75px;
@@ -15,38 +15,120 @@
 
 .desktop-navbar-links {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  align-items: center;
+  grid-template-columns: 1fr;
   justify-content: center;
   gap: 1em;
+  width: 95%;
+}
 
-  .desktop-homepage-button {
-    // @include bubbly-button(#ff8a65, #e71a46, #db8f15);
-    justify-self: center;
+.desktop-navbar-link-container {
+  width: 100%;
+  display: flex;
+  text-align: center;
+  flex-direction: column;
 
-    &:hover {
-      cursor: pointer;
-      color: #27e560; // change for lightmode later
-    }
+  h3 {
+    text-align: center;
   }
 
-  .desktop-habit-page-button {
-    // @include bubbly-button(#27e560, #6314e1, #10d8c7);
-    justify-self: center;
-
-    &:hover {
-      cursor: pointer;
-      color: #27e560;
-    }
+  hr {
+    width: 85%;
+    margin: 0 auto;
   }
 
-  .desktop-account-page-button {
-    // @include bubbly-button(#f47e8a, #88d4f1, #2c2439);
-    justify-self: center;
+  .desktop-navbar-button-container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5em;
+    margin-bottom: 1em;
 
-    &:hover {
-      cursor: pointer;
-      color: #27e560;
+    .desktop-navbar-button {
+      width: 80%;
+      border: none;
+    }
+
+    #desktop-navbar-dashboard-button {
+      background-color: #4a90e2;
+
+      &:hover {
+        background-color: #357abd;
+      }
+    }
+
+    #desktop-navbar-summary-button {
+      background-color: #f5a623;
+
+      &:hover {
+        background-color: #d4871c;
+      }
+    }
+
+    #desktop-navbar-insight-button {
+      background-color: #7ed321;
+
+      &:hover {
+        background-color: #5ea910;
+      }
+    }
+
+    #desktop-navbar-habit-button {
+      background-color: #7b61ff;
+
+      &:hover {
+        background-color: #5a41e0;
+      }
+    }
+
+    #desktop-navbar-create-button {
+      background-color: #ff6b81;
+
+      &:hover {
+        background-color: #e0556c;
+      }
+    }
+
+    #desktop-navbar-history-button {
+      background-color: #00c2cb;
+
+      &:hover {
+        background-color: #009ea5;
+      }
+    }
+
+    #desktop-navbar-profile-button {
+      background-color: #e5673e;
+
+      &:hover {
+        background-color: #d1552b;
+      }
+    }
+
+    #desktop-navbar-notifications-button {
+      background-color: #ffb347;
+
+      &:hover {
+        background-color: #4f7ad1;
+      }
+    }
+
+    #desktop-navbar-preferences-button {
+      background-color: #9d9d9d;
+
+      &:hover {
+        background-color: #7a7a7a;
+      }
+    }
+
+    .dark-button {
+      color: white;
+      border: 1px solid white;
+    }
+
+    .light-button {
+      color: black;
+      border: 1px solid black;
     }
   }
 }

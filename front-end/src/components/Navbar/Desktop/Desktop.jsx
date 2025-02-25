@@ -102,31 +102,133 @@ export default function Desktop() {
       </div>
 
       <div className="desktop-navbar-links">
-        <div
-          className="desktop-homepage-button"
-          onClick={() => {
-            navigate("/");
-          }}
-        >
-          Homepage
+        <div className="desktop-navbar-link-container">
+          <h3>Homepage</h3>
+          <hr />
+          <br />
+
+          <div className="desktop-navbar-button-container">
+            <Button
+              id="desktop-navbar-dashboard-button"
+              className={`desktop-navbar-button ${
+                themeState === "dark" ? "dark-button" : "light-button"
+              }`}
+              onClick={() => {
+                navigate("/");
+              }}
+            >
+              Dashboard
+            </Button>
+
+            <Button
+              id="desktop-navbar-summary-button"
+              className={`desktop-navbar-button ${
+                themeState === "dark" ? "dark-button" : "light-button"
+              }`}
+              onClick={() => {
+                navigate("/summary");
+              }}
+            >
+              Daily Summary
+            </Button>
+
+            <Button
+              id="desktop-navbar-insight-button"
+              className={`desktop-navbar-button ${
+                themeState === "dark" ? "dark-button" : "light-button"
+              }`}
+              onClick={() => {
+                navigate("/insights");
+              }}
+            >
+              Insights & Analytics
+            </Button>
+          </div>
         </div>
 
-        <div
-          className="desktop-habit-page-button"
-          onClick={() => {
-            navigate("/Habbits");
-          }}
-        >
-          Habits/Goals
+        <div className="desktop-navbar-link-container">
+          <h3>Habit Tracker</h3>
+          <hr />
+          <br />
+
+          <div className="desktop-navbar-button-container">
+            <Button
+              id="desktop-navbar-habit-button"
+              className={`desktop-navbar-button ${
+                themeState === "dark" ? "dark-button" : "light-button"
+              }`}
+              onClick={() => {
+                navigate("/habit-tracker");
+              }}
+            >
+              Habits
+            </Button>
+
+            <Button
+              id="desktop-navbar-create-button"
+              className={`desktop-navbar-button ${
+                themeState === "dark" ? "dark-button" : "light-button"
+              }`}
+            >
+              Create New Habit
+            </Button>
+
+            <Button
+              id="desktop-navbar-history-button"
+              className={`desktop-navbar-button ${
+                themeState === "dark" ? "dark-button" : "light-button"
+              }`}
+              onClick={() => {
+                navigate("/habit-history");
+              }}
+            >
+              Habit History
+            </Button>
+          </div>
         </div>
 
-        <div
-          className="desktop-account-page-button"
-          onClick={() => {
-            navigate("/Account-Settings");
-          }}
-        >
-          Account Settings
+        <div className="desktop-navbar-link-container">
+          <h3>Account Settings</h3>
+          <hr />
+          <br />
+
+          <div className="desktop-navbar-button-container">
+            <Button
+              id="desktop-navbar-profile-button"
+              className={`desktop-navbar-button ${
+                themeState === "dark" ? "dark-button" : "light-button"
+              }`}
+              onClick={() => {
+                navigate("/");
+              }}
+            >
+              Profile
+            </Button>
+
+            <Button
+              id="desktop-navbar-notifications-button"
+              className={`desktop-navbar-button ${
+                themeState === "dark" ? "dark-button" : "light-button"
+              }`}
+              onClick={() => {
+                navigate("/summary");
+              }}
+            >
+              Notifications
+            </Button>
+
+            <Button
+              id="desktop-navbar-preferences-button"
+              className={`desktop-navbar-button ${
+                themeState === "dark" ? "dark-button" : "light-button"
+              }`}
+              onClick={() => {
+                navigate("/insights");
+              }}
+            >
+              Preferences
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -134,11 +236,12 @@ export default function Desktop() {
         <Button
           id={`${themeState === "dark" ? "dark-button" : "light-button"}`}
           className="signin-button"
+          variant="success"
           onClick={() => {
             handleShow("signin");
           }}
         >
-          SignIn
+          Sign In
         </Button>
         <Button
           id={`${themeState === "dark" ? "dark-button" : "light-button"}`}
@@ -147,7 +250,7 @@ export default function Desktop() {
             handleShow("signup");
           }}
         >
-          SignUp
+          Sign Up
         </Button>
       </div>
 
