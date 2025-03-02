@@ -2,6 +2,11 @@ import "./Desktop.scss";
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Image, Modal } from "react-bootstrap";
+import { useSpring, animated } from "react-spring";
+import { IoIosSunny } from "react-icons/io";
+import { FaMoon } from "react-icons/fa";
+import { FaLongArrowAltUp } from "react-icons/fa";
+import { FaLongArrowAltDown } from "react-icons/fa";
 
 import { themeContext } from "../../../CustomContexts/Contexts";
 
@@ -14,6 +19,7 @@ export default function Desktop() {
 
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [showSignUpModal, setShowSignUpModal] = useState(false);
+  const [showDropdown, setShowDropdown] = useState([]);
 
   const handleShow = (auth) => {
     if (auth === "signin") {
@@ -81,154 +87,241 @@ export default function Desktop() {
     );
   };
 
+  const handleButtonToggle = (e) => {
+    const name = e.target.dataset.name;
+
+    if (showDropdown.includes(name)) {
+      setShowDropdown(showDropdown.filter((item) => item !== name));
+    } else {
+      setShowDropdown([...showDropdown, name]);
+    }
+  };
+
+  const slideDropdownAnimation = useSpring({});
+
   return (
     <>
-      <div className="desktop-navbar-title">
-        <Image
-          src={StellyHappy}
-          className="desktop-navbar-logo"
-          onClick={() => {
-            setThemeState("light");
-          }}
-        />
-        <p>Habbitly</p>
-        <Image
-          src={StellyAngry}
-          className="desktop-navbar-logo"
-          onClick={() => {
-            setThemeState("dark");
-          }}
-        />
+      <div className="desktop-navbar-title-container">
+        <Image src={StellyHappy} className="desktop-navbar-logo" />
+        <div className="desktop-navbar-title">
+          <h1>Habbitly</h1>
+
+          <div className="nav-theme-switcher-container">
+            <div
+              className={`nav-theme-switcher-outer-box ${
+                themeState === "dark"
+                  ? "theme-switcher-dark"
+                  : "theme-switcher-light"
+              }`}
+              style={
+                themeState === "dark"
+                  ? { border: "1px solid whitesmoke" }
+                  : { border: "1px solid black" }
+              }
+              onClick={() => {
+                setThemeState(themeState === "dark" ? "light" : "dark");
+              }}
+            >
+              <div
+                className="nav-theme-switcher-inner-box"
+                style={
+                  themeState === "dark"
+                    ? { backgroundColor: "whitesmoke" }
+                    : { backgroundColor: "black" }
+                }
+              ></div>
+
+              <FaMoon id="nav-dark-logo" />
+              <IoIosSunny id="nav-light-logo" />
+            </div>
+          </div>
+        </div>
+
+        <Image src={StellyAngry} className="desktop-navbar-logo" />
       </div>
 
       <div className="desktop-navbar-links">
         <div className="desktop-navbar-link-container">
-          <h3>Homepage</h3>
+          <h3 data-name="homepage" onClick={handleButtonToggle}>
+            <span>
+              {showDropdown.includes("homepage") ? (
+                <FaLongArrowAltDown />
+              ) : (
+                <FaLongArrowAltUp />
+              )}
+            </span>
+            Homepage
+            <span>
+              {showDropdown.includes("homepage") ? (
+                <FaLongArrowAltDown />
+              ) : (
+                <FaLongArrowAltUp />
+              )}
+            </span>
+          </h3>
           <hr />
           <br />
 
-          <div className="desktop-navbar-button-container">
-            <Button
-              id="desktop-navbar-dashboard-button"
-              className={`desktop-navbar-button ${
-                themeState === "dark" ? "dark-button" : "light-button"
-              }`}
-              onClick={() => {
-                navigate("/");
-              }}
-            >
-              Dashboard
-            </Button>
+          {showDropdown.includes("homepage") && (
+            <animated.div className="desktop-navbar-button-container">
+              <Button
+                id="desktop-navbar-dashboard-button"
+                className={`desktop-navbar-button ${
+                  themeState === "dark" ? "dark-button" : "light-button"
+                }`}
+                onClick={() => {
+                  navigate("/");
+                }}
+              >
+                Dashboard
+              </Button>
 
-            <Button
-              id="desktop-navbar-summary-button"
-              className={`desktop-navbar-button ${
-                themeState === "dark" ? "dark-button" : "light-button"
-              }`}
-              onClick={() => {
-                navigate("/summary");
-              }}
-            >
-              Daily Summary
-            </Button>
+              <Button
+                id="desktop-navbar-summary-button"
+                className={`desktop-navbar-button ${
+                  themeState === "dark" ? "dark-button" : "light-button"
+                }`}
+                onClick={() => {
+                  navigate("/summary");
+                }}
+              >
+                Daily Summary
+              </Button>
 
-            <Button
-              id="desktop-navbar-insight-button"
-              className={`desktop-navbar-button ${
-                themeState === "dark" ? "dark-button" : "light-button"
-              }`}
-              onClick={() => {
-                navigate("/insights");
-              }}
-            >
-              Insights & Analytics
-            </Button>
-          </div>
+              <Button
+                id="desktop-navbar-insight-button"
+                className={`desktop-navbar-button ${
+                  themeState === "dark" ? "dark-button" : "light-button"
+                }`}
+                onClick={() => {
+                  navigate("/insights");
+                }}
+              >
+                Insights & Analytics
+              </Button>
+            </animated.div>
+          )}
         </div>
 
         <div className="desktop-navbar-link-container">
-          <h3>Habit Tracker</h3>
+          <h3 data-name="habitTracker" onClick={handleButtonToggle}>
+            <span>
+              {showDropdown.includes("habitTracker") ? (
+                <FaLongArrowAltDown />
+              ) : (
+                <FaLongArrowAltUp />
+              )}
+            </span>
+            Habit Tracker
+            <span>
+              {showDropdown.includes("habitTracker") ? (
+                <FaLongArrowAltDown />
+              ) : (
+                <FaLongArrowAltUp />
+              )}
+            </span>
+          </h3>
           <hr />
           <br />
 
-          <div className="desktop-navbar-button-container">
-            <Button
-              id="desktop-navbar-habit-button"
-              className={`desktop-navbar-button ${
-                themeState === "dark" ? "dark-button" : "light-button"
-              }`}
-              onClick={() => {
-                navigate("/habit-tracker");
-              }}
-            >
-              Habits
-            </Button>
+          {showDropdown.includes("habitTracker") && (
+            <animated.div className="desktop-navbar-button-container">
+              <Button
+                id="desktop-navbar-habit-button"
+                className={`desktop-navbar-button ${
+                  themeState === "dark" ? "dark-button" : "light-button"
+                }`}
+                onClick={() => {
+                  navigate("/habit-tracker");
+                }}
+              >
+                Habits
+              </Button>
 
-            <Button
-              id="desktop-navbar-create-button"
-              className={`desktop-navbar-button ${
-                themeState === "dark" ? "dark-button" : "light-button"
-              }`}
-            >
-              Create New Habit
-            </Button>
+              <Button
+                id="desktop-navbar-create-button"
+                className={`desktop-navbar-button ${
+                  themeState === "dark" ? "dark-button" : "light-button"
+                }`}
+              >
+                Create New Habit
+              </Button>
 
-            <Button
-              id="desktop-navbar-history-button"
-              className={`desktop-navbar-button ${
-                themeState === "dark" ? "dark-button" : "light-button"
-              }`}
-              onClick={() => {
-                navigate("/habit-history");
-              }}
-            >
-              Habit History
-            </Button>
-          </div>
+              <Button
+                id="desktop-navbar-history-button"
+                className={`desktop-navbar-button ${
+                  themeState === "dark" ? "dark-button" : "light-button"
+                }`}
+                onClick={() => {
+                  navigate("/habit-history");
+                }}
+              >
+                Habit History
+              </Button>
+            </animated.div>
+          )}
         </div>
 
         <div className="desktop-navbar-link-container">
-          <h3>Account Settings</h3>
+          <h3 data-name="accountSettings" onClick={handleButtonToggle}>
+            <span>
+              {showDropdown.includes("accountSettings") ? (
+                <FaLongArrowAltDown />
+              ) : (
+                <FaLongArrowAltUp />
+              )}
+            </span>
+            Account Settings
+            <span>
+              {showDropdown.includes("accountSettings") ? (
+                <FaLongArrowAltDown />
+              ) : (
+                <FaLongArrowAltUp />
+              )}
+            </span>
+          </h3>
           <hr />
           <br />
 
-          <div className="desktop-navbar-button-container">
-            <Button
-              id="desktop-navbar-profile-button"
-              className={`desktop-navbar-button ${
-                themeState === "dark" ? "dark-button" : "light-button"
-              }`}
-              onClick={() => {
-                navigate("/");
-              }}
-            >
-              Profile
-            </Button>
+          {showDropdown.includes("accountSettings") && (
+            <animated.div className="desktop-navbar-button-container">
+              <Button
+                id="desktop-navbar-profile-button"
+                className={`desktop-navbar-button ${
+                  themeState === "dark" ? "dark-button" : "light-button"
+                }`}
+                onClick={() => {
+                  navigate("/");
+                }}
+              >
+                Profile
+              </Button>
 
-            <Button
-              id="desktop-navbar-notifications-button"
-              className={`desktop-navbar-button ${
-                themeState === "dark" ? "dark-button" : "light-button"
-              }`}
-              onClick={() => {
-                navigate("/summary");
-              }}
-            >
-              Notifications
-            </Button>
+              <Button
+                id="desktop-navbar-notifications-button"
+                className={`desktop-navbar-button ${
+                  themeState === "dark" ? "dark-button" : "light-button"
+                }`}
+                onClick={() => {
+                  navigate("/summary");
+                }}
+              >
+                Notifications
+              </Button>
 
-            <Button
-              id="desktop-navbar-preferences-button"
-              className={`desktop-navbar-button ${
-                themeState === "dark" ? "dark-button" : "light-button"
-              }`}
-              onClick={() => {
-                navigate("/insights");
-              }}
-            >
-              Preferences
-            </Button>
-          </div>
+              <Button
+                id="desktop-navbar-preferences-button"
+                className={`desktop-navbar-button ${
+                  themeState === "dark" ? "dark-button" : "light-button"
+                }`}
+                onClick={() => {
+                  navigate("/insights");
+                }}
+              >
+                Preferences
+              </Button>
+            </animated.div>
+          )}
         </div>
       </div>
 
