@@ -1,54 +1,70 @@
 import "./app.scss";
 import { useState, useEffect, useContext } from "react";
 // import * as THREE from "three"; add animated 3D cloud background later
-import { screenVersionContext, themeContext } from "./CustomContexts/Contexts";
+import Cookies from "js-cookie";
+
+import {
+  screenVersionContext,
+  themeContext,
+  userContext,
+  tokenContext,
+} from "./CustomContexts/Contexts";
+import CustomToastContainers from "./CustomFunctions/CustomToasts/CustomToastContainers";
+import DetectScreenSize from "./CustomFunctions/DetectScreenSize";
+import SmallResolution from "./CustomFunctions/SmallResolution/SmallResolution";
 
 import Desktop from "./Desktop/Desktop";
 import Mobile from "./Mobile/Mobile";
 
 const App = () => {
-  const { screenVersion } = useContext(screenVersionContext);
+  const screenVersion = useContext(screenVersionContext);
   const { themeState } = useContext(themeContext);
+  const { setAuthUser } = useContext(userContext);
+  const { setAuthToken } = useContext(tokenContext);
 
-  // app doesn't actually use screenVersion (it's undefined)
-  // it only switches cause of navbar's desktop & mobile
-  // and homepage's
+  const userData = Cookies.get("authUser") || null;
+  const tokenData = Cookies.get("authToken") || null;
+
+  const [screenSize, setScreenSize] = useState(DetectScreenSize().width);
+
+  useEffect(() => {
+    const resizeSidebarInterval = setInterval(() => {
+      setScreenSize(DetectScreenSize().width);
+    }, 500);
+
+    return () => {
+      clearInterval(resizeSidebarInterval);
+    };
+  }, []);
+
+  useEffect(() => {
+    handleReauthUser();
+  }, []); // eslint-disable-line
+
+  const handleReauthUser = () => {
+    if (
+      userData !== "undefined" &&
+      userData !== null &&
+      tokenData !== "undefined" &&
+      tokenData !== null
+    ) {
+      setAuthUser(JSON.parse(userData));
+      setAuthToken(JSON.parse(tokenData));
+    } else {
+      setAuthUser(null);
+      setAuthToken(null);
+    }
+  };
 
   return (
     <section
       className={`App ${themeState === "dark" ? "darkmode" : "lightmode"}`}
     >
+      <CustomToastContainers />
+      {screenSize < 400 && <SmallResolution />}
       {screenVersion === "desktop" ? <Desktop /> : <Mobile />}
     </section>
   );
 };
 
 export default App;
-
-/** 
-cookie stuff (taken from my chess project):
-  // === imports === \\
-  import Cookies from "js-cookie";
-  import { setCookies, removeCookies } from "../CustomFunctions/HandleCookies";
-
-  // === variables === \\
-    const userData = Cookies.get("Current_User") || null;
-    const tokenData = Cookies.get("token") || null;
-
-  // === check cookies func === //
-    const checkCookies = async () => {
-      if (userData && tokenData) {
-        setUser(JSON.parse(userData));
-        setToken(JSON.parse(tokenData));
-      }
-      setMainLoading(false);
-    };
-
-  // === exp date === \\
-    const expirationDate = new Date();
-    expirationDate.setDate(expirationDate.getDate() + 30);
-
-  // === set cookies example === \\
-    SetCookies("Current_User", user.payload, expirationDate);
-    SetCookies("token", user.token, expirationDate);
-*/

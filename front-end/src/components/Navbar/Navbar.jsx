@@ -9,7 +9,7 @@ import {
 import Desktop from "./Desktop/Desktop";
 import Mobile from "./Mobile/Mobile";
 
-const Navbar = () => {
+export const Navbar = () => {
   const screenVersion = useContext(screenVersionContext);
   const { themeState, setThemeState } = useContext(themeContext);
 
@@ -25,5 +25,3 @@ const Navbar = () => {
     </nav>
   );
 };
-
-export default Navbar;

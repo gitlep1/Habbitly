@@ -13,7 +13,7 @@ const {
 
 const { checkUserCredentials } = require("../Queries/usersQueries");
 
-emailAuth.get("/verify-code", async (req, res) => {
+emailAuth.post("/verify-code", async (req, res) => {
   const { email, code } = req.body;
 
   try {
@@ -51,10 +51,12 @@ emailAuth.get("/verify-code", async (req, res) => {
 });
 
 emailAuth.post("/send-verification", async (req, res) => {
-  const { email } = req.body;
+  const userData = {
+    email: req.body.email,
+  };
 
   try {
-    const userExists = await checkUserCredentials(email, "email");
+    const userExists = await checkUserCredentials(userData, "email");
     if (userExists) {
       return res.status(400).json({ message: "Email already exists." });
     }
@@ -64,20 +66,24 @@ emailAuth.post("/send-verification", async (req, res) => {
 
     const hashedCode = crypto.createHash("sha256").update(code).digest("hex");
 
-    const createdEmailAuth = await createEmailVerification(email, hashedCode);
+    const createdEmailAuth = await createEmailVerification(
+      userData.email,
+      hashedCode
+    );
 
     const mailOptions = {
       from: `Habbitly <${process.env.EMAIL}>`,
-      to: email,
+      to: userData.email,
       subject: "Habbitly Verification Code",
       text: `Your verification code is: ${code}`,
     };
 
     if (createdEmailAuth) {
       await transporter.sendMail(mailOptions);
-      res
-        .status(200)
-        .json({ message: "Verification code sent to your email." });
+      res.status(200).json({
+        message:
+          "Verification code has been sent to the specified email address.",
+      });
     } else {
       res.status(500).json({ message: "Failed to create email verification." });
     }

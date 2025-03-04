@@ -4,8 +4,9 @@ import { Route, Routes } from "react-router-dom";
 
 import { screenVersionContext } from "../CustomContexts/Contexts";
 
-import Navbar from "../components/Navbar/Navbar";
-import Homepage from "../components/Homepage/Homepage";
+import { Notfound } from "../components/Notfound/Notfound";
+import { Navbar } from "../components/Navbar/Navbar";
+import { Homepage } from "../components/Homepage/Homepage";
 
 const Mobile = () => {
   const screenVersion = useContext(screenVersionContext);
@@ -17,7 +18,7 @@ const Mobile = () => {
       <Routes>
         <Route path="/">
           <Route path="/" element={<Homepage />} />
-          <Route path="*" element={<h1>404 NOT FOUND</h1>} />
+          <Route path="*" element={<Notfound />} />
         </Route>
       </Routes>
     </section>

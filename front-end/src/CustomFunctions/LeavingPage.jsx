@@ -1,12 +1,7 @@
-import axios from "axios";
-
-const API = import.meta.env.VITE_API_URL;
-
-const LeavingPage = async (habbitID, token, navigate) => {
+const LeavingPage = async (token, navigate) => {
   const warnUserLeavingPage = () => {
     window.addEventListener("beforeunload", alertUser);
     window.addEventListener("unload", handleEndPoint);
-
     return () => {
       window.removeEventListener("beforeunload", alertUser);
       window.removeEventListener("unload", handleEndPoint);
@@ -20,12 +15,7 @@ const LeavingPage = async (habbitID, token, navigate) => {
 
   const handleEndPoint = async () => {
     console.log("user left page");
-    // await axios.delete(`${API}/habbits/${habbitID}`, {
-    //   headers: {
-    //     authorization: `Bearer ${token}`,
-    //   },
-    // });
-    // navigate("/Habbits");
+    navigate("/");
   };
 
   return warnUserLeavingPage();

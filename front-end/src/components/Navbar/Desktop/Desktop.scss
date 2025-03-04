@@ -92,6 +92,12 @@ $stellyHappy: url("../../../assets//images/StellyHappy.png");
   text-align: center;
   flex-direction: column;
 
+  .desktop-navbar-link-title {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+  }
+
   h3 {
     text-align: center;
   }
@@ -212,5 +218,16 @@ $stellyHappy: url("../../../assets//images/StellyHappy.png");
 .theme-switcher-light {
   .nav-theme-switcher-inner-box {
     transform: translateX(0);
+  }
+}
+
+.switch-auth-mode {
+  color: #0a58ca;
+  margin-top: 1em;
+  text-decoration: underline;
+
+  &:hover {
+    cursor: pointer;
+    color: #3370ca;
   }
 }

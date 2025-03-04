@@ -4,6 +4,7 @@ const http = require("http");
 
 const usersController = require("./controllers/usersController");
 const habbitsController = require("./controllers/habbitsController");
+const emailAuthController = require("./controllers/emailAuthController");
 
 require("dotenv").config();
 
@@ -33,6 +34,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // === Account Routes === \\
+app.use("/email", emailAuthController);
 app.use("/users", usersController);
 
 // === Habbit Routes === \\

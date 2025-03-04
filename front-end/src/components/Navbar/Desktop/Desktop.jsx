@@ -6,9 +6,20 @@ import { useSpring, animated } from "react-spring";
 import { IoIosSunny } from "react-icons/io";
 import { FaMoon } from "react-icons/fa";
 import { FaLongArrowAltUp } from "react-icons/fa";
-import { FaLongArrowAltDown } from "react-icons/fa";
 
-import { themeContext } from "../../../CustomContexts/Contexts";
+import {
+  themeContext,
+  userContext,
+  tokenContext,
+} from "../../../CustomContexts/Contexts";
+import {
+  GetCookies,
+  RemoveCookies,
+} from "../../../CustomFunctions/HandleCookies";
+
+import { Signup } from "../../AccountSettings/Signup";
+import { Signin } from "../../AccountSettings/Signin";
+import { Signout } from "../../AccountSettings/Signout";
 
 import StellyHappy from "../../../assets/images/StellyHappy.png";
 import StellyAngry from "../../../assets/images/StellyAngry.png";
@@ -17,72 +28,58 @@ export default function Desktop() {
   const navigate = useNavigate();
   const { themeState, setThemeState } = useContext(themeContext);
 
-  const [showSignInModal, setShowSignInModal] = useState(false);
-  const [showSignUpModal, setShowSignUpModal] = useState(false);
+  const userData = GetCookies("authUser");
+
+  const { setAuthUser } = useContext(userContext);
+  const { setAuthToken } = useContext(tokenContext);
+
   const [showDropdown, setShowDropdown] = useState([]);
 
-  const handleShow = (auth) => {
-    if (auth === "signin") {
-      setShowSignInModal(true);
-      setShowSignUpModal(false);
-    } else {
-      setShowSignInModal(false);
-      setShowSignUpModal(true);
-    }
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showSignoutModal, setShowSignoutModal] = useState(false);
+  const [isSignin, setIsSignin] = useState(true);
+
+  const handleAuthModalShow = () => {
+    setShowAuthModal(true);
   };
 
-  const handleClose = () => {
-    if (showSignInModal) {
-      setShowSignInModal(false);
-      setShowSignUpModal(false);
-    } else if (showSignUpModal) {
-      setShowSignUpModal(false);
-      setShowSignInModal(false);
-    }
+  const handleAuthModalClose = () => {
+    setShowAuthModal(false);
   };
 
-  const renderSignInModal = () => {
+  const handleSignoutModalShow = () => {
+    setShowSignoutModal(true);
+  };
+
+  const handleSignoutModalClose = () => {
+    setShowSignoutModal(false);
+  };
+
+  const toggleForm = () => setIsSignin(!isSignin);
+
+  const renderAuthModal = () => {
     return (
       <Modal
-        show={showSignInModal}
-        onHide={handleClose}
-        className="navbar-signin-modal"
+        show={showAuthModal}
+        onHide={handleAuthModalClose}
+        className="navbar-auth-modal"
       >
-        <Modal.Header closeButton className="navbar-signin-modal-header">
-          <Modal.Title>Sign In</Modal.Title>
+        <Modal.Header closeButton className="navbar-auth-modal-header">
+          <Modal.Title>{isSignin ? "Sign In" : "Sign Up"}</Modal.Title>
         </Modal.Header>
-        <Modal.Body className="navbar-signin-modal-body">
-          <p>Sign In</p>
+        <Modal.Body className="navbar-auth-modal-body">
+          {isSignin ? (
+            <Signin
+              handleSignUpClick={toggleForm}
+              handleAuthModalClose={handleAuthModalClose}
+            />
+          ) : (
+            <Signup
+              handleSignUpClick={toggleForm}
+              handleAuthModalClose={handleAuthModalClose}
+            />
+          )}
         </Modal.Body>
-        <Modal.Footer className="navbar-signin-modal-footer">
-          <Button variant="danger" onClick={handleClose}>
-            Close
-          </Button>
-          <Button variant="success">Sign In</Button>
-        </Modal.Footer>
-      </Modal>
-    );
-  };
-
-  const renderSignUpModal = () => {
-    return (
-      <Modal
-        show={showSignUpModal}
-        onHide={handleClose}
-        className="navbar-signup-modal"
-      >
-        <Modal.Header closeButton className="navbar-signup-modal-header">
-          <Modal.Title>Sign Up</Modal.Title>
-        </Modal.Header>
-        <Modal.Body className="navbar-signup-modal-body">
-          <p>Sign Up</p>
-        </Modal.Body>
-        <Modal.Footer className="navbar-signup-modal-footer">
-          <Button variant="danger" onClick={handleClose}>
-            Close
-          </Button>
-          <Button variant="success">Sign Up</Button>
-        </Modal.Footer>
       </Modal>
     );
   };
@@ -97,7 +94,50 @@ export default function Desktop() {
     }
   };
 
-  const slideDropdownAnimation = useSpring({});
+  const slideDropdownHomepage = useSpring({
+    opacity: showDropdown.includes("homepage") ? 1 : 0,
+    transform: showDropdown.includes("homepage")
+      ? "translateY(0%)"
+      : "translateY(-50%)",
+    config: { tension: 200, friction: 20 },
+  });
+
+  const slideDropdownHabitTracker = useSpring({
+    opacity: showDropdown.includes("habitTracker") ? 1 : 0,
+    transform: showDropdown.includes("habitTracker")
+      ? "translateY(0%)"
+      : "translateY(-50%)",
+    config: { tension: 200, friction: 20 },
+  });
+
+  const slideDropdownAccountSettings = useSpring({
+    opacity: showDropdown.includes("accountSettings") ? 1 : 0,
+    transform: showDropdown.includes("accountSettings")
+      ? "translateY(0%)"
+      : "translateY(-50%)",
+    config: { tension: 200, friction: 20 },
+  });
+
+  const arrowAnimationHomepage = useSpring({
+    transform: showDropdown.includes("homepage")
+      ? "rotate(180deg)"
+      : "rotate(0deg)",
+    config: { tension: 200, friction: 15 },
+  });
+
+  const arrowAnimationHabitTracker = useSpring({
+    transform: showDropdown.includes("habitTracker")
+      ? "rotate(180deg)"
+      : "rotate(0deg)",
+    config: { tension: 200, friction: 15 },
+  });
+
+  const arrowAnimationAccountSettings = useSpring({
+    transform: showDropdown.includes("accountSettings")
+      ? "rotate(180deg)"
+      : "rotate(0deg)",
+    config: { tension: 200, friction: 15 },
+  });
 
   return (
     <>
@@ -142,28 +182,31 @@ export default function Desktop() {
 
       <div className="desktop-navbar-links">
         <div className="desktop-navbar-link-container">
-          <h3 data-name="homepage" onClick={handleButtonToggle}>
-            <span>
-              {showDropdown.includes("homepage") ? (
-                <FaLongArrowAltDown />
-              ) : (
-                <FaLongArrowAltUp />
-              )}
-            </span>
-            Homepage
-            <span>
-              {showDropdown.includes("homepage") ? (
-                <FaLongArrowAltDown />
-              ) : (
-                <FaLongArrowAltUp />
-              )}
-            </span>
-          </h3>
+          <div className="desktop-navbar-link-title">
+            <animated.div style={arrowAnimationHomepage}>
+              <FaLongArrowAltUp />
+            </animated.div>
+
+            <h3 data-name="homepage" onClick={handleButtonToggle}>
+              Homepage
+            </h3>
+
+            <animated.div style={arrowAnimationHomepage}>
+              <FaLongArrowAltUp />
+            </animated.div>
+          </div>
+
           <hr />
           <br />
 
           {showDropdown.includes("homepage") && (
-            <animated.div className="desktop-navbar-button-container">
+            <animated.div
+              style={{
+                ...slideDropdownHomepage,
+                overflow: "hidden",
+              }}
+              className="desktop-navbar-button-container"
+            >
               <Button
                 id="desktop-navbar-dashboard-button"
                 className={`desktop-navbar-button ${
@@ -204,28 +247,31 @@ export default function Desktop() {
         </div>
 
         <div className="desktop-navbar-link-container">
-          <h3 data-name="habitTracker" onClick={handleButtonToggle}>
-            <span>
-              {showDropdown.includes("habitTracker") ? (
-                <FaLongArrowAltDown />
-              ) : (
-                <FaLongArrowAltUp />
-              )}
-            </span>
-            Habit Tracker
-            <span>
-              {showDropdown.includes("habitTracker") ? (
-                <FaLongArrowAltDown />
-              ) : (
-                <FaLongArrowAltUp />
-              )}
-            </span>
-          </h3>
+          <div className="desktop-navbar-link-title">
+            <animated.div style={arrowAnimationHabitTracker}>
+              <FaLongArrowAltUp />
+            </animated.div>
+
+            <h3 data-name="habitTracker" onClick={handleButtonToggle}>
+              Habit Tracker
+            </h3>
+
+            <animated.div style={arrowAnimationHabitTracker}>
+              <FaLongArrowAltUp />
+            </animated.div>
+          </div>
+
           <hr />
           <br />
 
           {showDropdown.includes("habitTracker") && (
-            <animated.div className="desktop-navbar-button-container">
+            <animated.div
+              style={{
+                ...slideDropdownHabitTracker,
+                overflow: "hidden",
+              }}
+              className="desktop-navbar-button-container"
+            >
               <Button
                 id="desktop-navbar-habit-button"
                 className={`desktop-navbar-button ${
@@ -263,28 +309,31 @@ export default function Desktop() {
         </div>
 
         <div className="desktop-navbar-link-container">
-          <h3 data-name="accountSettings" onClick={handleButtonToggle}>
-            <span>
-              {showDropdown.includes("accountSettings") ? (
-                <FaLongArrowAltDown />
-              ) : (
-                <FaLongArrowAltUp />
-              )}
-            </span>
-            Account Settings
-            <span>
-              {showDropdown.includes("accountSettings") ? (
-                <FaLongArrowAltDown />
-              ) : (
-                <FaLongArrowAltUp />
-              )}
-            </span>
-          </h3>
+          <div className="desktop-navbar-link-title">
+            <animated.div style={arrowAnimationAccountSettings}>
+              <FaLongArrowAltUp />
+            </animated.div>
+
+            <h3 data-name="accountSettings" onClick={handleButtonToggle}>
+              Account Settings
+            </h3>
+
+            <animated.div style={arrowAnimationAccountSettings}>
+              <FaLongArrowAltUp />
+            </animated.div>
+          </div>
+
           <hr />
           <br />
 
           {showDropdown.includes("accountSettings") && (
-            <animated.div className="desktop-navbar-button-container">
+            <animated.div
+              style={{
+                ...slideDropdownAccountSettings,
+                overflow: "hidden",
+              }}
+              className="desktop-navbar-button-container"
+            >
               <Button
                 id="desktop-navbar-profile-button"
                 className={`desktop-navbar-button ${
@@ -326,29 +375,47 @@ export default function Desktop() {
       </div>
 
       <div className="navbar-auth-buttons">
-        <Button
-          id={`${themeState === "dark" ? "dark-button" : "light-button"}`}
-          className="signin-button"
-          variant="success"
-          onClick={() => {
-            handleShow("signin");
-          }}
-        >
-          Sign In
-        </Button>
-        <Button
-          id={`${themeState === "dark" ? "dark-button" : "light-button"}`}
-          className="signup-button"
-          onClick={() => {
-            handleShow("signup");
-          }}
-        >
-          Sign Up
-        </Button>
+        {userData ? (
+          <Button
+            id={`${themeState === "dark" ? "dark-button" : "light-button"}`}
+            className="signout-button"
+            variant="danger"
+            onClick={handleSignoutModalShow}
+          >
+            Sign Out
+          </Button>
+        ) : (
+          <>
+            <Button
+              id={`${themeState === "dark" ? "dark-button" : "light-button"}`}
+              className="signin-button"
+              variant="success"
+              onClick={() => {
+                setIsSignin(true);
+                handleAuthModalShow();
+              }}
+            >
+              Sign In
+            </Button>
+            <Button
+              id={`${themeState === "dark" ? "dark-button" : "light-button"}`}
+              className="signup-button"
+              onClick={() => {
+                setIsSignin(false);
+                handleAuthModalShow();
+              }}
+            >
+              Sign Up
+            </Button>
+          </>
+        )}
       </div>
 
-      {renderSignInModal()}
-      {renderSignUpModal()}
+      {renderAuthModal()}
+      <Signout
+        showSignoutModal={showSignoutModal}
+        handleSignoutModalClose={handleSignoutModalClose}
+      />
     </>
   );
 }

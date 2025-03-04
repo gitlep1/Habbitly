@@ -88,6 +88,25 @@
     }
   }
 
+  .signout-button {
+    grid-column: 1 / -1;
+    transition: all 0.3s ease-in-out;
+    width: 90%;
+    margin: 0 auto;
+
+    &:hover {
+      cursor: pointer;
+      transform: scale(1.05);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+      background-color: #c90a0a;
+    }
+
+    &:active {
+      transform: scale(0.98);
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    }
+  }
+
   #dark-button {
     color: white;
     border: 1px solid white;

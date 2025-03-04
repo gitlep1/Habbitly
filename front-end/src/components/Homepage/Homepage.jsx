@@ -8,7 +8,7 @@ import {
 import { Desktop } from "./Desktop/Desktop";
 import { Mobile } from "./Mobile/Mobile";
 
-const Homepage = () => {
+export const Homepage = () => {
   const screenVersion = useContext(screenVersionContext);
   const { themeState } = useContext(themeContext);
 
@@ -23,5 +23,3 @@ const Homepage = () => {
     </section>
   );
 };
-
-export default Homepage;
