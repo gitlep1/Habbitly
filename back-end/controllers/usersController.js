@@ -15,6 +15,8 @@ const { checkValues } = require("../validation/userValidation");
 const { requireAuth } = require("../validation/requireAuth");
 const { scopeAuth } = require("../validation/scopeAuth");
 
+const defaultImg = "../images/default.png";
+
 const JSK = process.env.JWT_SECRET;
 
 users.get("/", requireAuth(), scopeAuth(["read:user"]), async (req, res) => {
@@ -68,7 +70,7 @@ users.get(
 
 users.post("/signup", checkValues, async (req, res) => {
   const newUserData = {
-    profileimg: req.body.profileimg,
+    profileimg: defaultImg,
     username: req.body.username,
     password: req.body.password,
     email: req.body.email,
