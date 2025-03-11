@@ -30,9 +30,6 @@ export default function Desktop() {
 
   const userData = GetCookies("authUser");
 
-  const { setAuthUser } = useContext(userContext);
-  const { setAuthToken } = useContext(tokenContext);
-
   const [showDropdown, setShowDropdown] = useState([]);
 
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -180,7 +177,11 @@ export default function Desktop() {
         <Image src={StellyAngry} className="desktop-navbar-logo" />
       </div>
 
-      <div className="desktop-navbar-links">
+      <div
+        className={`desktop-navbar-links ${
+          showDropdown.length === 3 ? "navbar-links-scrollable" : null
+        }`}
+      >
         <div className="desktop-navbar-link-container">
           <div className="desktop-navbar-link-title">
             <animated.div style={arrowAnimationHomepage}>
@@ -196,8 +197,7 @@ export default function Desktop() {
             </animated.div>
           </div>
 
-          <hr />
-          <br />
+          <hr className="line-under-title" />
 
           {showDropdown.includes("homepage") && (
             <animated.div
@@ -261,8 +261,7 @@ export default function Desktop() {
             </animated.div>
           </div>
 
-          <hr />
-          <br />
+          <hr className="line-under-title" />
 
           {showDropdown.includes("habitTracker") && (
             <animated.div
@@ -323,8 +322,7 @@ export default function Desktop() {
             </animated.div>
           </div>
 
-          <hr />
-          <br />
+          <hr className="line-under-title" />
 
           {showDropdown.includes("accountSettings") && (
             <animated.div
@@ -373,6 +371,11 @@ export default function Desktop() {
           )}
         </div>
       </div>
+
+      <h1>
+        <Image src={userData.profileimg} />
+        {userData.username}
+      </h1>
 
       <div className="navbar-auth-buttons">
         {userData ? (

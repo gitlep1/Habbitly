@@ -87,6 +87,7 @@ users.post("/signup", checkValues, async (req, res) => {
     if (checkCreds) {
       res.status(409).send("Email/Username already taken!");
     } else {
+      newUserData.profileimg;
       const createdUser = await createUser(newUserData);
 
       if (createdUser) {

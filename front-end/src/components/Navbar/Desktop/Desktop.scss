@@ -6,14 +6,7 @@ $stellyHappy: url("../../../assets//images/StellyHappy.png");
   justify-content: center;
 
   .desktop-navbar-logo {
-    max-width: 75px;
-    max-height: 75px;
-    width: auto;
-    height: auto;
-
-    &:hover {
-      cursor: pointer;
-    }
+    width: 25%;
   }
 
   .desktop-navbar-title {
@@ -75,8 +68,8 @@ $stellyHappy: url("../../../assets//images/StellyHappy.png");
   display: grid;
   grid-template-columns: 1fr;
   justify-content: center;
-  gap: 1em;
   width: 95%;
+  overflow: auto;
 
   h3 {
     &:hover {
@@ -84,6 +77,10 @@ $stellyHappy: url("../../../assets//images/StellyHappy.png");
       color: gold;
     }
   }
+}
+
+.navbar-links-scrollable {
+  height: 70%;
 }
 
 .desktop-navbar-link-container {
@@ -96,6 +93,10 @@ $stellyHappy: url("../../../assets//images/StellyHappy.png");
     display: flex;
     justify-content: space-around;
     align-items: center;
+  }
+
+  .line-under-title {
+    margin-bottom: 1em;
   }
 
   h3 {
