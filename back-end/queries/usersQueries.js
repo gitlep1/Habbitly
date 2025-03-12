@@ -19,9 +19,8 @@ const getUserByID = async (id) => {
 
 const createUser = async (newUserData) => {
   const query =
-    "INSERT INTO users (profileimg, username, password, email, created_at) VALUES ($1, $2, $3, $4, NOW())  RETURNING id, profileimg, username, theme, last_online";
+    "INSERT INTO users (username, password, email, created_at) VALUES ($1, $2, $3, NOW())  RETURNING id, profileimg, username, theme, last_online";
   const newUser = await db.oneOrNone(query, [
-    newUserData.profileimg,
     newUserData.username,
     newUserData.password,
     newUserData.email,

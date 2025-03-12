@@ -1,10 +1,10 @@
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Form, Button } from "react-bootstrap";
 import { toast } from "react-toastify";
 import axios from "axios";
 
-import { tokenContext, userContext } from "../../CustomContexts/Contexts";
+import defaultProfilePic from "../../assets/images/default-profile-pic.png";
 
 const API = import.meta.env.VITE_PUBLIC_API_BASE;
 
@@ -12,9 +12,6 @@ export const Signup = ({ handleSignUpClick, handleAuthModalClose }) => {
   let error = "";
 
   const navigate = useNavigate();
-
-  const { setAuthUser } = useContext(userContext);
-  const { setAuthToken } = useContext(tokenContext);
 
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
@@ -25,6 +22,7 @@ export const Signup = ({ handleSignUpClick, handleAuthModalClose }) => {
     e.preventDefault();
 
     const newUser = {
+      profilePic: defaultProfilePic,
       username,
       password,
       email,

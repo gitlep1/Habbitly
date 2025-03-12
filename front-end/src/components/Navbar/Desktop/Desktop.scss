@@ -232,3 +232,15 @@ $stellyHappy: url("../../../assets//images/StellyHappy.png");
     color: #3370ca;
   }
 }
+
+.navbar-username {
+  width: 85%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .navbar-profile-image {
+    width: 50px;
+    margin-right: 0.5em;
+  }
+}

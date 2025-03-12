@@ -151,7 +151,7 @@ export default function Desktop() {
 
       {userData && (
         <div className="navbar-username">
-          <Image src={userData.profileimg} />
+          <Image src={userData.profileimg} className="navbar-profile-image" />
           <h1>{userData.username}</h1>
         </div>
       )}

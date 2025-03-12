@@ -11,11 +11,12 @@ const {
   checkUserCredentials,
 } = require("../queries/usersQueries");
 
-const { checkValues } = require("../validation/userValidation");
+const {
+  checkUserValues,
+  checkUserExtraEntries,
+} = require("../validation/entryValidation");
 const { requireAuth } = require("../validation/requireAuth");
 const { scopeAuth } = require("../validation/scopeAuth");
-
-const defaultImg = "../images/default.png";
 
 const JSK = process.env.JWT_SECRET;
 
@@ -68,62 +69,66 @@ users.get(
   }
 );
 
-users.post("/signup", checkValues, async (req, res) => {
-  const newUserData = {
-    profileimg: defaultImg,
-    username: req.body.username,
-    password: req.body.password,
-    email: req.body.email,
-  };
+users.post(
+  "/signup",
+  checkUserValues,
+  checkUserExtraEntries,
+  async (req, res) => {
+    const newUserData = {
+      username: req.body.username,
+      password: req.body.password,
+      email: req.body.email,
+    };
 
-  console.log("=== POST (newUserData)", newUserData, "===");
+    console.log("=== POST (newUserData)", newUserData, "===");
 
-  try {
-    const checkCreds = await checkUserCredentials(
-      newUserData,
-      "email&username"
-    );
+    try {
+      const checkCreds = await checkUserCredentials(
+        newUserData,
+        "email&username"
+      );
 
-    console.log("=== POST user signup (checkCreds)", checkCreds, "===");
+      console.log("=== POST user signup (checkCreds)", checkCreds, "===");
 
-    if (checkCreds) {
-      res.status(409).send("Email/Username already taken!");
-    } else {
-      newUserData.profileimg;
-      const createdUser = await createUser(newUserData);
-
-      if (createdUser) {
-        const clientTokenPayload = {
-          user: createdUser,
-          scopes: ["read:user", "write:user"],
-        };
-        console.log(
-          "=== POST user signup (clientTokenPayload)",
-          clientTokenPayload,
-          "==="
-        );
-        const token = jwt.sign(clientTokenPayload, JSK, {
-          expiresIn: "30d",
-        });
-
-        const userData = {
-          id: createdUser.id,
-          profileimg: createdUser.profileimg,
-          username: createdUser.username,
-          theme: createdUser.theme,
-          last_online: createdUser.last_online,
-        };
-
-        res.status(200).json({ payload: userData, token });
+      if (checkCreds) {
+        res.status(409).send("Email/Username already taken!");
       } else {
-        res.status(404).send("user not created");
+        newUserData.profileimg;
+        const createdUser = await createUser(newUserData);
+
+        if (createdUser) {
+          const clientTokenPayload = {
+            user: createdUser,
+            scopes: ["read:user", "write:user"],
+          };
+          console.log(
+            "=== POST user signup (clientTokenPayload)",
+            clientTokenPayload,
+            "==="
+          );
+          const token = jwt.sign(clientTokenPayload, JSK, {
+            expiresIn: "30d",
+          });
+
+          const userData = {
+            id: createdUser.id,
+            profileimg: createdUser.profileimg,
+            username: createdUser.username,
+            theme: createdUser.theme,
+            last_online: createdUser.last_online,
+          };
+
+          res.status(200).json({ payload: userData, token });
+        } else {
+          res.status(404).send("user not created");
+        }
       }
+    } catch (error) {
+      console.error("users.POST /signup", { error });
+      res.status(500).send("Internal Server Error");
     }
-  } catch (error) {
-    console.error("users.POST /signup", { error });
-    res.status(500).send("Internal Server Error");
   }
-});
+);
 
 users.post("/signin", async (req, res) => {
   const existingUserData = {
@@ -179,6 +184,7 @@ users.put(
   "/update",
   requireAuth(),
   scopeAuth(["read:user", "write:user"]),
+  checkUserExtraEntries,
   async (req, res) => {
     const { token } = req.user;
     const decoded = jwt.decode(token);

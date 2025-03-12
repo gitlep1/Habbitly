@@ -9,9 +9,9 @@ const {
   createEmailVerification,
   getEmailVerification,
   deleteEmailVerification,
-} = require("../Queries/emailAuthQueries");
+} = require("../queries/emailAuthQueries");
 
-const { checkUserCredentials } = require("../Queries/usersQueries");
+const { checkUserCredentials } = require("../queries/usersQueries");
 
 emailAuth.post("/verify-code", async (req, res) => {
   const { email, code } = req.body;
@@ -58,11 +58,20 @@ emailAuth.post("/send-verification", async (req, res) => {
   try {
     const userExists = await checkUserCredentials(userData, "email");
     if (userExists) {
-      return res.status(400).json({ message: "Email already exists." });
+      return res.status(400).json({ error: "Email already exists." });
     }
 
     const transporter = await createTransporter();
     const code = generateCode();
+
+    if (!transporter) {
+      console.error(
+        "Error: Transporter was not created. Check logs for details."
+      );
+      return res
+        .status(500)
+        .json({ error: "Failed to create email transporter." });
+    }
 
     const hashedCode = crypto.createHash("sha256").update(code).digest("hex");
 
@@ -81,15 +90,15 @@ emailAuth.post("/send-verification", async (req, res) => {
     if (createdEmailAuth) {
       await transporter.sendMail(mailOptions);
       res.status(200).json({
-        message:
+        success:
           "Verification code has been sent to the specified email address.",
       });
     } else {
-      res.status(500).json({ message: "Failed to create email verification." });
+      res.status(500).json({ error: "Failed to create email verification." });
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Failed to send verification code." });
+    res.status(500).json({ error: "Failed to send verification code." });
   }
 });
 

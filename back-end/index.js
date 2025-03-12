@@ -1,10 +1,13 @@
 const express = require("express");
 const cors = require("cors");
 const http = require("http");
+const multer = require("multer");
+const upload = multer();
 
 const usersController = require("./controllers/usersController");
 const habbitsController = require("./controllers/habbitsController");
 const emailAuthController = require("./controllers/emailAuthController");
+const imageUploaderController = require("./controllers/imageUploaderController");
 
 require("dotenv").config();
 
@@ -32,6 +35,7 @@ app.use(
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+// app.use(upload.any());
 
 // === Account Routes === \\
 app.use("/email", emailAuthController);
@@ -39,6 +43,9 @@ app.use("/users", usersController);
 
 // === Habbit Routes === \\
 app.use("/habbits", habbitsController);
+
+// === Image Routes === \\
+app.use("/images", imageUploaderController);
 
 app.post("/login", (req, res) => {
   const { username, password } = req.body;

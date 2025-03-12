@@ -39,12 +39,7 @@ habbits.get(
   requireAuth(),
   scopeAuth(["read:user", "write:user"]),
   async (req, res) => {
-    let token = req.user.token || req.headers.authorization;
-
-    if (token && token.startsWith("Bearer ")) {
-      token = token.split(" ")[1];
-    }
-
+    const { token } = req.user;
     const decoded = jwt.decode(token);
 
     try {
@@ -69,13 +64,7 @@ habbits.get(
   scopeAuth(["read:user", "write:user"]),
   async (req, res) => {
     const { id } = req.params;
-
-    let token = req.user.token || req.headers.authorization;
-
-    if (token && token.startsWith("Bearer ")) {
-      token = token.split(" ")[1];
-    }
-
+    const { token } = req.user;
     const decoded = jwt.decode(token);
 
     try {
@@ -104,12 +93,7 @@ habbits.post(
   requireAuth(),
   scopeAuth(["read:user", "write:user"]),
   async (req, res) => {
-    let token = req.user.token || req.headers.authorization;
-
-    if (token && token.startsWith("Bearer ")) {
-      token = token.split(" ")[1];
-    }
-
+    const { token } = req.user;
     const decoded = jwt.decode(token);
 
     const newHabbitData = {
@@ -149,13 +133,7 @@ habbits.put(
   scopeAuth(["read:user", "write:user"]),
   async (req, res) => {
     const { id } = req.params;
-
-    let token = req.user.token || req.headers.authorization;
-
-    if (token && token.startsWith("Bearer ")) {
-      token = token.split(" ")[1];
-    }
-
+    const { token } = req.user;
     const decoded = jwt.decode(token);
 
     const updatedHabbitData = {
@@ -205,13 +183,7 @@ habbits.delete(
   scopeAuth(["read:user", "write:user"]),
   async (req, res) => {
     const { id } = req.params;
-
-    let token = req.user.token || req.headers.authorization;
-
-    if (token && token.startsWith("Bearer ")) {
-      token = token.split(" ")[1];
-    }
-
+    const { token } = req.user;
     const decoded = jwt.decode(token);
 
     try {
