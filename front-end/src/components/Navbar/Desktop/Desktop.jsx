@@ -5,6 +5,7 @@ import { useSpring, animated } from "react-spring";
 import { IoIosSunny } from "react-icons/io";
 import { FaMoon } from "react-icons/fa";
 import { MdArrowForwardIos } from "react-icons/md";
+import { MdArrowBackIos } from "react-icons/md";
 
 import { themeContext } from "../../../CustomContexts/Contexts";
 import { GetCookies } from "../../../CustomFunctions/HandleCookies";
@@ -89,13 +90,15 @@ export default function Desktop() {
   };
 
   const sidebarAnimation = useSpring({
-    transform: expandSidebar ? "translateX(0%)" : "translateX(-90%)",
+    transform: expandSidebar ? "translateX(0%)" : "translateX(-93%)",
     config: { duration: 200 },
   });
 
   return (
     <animated.nav
-      className="desktop-navbar desktop-navbar-container"
+      className={`desktop-navbar desktop-navbar-container ${
+        themeState === "dark" ? "dark-navbar" : "light-navbar"
+      }`}
       style={sidebarAnimation}
     >
       <div className="desktop-navbar-links-container">
@@ -222,39 +225,99 @@ export default function Desktop() {
         }}
       >
         <div className="arrows arrow-set-1">
-          <MdArrowForwardIos className="arrow arrow-1" />
-          <MdArrowForwardIos className="arrow arrow-2" />
-          <MdArrowForwardIos className="arrow arrow-3" />
+          {expandSidebar ? (
+            <>
+              <MdArrowBackIos className="arrow arrow-1" />
+              <MdArrowBackIos className="arrow arrow-2" />
+              <MdArrowBackIos className="arrow arrow-3" />
+            </>
+          ) : (
+            <>
+              <MdArrowForwardIos className="arrow arrow-1" />
+              <MdArrowForwardIos className="arrow arrow-2" />
+              <MdArrowForwardIos className="arrow arrow-3" />
+            </>
+          )}
         </div>
 
         <div className="arrows arrow-set-2">
-          <MdArrowForwardIos className="arrow arrow-1" />
-          <MdArrowForwardIos className="arrow arrow-2" />
-          <MdArrowForwardIos className="arrow arrow-3" />
+          {expandSidebar ? (
+            <>
+              <MdArrowBackIos className="arrow arrow-1" />
+              <MdArrowBackIos className="arrow arrow-2" />
+              <MdArrowBackIos className="arrow arrow-3" />
+            </>
+          ) : (
+            <>
+              <MdArrowForwardIos className="arrow arrow-1" />
+              <MdArrowForwardIos className="arrow arrow-2" />
+              <MdArrowForwardIos className="arrow arrow-3" />
+            </>
+          )}
         </div>
 
         <div className="arrows arrow-set-3">
-          <MdArrowForwardIos className="arrow arrow-1" />
-          <MdArrowForwardIos className="arrow arrow-2" />
-          <MdArrowForwardIos className="arrow arrow-3" />
+          {expandSidebar ? (
+            <>
+              <MdArrowBackIos className="arrow arrow-1" />
+              <MdArrowBackIos className="arrow arrow-2" />
+              <MdArrowBackIos className="arrow arrow-3" />
+            </>
+          ) : (
+            <>
+              <MdArrowForwardIos className="arrow arrow-1" />
+              <MdArrowForwardIos className="arrow arrow-2" />
+              <MdArrowForwardIos className="arrow arrow-3" />
+            </>
+          )}
         </div>
 
         <div className="arrows arrow-set-4">
-          <MdArrowForwardIos className="arrow arrow-1" />
-          <MdArrowForwardIos className="arrow arrow-2" />
-          <MdArrowForwardIos className="arrow arrow-3" />
+          {expandSidebar ? (
+            <>
+              <MdArrowBackIos className="arrow arrow-1" />
+              <MdArrowBackIos className="arrow arrow-2" />
+              <MdArrowBackIos className="arrow arrow-3" />
+            </>
+          ) : (
+            <>
+              <MdArrowForwardIos className="arrow arrow-1" />
+              <MdArrowForwardIos className="arrow arrow-2" />
+              <MdArrowForwardIos className="arrow arrow-3" />
+            </>
+          )}
         </div>
 
         <div className="arrows arrow-set-5">
-          <MdArrowForwardIos className="arrow arrow-1" />
-          <MdArrowForwardIos className="arrow arrow-2" />
-          <MdArrowForwardIos className="arrow arrow-3" />
+          {expandSidebar ? (
+            <>
+              <MdArrowBackIos className="arrow arrow-1" />
+              <MdArrowBackIos className="arrow arrow-2" />
+              <MdArrowBackIos className="arrow arrow-3" />
+            </>
+          ) : (
+            <>
+              <MdArrowForwardIos className="arrow arrow-1" />
+              <MdArrowForwardIos className="arrow arrow-2" />
+              <MdArrowForwardIos className="arrow arrow-3" />
+            </>
+          )}
         </div>
 
         <div className="arrows arrow-set-6">
-          <MdArrowForwardIos className="arrow arrow-1" />
-          <MdArrowForwardIos className="arrow arrow-2" />
-          <MdArrowForwardIos className="arrow arrow-3" />
+          {expandSidebar ? (
+            <>
+              <MdArrowBackIos className="arrow arrow-1" />
+              <MdArrowBackIos className="arrow arrow-2" />
+              <MdArrowBackIos className="arrow arrow-3" />
+            </>
+          ) : (
+            <>
+              <MdArrowForwardIos className="arrow arrow-1" />
+              <MdArrowForwardIos className="arrow arrow-2" />
+              <MdArrowForwardIos className="arrow arrow-3" />
+            </>
+          )}
         </div>
       </div>
     </animated.nav>
