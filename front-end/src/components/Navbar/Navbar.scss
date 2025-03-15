@@ -1,137 +1,49 @@
-@mixin bubbly-button($color1, $color2, $color3) {
-  background: linear-gradient(135deg, $color1, $color2, $color3);
-  border: none;
-  font-weight: bold;
-  padding: 12px 30px;
-  border-radius: 30px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  transition: all 0.3s ease-in-out;
-  font-size: 1.2rem;
-  display: inline-block;
+// @mixin bubbly-button($color1, $color2, $color3) {
+//   background: linear-gradient(135deg, $color1, $color2, $color3);
+//   border: none;
+//   font-weight: bold;
+//   padding: 12px 30px;
+//   border-radius: 30px;
+//   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+//   transition: all 0.3s ease-in-out;
+//   font-size: 1.2rem;
+//   display: inline-block;
+
+//   &:hover {
+//     transform: scale(1.05);
+//     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+//   }
+
+//   &:active {
+//     transform: scale(0.98);
+//     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+//   }
+// }
+
+#dark-button {
+  color: white;
+  border: 1px solid white;
+  box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
 
   &:hover {
-    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.5);
+  }
+
+  &:active {
+    box-shadow: 0 5px 10px rgba(255, 255, 255, 0.2);
+  }
+}
+
+#light-button {
+  color: black;
+  border: 1px solid black;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+
+  &:hover {
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
   }
 
   &:active {
-    transform: scale(0.98);
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-  }
-}
-
-.mobile-navbar {
-  border-radius: 20px 20px 0px 0px;
-  display: grid;
-  grid-template-columns: 1;
-  align-items: center;
-  justify-content: center;
-  outline-offset: -5px;
-  outline-style: inset;
-  -webkit-box-shadow: 5px 5px 15px 5px #000000;
-  box-shadow: 5px 5px 15px 1.5px #000000;
-}
-
-.desktop-navbar {
-  position: absolute;
-  width: 35%;
-  height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: none;
-  border-radius: 20px 20px 0px 0px;
-  -webkit-box-shadow: 5px 5px 15px 5px black;
-  box-shadow: 5px 5px 15px 1.5px black;
-}
-
-.navbar-auth-buttons {
-  position: absolute;
-  bottom: 1em;
-  width: 100%;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-
-  .signin-button {
-    transition: all 0.3s ease-in-out;
-    width: 90%;
-    margin: 0 auto;
-
-    &:hover {
-      cursor: pointer;
-      transform: scale(1.05);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
-      background-color: #12663f;
-    }
-
-    &:active {
-      transform: scale(0.98);
-      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-    }
-  }
-
-  .signup-button {
-    transition: all 0.3s ease-in-out;
-    width: 90%;
-    margin: 0 auto;
-
-    &:hover {
-      cursor: pointer;
-      transform: scale(1.05);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
-      background-color: #0a56c9;
-    }
-
-    &:active {
-      transform: scale(0.98);
-      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-    }
-  }
-
-  .signout-button {
-    grid-column: 1 / -1;
-    transition: all 0.3s ease-in-out;
-    width: 90%;
-    margin: 0 auto;
-
-    &:hover {
-      cursor: pointer;
-      transform: scale(1.05);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
-      background-color: #c90a0a;
-    }
-
-    &:active {
-      transform: scale(0.98);
-      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-    }
-  }
-
-  #dark-button {
-    color: white;
-    border: 1px solid white;
-    box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
-
-    &:hover {
-      box-shadow: 0 8px 20px rgba(255, 255, 255, 0.5);
-    }
-
-    &:active {
-      box-shadow: 0 5px 10px rgba(255, 255, 255, 0.2);
-    }
-  }
-
-  #light-button {
-    color: black;
-    border: 1px solid black;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-
-    &:hover {
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
-    }
-
-    &:active {
-      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-    }
   }
 }

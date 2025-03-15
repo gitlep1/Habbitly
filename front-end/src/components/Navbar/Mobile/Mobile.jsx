@@ -3,6 +3,8 @@ import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Image, Modal } from "react-bootstrap";
 import { useSpring, animated } from "react-spring";
+import { IoIosSunny } from "react-icons/io";
+import { FaMoon } from "react-icons/fa";
 
 import { themeContext } from "../../../CustomContexts/Contexts";
 
@@ -38,6 +40,7 @@ export default function Mobile() {
   };
 
   const expandNavbarAnimation = useSpring({
+    display: expanded ? "flex" : "none",
     height: expanded ? "8em" : "0",
     opacity: expanded ? 1 : 0,
     zIndex: expanded ? 1 : -1,
@@ -93,33 +96,57 @@ export default function Mobile() {
   };
 
   return (
-    <>
-      <div className={`mobile-navbar-title`}>
-        <Image
-          src={StellyHappy}
-          className={`mobile-navbar-logo`}
-          onClick={() => {
-            setThemeState("light");
-          }}
-        />
-        <p>Habbitly</p>
-        <Image
-          src={StellyAngry}
-          className={`mobile-navbar-logo`}
-          onClick={() => {
-            setThemeState("dark");
-          }}
-        />
+    <nav className="mobile-sidebar">
+      <div className="mobile-navbar-title-container">
+        <div className="mobile-navbar-title">
+          <Image src={StellyHappy} className="mobile-navbar-logo" />
+          <p>Habbitly</p>
+          <Image src={StellyAngry} className="mobile-navbar-logo" />
+        </div>
+
+        <div className="nav-theme-switcher-container">
+          <div
+            className={`nav-theme-switcher-outer-box ${
+              themeState === "dark"
+                ? "theme-switcher-dark"
+                : "theme-switcher-light"
+            }`}
+            style={
+              themeState === "dark"
+                ? { border: "1px solid whitesmoke" }
+                : { border: "1px solid black" }
+            }
+            onClick={() => {
+              setThemeState(themeState === "dark" ? "light" : "dark");
+            }}
+          >
+            <div
+              className="nav-theme-switcher-inner-box"
+              style={
+                themeState === "dark"
+                  ? { backgroundColor: "whitesmoke" }
+                  : { backgroundColor: "black" }
+              }
+            ></div>
+
+            <FaMoon id="nav-dark-logo" />
+            <IoIosSunny id="nav-light-logo" />
+          </div>
+        </div>
       </div>
 
       <Button
         variant="none"
-        className={`mobile-expanded-button`}
+        className={`mobile-expanded-button-container`}
         onClick={() => {
           setExpanded(!expanded);
         }}
       >
-        <span className={`${themeState === "dark" ? "darkmode" : "lightmode"}`}>
+        <span
+          className={`${
+            themeState === "dark" ? "darkmode" : "lightmode"
+          } mobile-expanded-button`}
+        >
           {expanded ? "Hide Menu" : "Show Menu"}
         </span>
       </Button>
@@ -179,6 +206,6 @@ export default function Mobile() {
         {renderSignInModal()}
         {renderSignUpModal()}
       </animated.div>
-    </>
+    </nav>
   );
 }

@@ -1,5 +1,6 @@
 import "./Navbar.scss";
-import { useContext } from "react";
+import { useState, useContext } from "react";
+import { useSpring, animated } from "react-spring";
 
 import {
   screenVersionContext,
@@ -14,11 +15,7 @@ export const Navbar = () => {
   const { themeState, setThemeState } = useContext(themeContext);
 
   return (
-    <nav
-      className={`${screenVersion}-navbar ${
-        themeState === "dark" ? "darkmode" : "lightmode"
-      }`}
-    >
+    <nav className={`${themeState === "dark" ? "darkmode" : "lightmode"}`}>
       <themeContext.Provider value={{ themeState, setThemeState }}>
         {screenVersion === "desktop" ? <Desktop /> : <Mobile />}
       </themeContext.Provider>

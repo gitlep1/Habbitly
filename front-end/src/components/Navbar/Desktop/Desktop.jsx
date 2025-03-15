@@ -1,8 +1,10 @@
 import "./Desktop.scss";
 import { useState, useContext } from "react";
 import { Button, Image, Modal } from "react-bootstrap";
+import { useSpring, animated } from "react-spring";
 import { IoIosSunny } from "react-icons/io";
 import { FaMoon } from "react-icons/fa";
+import { MdArrowForwardIos } from "react-icons/md";
 
 import { themeContext } from "../../../CustomContexts/Contexts";
 import { GetCookies } from "../../../CustomFunctions/HandleCookies";
@@ -28,6 +30,8 @@ export default function Desktop() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showSignoutModal, setShowSignoutModal] = useState(false);
   const [isSignin, setIsSignin] = useState(true);
+
+  const [expandSidebar, setExpandSidebar] = useState(true);
 
   const handleAuthModalShow = () => {
     setShowAuthModal(true);
@@ -84,120 +88,175 @@ export default function Desktop() {
     }
   };
 
-  return (
-    <>
-      <div className="desktop-navbar-title-container">
-        <Image src={StellyHappy} className="desktop-navbar-logo" />
-        <div className="desktop-navbar-title">
-          <h1>Habbitly</h1>
+  const sidebarAnimation = useSpring({
+    transform: expandSidebar ? "translateX(0%)" : "translateX(-90%)",
+    config: { duration: 200 },
+  });
 
-          <div className="nav-theme-switcher-container">
-            <div
-              className={`nav-theme-switcher-outer-box ${
-                themeState === "dark"
-                  ? "theme-switcher-dark"
-                  : "theme-switcher-light"
-              }`}
-              style={
-                themeState === "dark"
-                  ? { border: "1px solid whitesmoke" }
-                  : { border: "1px solid black" }
-              }
-              onClick={() => {
-                setThemeState(themeState === "dark" ? "light" : "dark");
-              }}
-            >
+  return (
+    <animated.nav
+      className="desktop-navbar desktop-navbar-container"
+      style={sidebarAnimation}
+    >
+      <div className="desktop-navbar-links-container">
+        <div className="desktop-navbar-title-container">
+          <Image src={StellyHappy} className="desktop-navbar-logo" />
+          <div className="desktop-navbar-title">
+            <h1>Habbitly</h1>
+
+            <div className="nav-theme-switcher-container">
               <div
-                className="nav-theme-switcher-inner-box"
+                className={`nav-theme-switcher-outer-box ${
+                  themeState === "dark"
+                    ? "theme-switcher-dark"
+                    : "theme-switcher-light"
+                }`}
                 style={
                   themeState === "dark"
-                    ? { backgroundColor: "whitesmoke" }
-                    : { backgroundColor: "black" }
+                    ? { border: "1px solid whitesmoke" }
+                    : { border: "1px solid black" }
                 }
-              ></div>
+                onClick={() => {
+                  setThemeState(themeState === "dark" ? "light" : "dark");
+                }}
+              >
+                <div
+                  className="nav-theme-switcher-inner-box"
+                  style={
+                    themeState === "dark"
+                      ? { backgroundColor: "whitesmoke" }
+                      : { backgroundColor: "black" }
+                  }
+                ></div>
 
-              <FaMoon id="nav-dark-logo" />
-              <IoIosSunny id="nav-light-logo" />
+                <FaMoon id="nav-dark-logo" />
+                <IoIosSunny id="nav-light-logo" />
+              </div>
             </div>
           </div>
+
+          <Image src={StellyAngry} className="desktop-navbar-logo" />
         </div>
 
-        <Image src={StellyAngry} className="desktop-navbar-logo" />
+        <div
+          className={`desktop-navbar-links ${
+            showDropdown.length === 3 ? "navbar-links-scrollable" : null
+          }`}
+        >
+          <HomepageLinks
+            handleButtonToggle={handleButtonToggle}
+            showDropdown={showDropdown}
+            themeState={themeState}
+          />
+
+          <HabitTrackerLinks
+            handleButtonToggle={handleButtonToggle}
+            showDropdown={showDropdown}
+            themeState={themeState}
+          />
+
+          <AccountSettingsLinks
+            handleButtonToggle={handleButtonToggle}
+            showDropdown={showDropdown}
+            themeState={themeState}
+          />
+        </div>
+
+        {userData && (
+          <div className="navbar-username">
+            <Image src={userData.profileimg} className="navbar-profile-image" />
+            <h1>{userData.username}</h1>
+          </div>
+        )}
+
+        <div className="navbar-auth-buttons">
+          {userData ? (
+            <Button
+              id={`${themeState === "dark" ? "dark-button" : "light-button"}`}
+              className="signout-button"
+              variant="danger"
+              onClick={handleSignoutModalShow}
+            >
+              Sign Out
+            </Button>
+          ) : (
+            <>
+              <Button
+                id={`${themeState === "dark" ? "dark-button" : "light-button"}`}
+                className="signin-button"
+                variant="success"
+                onClick={() => {
+                  setIsSignin(true);
+                  handleAuthModalShow();
+                }}
+              >
+                Sign In
+              </Button>
+              <Button
+                id={`${themeState === "dark" ? "dark-button" : "light-button"}`}
+                className="signup-button"
+                onClick={() => {
+                  setIsSignin(false);
+                  handleAuthModalShow();
+                }}
+              >
+                Sign Up
+              </Button>
+            </>
+          )}
+        </div>
+
+        {renderAuthModal()}
+        <Signout
+          showSignoutModal={showSignoutModal}
+          handleSignoutModalClose={handleSignoutModalClose}
+        />
       </div>
 
       <div
-        className={`desktop-navbar-links ${
-          showDropdown.length === 3 ? "navbar-links-scrollable" : null
+        className={`navbar-expand-button ${
+          themeState === "dark" ? "dark-expand-button" : "light-expand-button"
         }`}
+        onClick={() => {
+          setExpandSidebar(!expandSidebar);
+        }}
       >
-        <HomepageLinks
-          handleButtonToggle={handleButtonToggle}
-          showDropdown={showDropdown}
-          themeState={themeState}
-        />
-
-        <HabitTrackerLinks
-          handleButtonToggle={handleButtonToggle}
-          showDropdown={showDropdown}
-          themeState={themeState}
-        />
-
-        <AccountSettingsLinks
-          handleButtonToggle={handleButtonToggle}
-          showDropdown={showDropdown}
-          themeState={themeState}
-        />
-      </div>
-
-      {userData && (
-        <div className="navbar-username">
-          <Image src={userData.profileimg} className="navbar-profile-image" />
-          <h1>{userData.username}</h1>
+        <div className="arrows arrow-set-1">
+          <MdArrowForwardIos className="arrow arrow-1" />
+          <MdArrowForwardIos className="arrow arrow-2" />
+          <MdArrowForwardIos className="arrow arrow-3" />
         </div>
-      )}
 
-      <div className="navbar-auth-buttons">
-        {userData ? (
-          <Button
-            id={`${themeState === "dark" ? "dark-button" : "light-button"}`}
-            className="signout-button"
-            variant="danger"
-            onClick={handleSignoutModalShow}
-          >
-            Sign Out
-          </Button>
-        ) : (
-          <>
-            <Button
-              id={`${themeState === "dark" ? "dark-button" : "light-button"}`}
-              className="signin-button"
-              variant="success"
-              onClick={() => {
-                setIsSignin(true);
-                handleAuthModalShow();
-              }}
-            >
-              Sign In
-            </Button>
-            <Button
-              id={`${themeState === "dark" ? "dark-button" : "light-button"}`}
-              className="signup-button"
-              onClick={() => {
-                setIsSignin(false);
-                handleAuthModalShow();
-              }}
-            >
-              Sign Up
-            </Button>
-          </>
-        )}
+        <div className="arrows arrow-set-2">
+          <MdArrowForwardIos className="arrow arrow-1" />
+          <MdArrowForwardIos className="arrow arrow-2" />
+          <MdArrowForwardIos className="arrow arrow-3" />
+        </div>
+
+        <div className="arrows arrow-set-3">
+          <MdArrowForwardIos className="arrow arrow-1" />
+          <MdArrowForwardIos className="arrow arrow-2" />
+          <MdArrowForwardIos className="arrow arrow-3" />
+        </div>
+
+        <div className="arrows arrow-set-4">
+          <MdArrowForwardIos className="arrow arrow-1" />
+          <MdArrowForwardIos className="arrow arrow-2" />
+          <MdArrowForwardIos className="arrow arrow-3" />
+        </div>
+
+        <div className="arrows arrow-set-5">
+          <MdArrowForwardIos className="arrow arrow-1" />
+          <MdArrowForwardIos className="arrow arrow-2" />
+          <MdArrowForwardIos className="arrow arrow-3" />
+        </div>
+
+        <div className="arrows arrow-set-6">
+          <MdArrowForwardIos className="arrow arrow-1" />
+          <MdArrowForwardIos className="arrow arrow-2" />
+          <MdArrowForwardIos className="arrow arrow-3" />
+        </div>
       </div>
-
-      {renderAuthModal()}
-      <Signout
-        showSignoutModal={showSignoutModal}
-        handleSignoutModalClose={handleSignoutModalClose}
-      />
-    </>
+    </animated.nav>
   );
 }

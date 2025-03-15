@@ -1,21 +1,101 @@
-.mobile-navbar-title {
-  display: flex;
-  align-items: center;
+.mobile-navbar {
+  border-radius: 20px 20px 0px 0px;
+  outline-offset: -5px;
+  outline-style: inset;
+  -webkit-box-shadow: 5px 5px 15px 5px #000000;
+  box-shadow: 5px 5px 15px 1.5px #000000;
+  border: 3px solid red;
+}
+
+.mobile-navbar-title-container {
+  display: grid;
+  grid-template-columns: 1fr 0px;
   font-size: 35px;
 
-  .mobile-navbar-logo {
-    width: 75px;
-    height: auto;
+  .mobile-navbar-title {
+    grid-column: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .mobile-navbar-logo {
+      width: 75px;
+      height: auto;
+    }
+  }
+
+  .nav-theme-switcher-container {
+    grid-column: 2;
+    justify-self: flex-end;
+    margin: 0.5em;
+
+    .nav-theme-switcher-outer-box {
+      width: 50px;
+      height: 25px;
+      position: relative;
+
+      .nav-theme-switcher-inner-box {
+        width: 23px;
+        height: 23px;
+        position: absolute;
+        z-index: 1;
+        transition: transform 0.3s ease-in-out;
+      }
+
+      #nav-light-logo,
+      #nav-dark-logo {
+        position: absolute;
+        font-size: 20px;
+        top: 2px;
+        transition: opacity 0.3s ease-in-out;
+      }
+
+      #nav-dark-logo {
+        left: 2px;
+        color: whitesmoke;
+        opacity: 1;
+      }
+
+      #nav-light-logo {
+        right: 2px;
+        color: black;
+        opacity: 1;
+      }
+    }
+
+    .nav-theme-switcher-custom {
+      font-size: 10px;
+      color: #0a58ca;
+      text-decoration: underline;
+
+      &:hover {
+        cursor: pointer;
+        color: #3370ca;
+      }
+    }
   }
 }
 
-.mobile-expanded-button {
-  display: grid;
-  grid-template-columns: 1;
-  gap: 0.5em;
-  border: none;
-  font-size: 20px;
-  z-index: 500;
+.theme-switcher-dark {
+  .nav-theme-switcher-inner-box {
+    transform: translateX(25px);
+  }
+}
+
+.theme-switcher-light {
+  .nav-theme-switcher-inner-box {
+    transform: translateX(0);
+  }
+}
+
+.mobile-expanded-button-container {
+  width: 100%;
+
+  .mobile-expanded-button {
+    border: none;
+    font-size: 15px;
+    z-index: 500;
+  }
 }
 
 .mobile-navbar-links {
