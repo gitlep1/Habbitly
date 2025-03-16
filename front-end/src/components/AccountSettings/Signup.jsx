@@ -139,13 +139,16 @@ export const Signup = ({ handleSignUpClick, handleAuthModalClose }) => {
           </Button>
           {error && <p className="error-message">{error}</p>}
         </Form>
-        <p
-          className="switch-auth-mode"
-          onClick={() => {
-            handleSignUpClick();
-          }}
-        >
-          Already have an account? Sign In
+        <p className="switch-auth-mode-container">
+          Already have an account?{" "}
+          <span
+            className="switch-auth-mode"
+            onClick={() => {
+              handleSignUpClick();
+            }}
+          >
+            Sign In
+          </span>
         </p>
       </div>
     );

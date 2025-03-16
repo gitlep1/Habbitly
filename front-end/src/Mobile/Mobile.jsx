@@ -1,5 +1,5 @@
 import "./Mobile.scss";
-import { useState, useEffect, useRef, useContext } from "react";
+import { useContext } from "react";
 import { Route, Routes } from "react-router-dom";
 
 import { screenVersionContext } from "../CustomContexts/Contexts";
@@ -7,6 +7,7 @@ import { screenVersionContext } from "../CustomContexts/Contexts";
 import { Notfound } from "../components/Notfound/Notfound";
 import { Navbar } from "../components/Navbar/Navbar";
 import { Homepage } from "../components/Homepage/Homepage";
+import { EmailVerification } from "../components/AccountSettings/EmailVerification";
 
 const Mobile = () => {
   const screenVersion = useContext(screenVersionContext);
@@ -16,10 +17,9 @@ const Mobile = () => {
       <Navbar />
 
       <Routes>
-        <Route path="/">
-          <Route path="/" element={<Homepage />} />
-          <Route path="*" element={<Notfound />} />
-        </Route>
+        <Route path="/" element={<Homepage />} />
+        <Route path="/email-verification" element={<EmailVerification />} />
+        <Route path="*" element={<Notfound />} />
       </Routes>
     </section>
   );

@@ -115,13 +115,16 @@ export const Signin = ({ handleSignUpClick, handleAuthModalClose }) => {
             Close
           </Button>
         </Form>
-        <p
-          className="switch-auth-mode"
-          onClick={() => {
-            handleSignUpClick();
-          }}
-        >
-          Don&apos;t have an account? Sign Up
+        <p className="switch-auth-mode-container">
+          Don&apos;t have an account?{" "}
+          <span
+            className="switch-auth-mode"
+            onClick={() => {
+              handleSignUpClick();
+            }}
+          >
+            Sign Up
+          </span>
         </p>
       </div>
     );

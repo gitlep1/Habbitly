@@ -7,8 +7,8 @@ export const Desktop = () => {
   const { themeState } = useContext(themeContext);
 
   return (
-    <>
-      <div>Desktop Homepage</div>
-    </>
+    <section className="desktop-homepage-container">
+      <div className="desktop-homepage-inner">Desktop Homepage</div>
+    </section>
   );
 };

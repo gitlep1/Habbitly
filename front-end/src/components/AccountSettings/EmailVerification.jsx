@@ -77,10 +77,12 @@ export const EmailVerification = () => {
       <h1>Verify Your Email</h1>
       {email ? (
         <div>
-          <h3>An email verification link has been sent to: {email}</h3>
+          <h3>A code has been sent to: {email}</h3>
           <Form onSubmit={handleSubmit}>
             <Form.Group controlId="formCode">
-              <Form.Label>Verification Code</Form.Label>
+              <Form.Label style={{ color: "lightgreen" }}>
+                Verification Code{" "}
+              </Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Enter verification code"
@@ -88,6 +90,11 @@ export const EmailVerification = () => {
                 onChange={(e) => setCodeInput(e.target.value)}
               />
             </Form.Group>
+            <span style={{ fontSize: "15px", color: "red" }}>
+              If you do not see the code in your inbox please check your spam
+              folder
+            </span>
+            <br />
             <br />
             <Button type="submit">Verify Email</Button>
           </Form>

@@ -1,7 +1,8 @@
 import "./Desktop.scss";
-import { useState, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Button, Image, Modal } from "react-bootstrap";
 import { useSpring, animated } from "react-spring";
+import { useLocation } from "react-router-dom";
 import { IoIosSunny } from "react-icons/io";
 import { FaMoon } from "react-icons/fa";
 import { MdArrowForwardIos } from "react-icons/md";
@@ -22,6 +23,8 @@ import { HabitTrackerLinks } from "./Links/2-HabitTracker";
 import { AccountSettingsLinks } from "./Links/3-AccountSettings";
 
 export default function Desktop() {
+  const location = useLocation();
+
   const { themeState, setThemeState } = useContext(themeContext);
 
   const userData = GetCookies("authUser");
@@ -93,6 +96,12 @@ export default function Desktop() {
     transform: expandSidebar ? "translateX(0%)" : "translateX(-93%)",
     config: { duration: 200 },
   });
+
+  useEffect(() => {
+    if (location.pathname === "/email-verification") {
+      setExpandSidebar(false);
+    }
+  }, [location]);
 
   return (
     <animated.nav
@@ -210,6 +219,7 @@ export default function Desktop() {
         </div>
 
         {renderAuthModal()}
+
         <Signout
           showSignoutModal={showSignoutModal}
           handleSignoutModalClose={handleSignoutModalClose}

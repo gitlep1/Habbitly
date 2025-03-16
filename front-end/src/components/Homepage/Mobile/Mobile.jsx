@@ -7,8 +7,8 @@ export const Mobile = () => {
   const { themeState } = useContext(themeContext);
 
   return (
-    <>
+    <section className="mobile-homepage">
       <div>Mobile Homepage</div>
-    </>
+    </section>
   );
 };

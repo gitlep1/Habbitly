@@ -47,3 +47,18 @@
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
   }
 }
+
+.switch-auth-mode-container {
+  text-align: center;
+
+  .switch-auth-mode {
+    color: #0a58ca;
+    margin-top: 1em;
+    text-decoration: underline;
+
+    &:hover {
+      cursor: pointer;
+      color: #3370ca;
+    }
+  }
+}

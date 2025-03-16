@@ -1,5 +1,5 @@
 import "./Desktop.scss";
-import { useState, useEffect, useRef, useContext } from "react";
+import { useContext } from "react";
 import { Route, Routes } from "react-router-dom";
 
 import { screenVersionContext } from "../CustomContexts/Contexts";

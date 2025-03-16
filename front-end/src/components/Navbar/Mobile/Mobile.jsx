@@ -1,47 +1,98 @@
 import "./Mobile.scss";
-import { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect, useContext } from "react";
 import { Button, Image, Modal } from "react-bootstrap";
 import { useSpring, animated } from "react-spring";
+import { useLocation } from "react-router-dom";
 import { IoIosSunny } from "react-icons/io";
 import { FaMoon } from "react-icons/fa";
 
+import { GetCookies } from "../../../CustomFunctions/HandleCookies";
 import { themeContext } from "../../../CustomContexts/Contexts";
+
+import { Signin } from "../../AccountSettings/Signin";
+import { Signup } from "../../AccountSettings/Signup";
 
 import StellyHappy from "../../../assets/images/StellyHappy.png";
 import StellyAngry from "../../../assets/images/StellyAngry.png";
 
+import { HomepageLinks } from "./Links/1-Homepage";
+import { HabitTrackerLinks } from "./Links/2-HabitTracker";
+import { AccountSettingsLinks } from "./Links/3-AccountSettings";
+import { Signout } from "../../AccountSettings/Signout";
+
 export default function Mobile() {
-  const navigate = useNavigate();
+  const location = useLocation();
+
   const { themeState, setThemeState } = useContext(themeContext);
 
-  const [expanded, setExpanded] = useState(true);
-  const [showSignInModal, setShowSignInModal] = useState(false);
-  const [showSignUpModal, setShowSignUpModal] = useState(false);
+  const userData = GetCookies("authUser");
 
-  const handleShow = (auth) => {
-    if (auth === "signin") {
-      setShowSignInModal(true);
-      setShowSignUpModal(false);
-    } else {
-      setShowSignInModal(false);
-      setShowSignUpModal(true);
-    }
+  const [showDropdown, setShowDropdown] = useState([]);
+
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showSignoutModal, setShowSignoutModal] = useState(false);
+  const [isSignin, setIsSignin] = useState(true);
+
+  const [expanded, setExpanded] = useState(true);
+
+  const handleAuthModalShow = () => {
+    setShowAuthModal(true);
   };
 
-  const handleClose = () => {
-    if (showSignInModal) {
-      setShowSignInModal(false);
-      setShowSignUpModal(false);
-    } else if (showSignUpModal) {
-      setShowSignUpModal(false);
-      setShowSignInModal(false);
+  const handleAuthModalClose = () => {
+    setShowAuthModal(false);
+  };
+
+  const handleSignoutModalShow = () => {
+    setShowSignoutModal(true);
+  };
+
+  const handleSignoutModalClose = () => {
+    setShowSignoutModal(false);
+  };
+
+  const toggleForm = () => setIsSignin(!isSignin);
+
+  const renderAuthModal = () => {
+    return (
+      <Modal
+        show={showAuthModal}
+        onHide={handleAuthModalClose}
+        className="navbar-auth-modal"
+      >
+        <Modal.Header closeButton className="navbar-auth-modal-header">
+          <Modal.Title>{isSignin ? "Sign In" : "Sign Up"}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="navbar-auth-modal-body">
+          {isSignin ? (
+            <Signin
+              handleSignUpClick={toggleForm}
+              handleAuthModalClose={handleAuthModalClose}
+            />
+          ) : (
+            <Signup
+              handleSignUpClick={toggleForm}
+              handleAuthModalClose={handleAuthModalClose}
+            />
+          )}
+        </Modal.Body>
+      </Modal>
+    );
+  };
+
+  const handleButtonToggle = (e) => {
+    const name = e.target.dataset.name;
+
+    if (showDropdown.includes(name)) {
+      setShowDropdown(showDropdown.filter((item) => item !== name));
+    } else {
+      setShowDropdown([...showDropdown, name]);
     }
   };
 
   const expandNavbarAnimation = useSpring({
     display: expanded ? "flex" : "none",
-    height: expanded ? "8em" : "0",
+    height: expanded ? "100dvh" : "0",
     opacity: expanded ? 1 : 0,
     zIndex: expanded ? 1 : -1,
     config: {
@@ -49,54 +100,18 @@ export default function Mobile() {
     },
   });
 
-  const renderSignInModal = () => {
-    return (
-      <Modal
-        show={showSignInModal}
-        onHide={handleClose}
-        className="navbar-signin-modal"
-      >
-        <Modal.Header closeButton className="navbar-signin-modal-header">
-          <Modal.Title>Sign In</Modal.Title>
-        </Modal.Header>
-        <Modal.Body className="navbar-signin-modal-body">
-          <p>Sign In</p>
-        </Modal.Body>
-        <Modal.Footer className="navbar-signin-modal-footer">
-          <Button variant="danger" onClick={handleClose}>
-            Close
-          </Button>
-          <Button variant="success">Sign In</Button>
-        </Modal.Footer>
-      </Modal>
-    );
-  };
-
-  const renderSignUpModal = () => {
-    return (
-      <Modal
-        show={showSignUpModal}
-        onHide={handleClose}
-        className="navbar-signup-modal"
-      >
-        <Modal.Header closeButton className="navbar-signup-modal-header">
-          <Modal.Title>Sign Up</Modal.Title>
-        </Modal.Header>
-        <Modal.Body className="navbar-signup-modal-body">
-          <p>Sign Up</p>
-        </Modal.Body>
-        <Modal.Footer className="navbar-signup-modal-footer">
-          <Button variant="danger" onClick={handleClose}>
-            Close
-          </Button>
-          <Button variant="success">Sign Up</Button>
-        </Modal.Footer>
-      </Modal>
-    );
-  };
+  useEffect(() => {
+    if (location.pathname === "/email-verification") {
+      setExpanded(false);
+    }
+  }, [location]);
 
   return (
-    <nav className="mobile-sidebar">
+    <nav
+      className={`mobile-sidebar ${
+        themeState === "dark" ? "dark-navbar " : "light-navbar"
+      }`}
+    >
       <div className="mobile-navbar-title-container">
         <div className="mobile-navbar-title">
           <Image src={StellyHappy} className="mobile-navbar-logo" />
@@ -135,76 +150,97 @@ export default function Mobile() {
         </div>
       </div>
 
-      <Button
-        variant="none"
-        className={`mobile-expanded-button-container`}
+      <div
+        className={`mobile-expanded-button-container ${
+          themeState === "dark"
+            ? "darkmode-expanded-container"
+            : "lightmode-expanded-container"
+        }`}
         onClick={() => {
           setExpanded(!expanded);
         }}
       >
         <span
-          className={`${
-            themeState === "dark" ? "darkmode" : "lightmode"
-          } mobile-expanded-button`}
+          className={`mobile-expanded-button ${
+            themeState === "dark" ? "darkmode-expanded" : "lightmode-expanded"
+          }`}
         >
           {expanded ? "Hide Menu" : "Show Menu"}
         </span>
-      </Button>
+      </div>
 
       <animated.div
-        className={`mobile-navbar-links`}
+        className="mobile-navbar-links"
         style={expandNavbarAnimation}
       >
-        <div
-          className={`mobile-homepage-button`}
-          onClick={() => {
-            navigate("/");
-          }}
-        >
-          Homepage
-        </div>
+        <HomepageLinks
+          handleButtonToggle={handleButtonToggle}
+          showDropdown={showDropdown}
+          themeState={themeState}
+        />
 
-        <div
-          className={`mobile-habit-page-button`}
-          onClick={() => {
-            navigate("/Habbits");
-          }}
-        >
-          Habbits/Goals
-        </div>
+        <HabitTrackerLinks
+          handleButtonToggle={handleButtonToggle}
+          showDropdown={showDropdown}
+          themeState={themeState}
+        />
 
-        <div
-          className={`mobile-account-page-button`}
-          onClick={() => {
-            navigate("/Account-Settings");
-          }}
-        >
-          Account Settings
-        </div>
+        <AccountSettingsLinks
+          handleButtonToggle={handleButtonToggle}
+          showDropdown={showDropdown}
+          themeState={themeState}
+        />
+
+        {userData && (
+          <div className="navbar-username">
+            <Image src={userData.profileimg} className="navbar-profile-image" />
+            <h1>{userData.username}</h1>
+          </div>
+        )}
 
         <div className="navbar-auth-buttons">
-          <Button
-            id={`${themeState === "dark" ? "dark-button" : "light-button"}`}
-            className="signin-button"
-            onClick={() => {
-              handleShow("signin");
-            }}
-          >
-            SignIn
-          </Button>
-          <Button
-            id={`${themeState === "dark" ? "dark-button" : "light-button"}`}
-            className="signup-button"
-            onClick={() => {
-              handleShow("signup");
-            }}
-          >
-            SignUp
-          </Button>
+          {userData ? (
+            <Button
+              id={`${themeState === "dark" ? "dark-button" : "light-button"}`}
+              className="signout-button"
+              variant="danger"
+              onClick={handleSignoutModalShow}
+            >
+              Sign Out
+            </Button>
+          ) : (
+            <>
+              <Button
+                id={`${themeState === "dark" ? "dark-button" : "light-button"}`}
+                className="signin-button"
+                variant="success"
+                onClick={() => {
+                  setIsSignin(true);
+                  handleAuthModalShow();
+                }}
+              >
+                Sign In
+              </Button>
+              <Button
+                id={`${themeState === "dark" ? "dark-button" : "light-button"}`}
+                className="signup-button"
+                onClick={() => {
+                  setIsSignin(false);
+                  handleAuthModalShow();
+                }}
+              >
+                Sign Up
+              </Button>
+            </>
+          )}
         </div>
 
-        {renderSignInModal()}
-        {renderSignUpModal()}
+        {renderAuthModal()}
+
+        <Signout
+          showSignoutModal={showSignoutModal}
+          handleSignoutModalClose={handleSignoutModalClose}
+        />
       </animated.div>
     </nav>
   );

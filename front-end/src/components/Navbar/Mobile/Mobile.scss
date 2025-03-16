@@ -1,10 +1,24 @@
-.mobile-navbar {
-  border-radius: 20px 20px 0px 0px;
-  outline-offset: -5px;
-  outline-style: inset;
+.mobile-sidebar {
+  position: absolute;
   -webkit-box-shadow: 5px 5px 15px 5px #000000;
   box-shadow: 5px 5px 15px 1.5px #000000;
-  border: 3px solid red;
+  width: 100dvw;
+}
+
+.dark-navbar {
+  background-color: #191c26;
+}
+
+.light-navbar {
+  background-color: #d7d7d7;
+}
+
+.darkmode-expanded {
+  color: white;
+}
+
+.lightmode-expanded {
+  color: black;
 }
 
 .mobile-navbar-title-container {
@@ -89,12 +103,29 @@
 }
 
 .mobile-expanded-button-container {
+  text-align: center;
   width: 100%;
+  margin-bottom: 0.5em;
 
   .mobile-expanded-button {
-    border: none;
-    font-size: 15px;
+    font-size: 20px;
     z-index: 500;
+  }
+}
+
+.darkmode-expanded-container {
+  background-color: #2c3142;
+
+  &:active {
+    background-color: #3a3f54;
+  }
+}
+
+.lightmode-expanded-container {
+  background-color: #e0e0e5;
+
+  &:active {
+    background-color: #cfd3dc;
   }
 }
 
@@ -102,18 +133,202 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
   font-size: 25px;
+  overflow: auto;
 
-  .mobile-homepage-button {
-    // @include bubbly-button(#ff8a65, #e71a46, #db8f15);
+  .navbar-username {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3em;
+
+    .navbar-profile-image {
+      width: 50px;
+    }
   }
 
-  .mobile-habit-page-button {
-    // @include bubbly-button(#27e560, #6314e1, #10d8c7);
+  .mobile-navbar-link-container {
+    display: flex;
+    text-align: center;
+    flex-direction: column;
+
+    .mobile-navbar-link-title {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+    }
+
+    .line-under-title {
+      margin-bottom: 1em;
+    }
+
+    h3 {
+      text-align: center;
+    }
+
+    hr {
+      width: 85%;
+      margin: 0 auto;
+    }
+
+    .mobile-navbar-button-container {
+      flex-grow: 1;
+      gap: 0.5em;
+      margin-bottom: 1em;
+
+      .mobile-navbar-button {
+        width: 80%;
+        border: none;
+        transition: all 0.3s ease-in-out;
+
+        &:hover {
+          transform: scale(1.05);
+        }
+      }
+
+      #mobile-navbar-dashboard-button {
+        background-color: #4a90e2;
+
+        &:hover {
+          background-color: #357abd;
+        }
+      }
+
+      #mobile-navbar-summary-button {
+        background-color: #f5a623;
+
+        &:hover {
+          background-color: #d4871c;
+        }
+      }
+
+      #mobile-navbar-insight-button {
+        background-color: #7ed321;
+
+        &:hover {
+          background-color: #5ea910;
+        }
+      }
+
+      #mobile-navbar-habit-button {
+        background-color: #7b61ff;
+
+        &:hover {
+          background-color: #5a41e0;
+        }
+      }
+
+      #mobile-navbar-create-button {
+        background-color: #ff6b81;
+
+        &:hover {
+          background-color: #e0556c;
+        }
+      }
+
+      #mobile-navbar-history-button {
+        background-color: #00c2cb;
+
+        &:hover {
+          background-color: #009ea5;
+        }
+      }
+
+      #mobile-navbar-profile-button {
+        background-color: #e5673e;
+
+        &:hover {
+          background-color: #d1552b;
+        }
+      }
+
+      #mobile-navbar-notifications-button {
+        background-color: #ffcc3ed1;
+
+        &:hover {
+          background-color: #b08c2b;
+        }
+      }
+
+      #mobile-navbar-preferences-button {
+        background-color: #9d9d9d;
+
+        &:hover {
+          background-color: #7a7a7a;
+        }
+      }
+
+      .dark-button {
+        color: white;
+        border: 1px solid white;
+      }
+
+      .light-button {
+        color: black;
+        border: 1px solid black;
+      }
+    }
+  }
+}
+
+.navbar-auth-buttons {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  margin: auto 0 1em 0;
+
+  .signin-button {
+    transition: all 0.3s ease-in-out;
+    width: 90%;
+    margin: 0 auto;
+
+    &:hover {
+      cursor: pointer;
+      transform: scale(1.05);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+      background-color: #12663f;
+    }
+
+    &:active {
+      transform: scale(0.98);
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    }
   }
 
-  .mobile-account-page-button {
-    // @include bubbly-button(#f47e8a, #88d4f1, #2c2439);
+  .signup-button {
+    transition: all 0.3s ease-in-out;
+    width: 90%;
+    margin: 0 auto;
+
+    &:hover {
+      cursor: pointer;
+      transform: scale(1.05);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+      background-color: #0a56c9;
+    }
+
+    &:active {
+      transform: scale(0.98);
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  .signout-button {
+    grid-column: 1 / -1;
+    transition: all 0.3s ease-in-out;
+    width: 85%;
+    margin: 0 2em;
+
+    &:hover {
+      cursor: pointer;
+      transform: scale(1.05);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+      background-color: #c90a0a;
+    }
+
+    &:active {
+      transform: scale(0.98);
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    }
   }
 }
