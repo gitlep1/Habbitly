@@ -1,6 +1,6 @@
 import "./app.scss";
 import { useState, useEffect, useContext } from "react";
-// import * as THREE from "three"; add animated 3D cloud background later
+// import * as THREE from "three";
 import Cookies from "js-cookie";
 
 import {

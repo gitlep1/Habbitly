@@ -1,0 +1,80 @@
+.desktop-dashboard-container {
+  height: 100dvh;
+  width: 96dvw;
+  margin: 0 2.5em;
+
+  .dashboard-header {
+    display: grid;
+    grid-template-columns: 250px 1fr 250px;
+
+    .dashboard-title {
+      // border: 3px solid cyan;
+      grid-row: 1;
+      grid-column: 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 8em;
+
+      .fancy-line {
+        width: 100%;
+        height: 25%;
+        background: linear-gradient(to right, #fa8c97, #fdc5bd, #fbefdf, #9adcfb, #fe8084, #82b1df);
+        border-radius: 1em;
+      }
+
+      .daily-date {
+        // border: 3px solid purple;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+
+        #today {
+          font-size: 18px;
+        }
+
+        #date {
+          justify-self: center;
+          align-self: center;
+        }
+      }
+    }
+
+    .dashboard-welcome {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 8em;
+    }
+
+    .richard-container {
+      grid-column: 1;
+      grid-row: 1;
+
+      #anchor {
+        width: 300px;
+      }
+
+      #eyes {
+        position: absolute;
+
+        .eye {
+          position: absolute;
+          width: 30px;
+        }
+
+        :nth-child(1) {
+          top: -108px;
+          left: 92px;
+        }
+
+        :nth-child(2) {
+          top: -108px;
+          left: 174px;
+        }
+      }
+    }
+  }
+}

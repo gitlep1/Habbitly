@@ -9,7 +9,7 @@ import { MdArrowForwardIos } from "react-icons/md";
 import { MdArrowBackIos } from "react-icons/md";
 
 import { themeContext } from "../../../CustomContexts/Contexts";
-import { GetCookies } from "../../../CustomFunctions/HandleCookies";
+import { GetCookies, SetCookies } from "../../../CustomFunctions/HandleCookies";
 
 import { Signup } from "../../AccountSettings/Signup";
 import { Signin } from "../../AccountSettings/Signin";
@@ -28,6 +28,7 @@ export default function Desktop() {
   const { themeState, setThemeState } = useContext(themeContext);
 
   const userData = GetCookies("authUser");
+  const expandCookie = GetCookies("expandCookie") || null;
 
   const [showDropdown, setShowDropdown] = useState([]);
 
@@ -35,7 +36,9 @@ export default function Desktop() {
   const [showSignoutModal, setShowSignoutModal] = useState(false);
   const [isSignin, setIsSignin] = useState(true);
 
-  const [expandSidebar, setExpandSidebar] = useState(true);
+  const [expandSidebar, setExpandSidebar] = useState(
+    expandCookie ? true : false
+  );
 
   const handleAuthModalShow = () => {
     setShowAuthModal(true);
@@ -102,6 +105,15 @@ export default function Desktop() {
       setExpandSidebar(false);
     }
   }, [location]);
+
+  const expandSidebarCookie = () => {
+    if (expandSidebar) {
+      SetCookies("expandCookie", false, 365);
+    } else {
+      SetCookies("expandCookie", true, 365);
+    }
+    setExpandSidebar(!expandSidebar);
+  };
 
   return (
     <animated.nav
@@ -231,7 +243,7 @@ export default function Desktop() {
           themeState === "dark" ? "dark-expand-button" : "light-expand-button"
         }`}
         onClick={() => {
-          setExpandSidebar(!expandSidebar);
+          expandSidebarCookie();
         }}
       >
         <div className="arrows arrow-set-1">

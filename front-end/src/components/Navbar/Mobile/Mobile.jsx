@@ -6,7 +6,7 @@ import { useLocation } from "react-router-dom";
 import { IoIosSunny } from "react-icons/io";
 import { FaMoon } from "react-icons/fa";
 
-import { GetCookies } from "../../../CustomFunctions/HandleCookies";
+import { GetCookies, SetCookies } from "../../../CustomFunctions/HandleCookies";
 import { themeContext } from "../../../CustomContexts/Contexts";
 
 import { Signin } from "../../AccountSettings/Signin";
@@ -26,6 +26,7 @@ export default function Mobile() {
   const { themeState, setThemeState } = useContext(themeContext);
 
   const userData = GetCookies("authUser");
+  const expandCookie = GetCookies("expandCookie") || null;
 
   const [showDropdown, setShowDropdown] = useState([]);
 
@@ -33,7 +34,7 @@ export default function Mobile() {
   const [showSignoutModal, setShowSignoutModal] = useState(false);
   const [isSignin, setIsSignin] = useState(true);
 
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(expandCookie ? true : false);
 
   const handleAuthModalShow = () => {
     setShowAuthModal(true);
@@ -106,6 +107,15 @@ export default function Mobile() {
     }
   }, [location]);
 
+  const expandSidebarCookie = () => {
+    if (expanded) {
+      SetCookies("expandCookie", false, 365);
+    } else {
+      SetCookies("expandCookie", true, 365);
+    }
+    setExpanded(!expanded);
+  };
+
   return (
     <nav
       className={`mobile-sidebar ${
@@ -157,7 +167,7 @@ export default function Mobile() {
             : "lightmode-expanded-container"
         }`}
         onClick={() => {
-          setExpanded(!expanded);
+          expandSidebarCookie();
         }}
       >
         <span
