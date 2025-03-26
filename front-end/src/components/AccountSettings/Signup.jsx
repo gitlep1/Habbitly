@@ -67,9 +67,12 @@ export const Signup = ({ handleSignUpClick, handleAuthModalClose }) => {
         });
       })
       .catch((err) => {
-        return toast.error(err.response.data.error, {
-          containerId: "toast-notify",
-        });
+        return toast.error(
+          "ERROR: Please try again. If this continues try again in a few hours as the server might be down.",
+          {
+            containerId: "toast-notify",
+          }
+        );
       });
   };
 
