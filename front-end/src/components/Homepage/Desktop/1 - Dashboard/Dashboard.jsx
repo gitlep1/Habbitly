@@ -46,6 +46,33 @@ export const Dashboard = () => {
     return deg;
   };
 
+  const greetingInUserTimezone = (date) => {
+    const userDate = new Date(date);
+    const userHour = userDate.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      hour12: false,
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    });
+
+    if (userHour < 12) {
+      return "Good Morning";
+    } else if (userHour < 18) {
+      return "Good Afternoon";
+    } else {
+      return "Good Evening";
+    }
+  };
+
+  const dateInUserTimezone = (date) => {
+    return new Date(date).toLocaleDateString("en-US", {
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      weekday: "short",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
+
   return (
     <section className="desktop-dashboard-container">
       <div className="dashboard-header">
@@ -57,13 +84,13 @@ export const Dashboard = () => {
           <div className="fancy-line"></div>
           <div className="daily-date">
             <span id="today">Today&apos;s Date:</span>
-            <span id="date">{new Date().toLocaleDateString()}</span>
+            <span id="date">{dateInUserTimezone(new Date())}</span>
           </div>
         </div>
         <div className="dashboard-welcome">
           <h1>HABBITLY</h1>
           <p>
-            Welcome back,
+            {greetingInUserTimezone(new Date())},{" "}
             <span id="username">
               {userData ? ` ${userData.username}` : " User"}
             </span>
