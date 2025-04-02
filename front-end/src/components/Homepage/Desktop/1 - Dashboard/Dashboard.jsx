@@ -118,6 +118,16 @@ export const Dashboard = () => {
           </div>
         </div>
       </div>
+
+      <div className="dashboard-active-habit">
+        <h1>Active Habit</h1>
+      </div>
+      <div className="dashboard-calendar">
+        <h1>Calendar</h1>
+      </div>
+      <div className="dashboard-notifications">
+        <h1>Notifications</h1>
+      </div>
     </section>
   );
 };

@@ -29,8 +29,9 @@ export default function Desktop() {
 
   const userData = GetCookies("authUser");
   const expandCookie = GetCookies("expandCookie") || null;
+  const expandedList = GetCookies("expandedLinks") || [];
 
-  const [showDropdown, setShowDropdown] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(expandedList);
 
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showSignoutModal, setShowSignoutModal] = useState(false);
@@ -87,12 +88,16 @@ export default function Desktop() {
 
   const handleButtonToggle = (e) => {
     const name = e.target.dataset.name;
+    let updatedDropdowns;
 
     if (showDropdown.includes(name)) {
-      setShowDropdown(showDropdown.filter((item) => item !== name));
+      updatedDropdowns = showDropdown.filter((item) => item !== name);
     } else {
-      setShowDropdown([...showDropdown, name]);
+      updatedDropdowns = [...showDropdown, name];
     }
+
+    setShowDropdown(updatedDropdowns);
+    SetCookies("expandedLinks", updatedDropdowns, 7);
   };
 
   const sidebarAnimation = useSpring({
@@ -104,6 +109,7 @@ export default function Desktop() {
     if (location.pathname === "/email-verification") {
       setExpandSidebar(false);
     }
+    setShowDropdown(GetCookies("expandedLinks") || []);
   }, [location]);
 
   const expandSidebarCookie = () => {
