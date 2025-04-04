@@ -7,6 +7,10 @@ import { GetCookies } from "../../../../CustomFunctions/HandleCookies";
 import richard from "../../../../assets/images/Dashboard-images/richard-logo-2.png";
 import richardEye from "../../../../assets/images/Dashboard-images/richard-eye-2.png";
 
+import { ActiveHabit } from "./ActiveHabit";
+import { Calendar } from "./Calendar";
+import { Notifications } from "./Notifications";
+
 export const Dashboard = () => {
   const richardContainerRef = useRef(null);
   const anchorRef = useRef(null);
@@ -119,15 +123,9 @@ export const Dashboard = () => {
         </div>
       </div>
 
-      <div className="dashboard-active-habit">
-        <h1>Active Habit</h1>
-      </div>
-      <div className="dashboard-calendar">
-        <h1>Calendar</h1>
-      </div>
-      <div className="dashboard-notifications">
-        <h1>Notifications</h1>
-      </div>
+      <ActiveHabit />
+      <Calendar />
+      <Notifications />
     </section>
   );
 };

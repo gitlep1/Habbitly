@@ -1,5 +1,4 @@
 .desktop-dashboard-container {
-  // border: 3px solid purple;
   height: 100dvh;
   width: 96dvw;
   margin: 0 2.5em;
@@ -82,9 +81,112 @@
     }
   }
 
-  .dashboard-active-habit {
-    // border: 3px solid green;
+  .active-habit-container {
     grid-column: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .active-habit-card {
+      background-color: #4d88bb;
+      width: 100%;
+      height: 85%;
+      border-radius: 3em;
+
+      .active-habit-card-header {
+        display: grid;
+        grid-template-columns: 250px 1fr;
+        height: 45%;
+
+        h3 {
+          grid-column: 2;
+          display: flex;
+          font-size: 50px;
+          align-self: center;
+          justify-self: flex-start;
+        }
+
+        #active-habit-cloud {
+          position: absolute;
+          top: 200px;
+          left: 5px;
+          width: 250px;
+        }
+      }
+
+      .active-habit-card-container {
+        display: grid;
+        grid-template-columns: 1fr 200px;
+        gap: 1em;
+
+        .active-habit-card-data {
+          display: flex;
+          flex-direction: column;
+          gap: 0.1em;
+          padding: 0.5em 0 0 2em;
+          font-size: 20px;
+        }
+
+        .active-habit-card-checkmark-outer {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 55%;
+          margin: 0 auto;
+          background-color: #aed2e7;
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+
+          .active-habit-card-checkmark-inner {
+            width: 90%;
+            height: 90%;
+            background-color: #4a90e2;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+
+            &:hover {
+              cursor: pointer;
+              background-color: #62a5f3;
+            }
+
+            svg {
+              width: 90%;
+              height: 90%;
+              stroke: white;
+              stroke-width: 4;
+              stroke-linecap: round;
+              stroke-linejoin: round;
+            }
+          }
+        }
+      }
+
+      .flamey-container {
+        display: flex;
+        align-items: center;
+        margin-left: 1em;
+
+        #flamey {
+          width: 40px;
+        }
+
+        .flamey-progress-bar-container {
+          background-color: #0095ff;
+          height: 1em;
+          width: 50%;
+          border-radius: 1em;
+
+          .flamey-progress-bar {
+            background-color: orange;
+            height: inherit;
+            border-radius: inherit;
+            transition: width 0.5s ease-in-out;
+          }
+        }
+      }
+    }
   }
 
   .dashboard-calendar {
