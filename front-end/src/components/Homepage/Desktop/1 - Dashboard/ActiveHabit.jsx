@@ -1,4 +1,11 @@
+import { useState, useEffect } from "react";
 import { Image } from "react-bootstrap";
+import axios from "axios";
+
+import {
+  GetCookies,
+  SetCookies,
+} from "../../../../CustomFunctions/HandleCookies";
 
 import Luna from "../../../../assets/images/Dashboard-images/Luna.png";
 import flamey1x from "../../../../assets/images/Dashboard-images/flamey-1x.gif";
@@ -6,32 +13,47 @@ import flamey2x from "../../../../assets/images/Dashboard-images/flamey-2x.gif";
 import flamey3x from "../../../../assets/images/Dashboard-images/flamey-3x.gif";
 import flamey4x from "../../../../assets/images/Dashboard-images/flamey-4x.gif";
 
+const API = import.meta.env.VITE_PUBLIC_API_BASE;
+
 export const ActiveHabit = () => {
-  const habitMockData = {
-    user_id: 1,
-    name: "Meditate",
-    goal: "Meditate for 10 minutes",
-    category: "Mental Health",
-    habit_interval: "daily",
-    times_per_interval: 1,
-    start_date: "2025-01-01",
-    goal_completed: false,
-    habit_progress: 25,
-    last_completed_date: "2025-04-01",
-    end_date: "2026-01-01",
-    is_active: true,
-    habit_completed: false,
+  const [activeHabitData, setActiveHabitData] = useState({});
+  const [error, setError] = useState(null);
+
+  const getActiveHabit = async () => {
+    const authToken = GetCookies("authToken");
+
+    await axios
+      .get(`${API}/habbits`, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      })
+      .then((res) => {
+        const activeHabit = res.data.payload.filter(
+          (habit) => habit.is_active === true
+        );
+
+        setActiveHabitData(activeHabit[0]);
+      })
+      .catch((err) => {
+        setError(err);
+      });
   };
 
   let {
-    name,
-    goal,
+    habit_name,
+    habit_task,
+    habit_task_completed,
+    habit_category,
     habit_interval,
-    start_date,
-    goal_completed,
     habit_progress,
+    times_per_interval,
+    start_date,
+    last_completed_date,
     end_date,
-  } = habitMockData;
+    is_active,
+    habit_completed,
+  } = activeHabitData;
 
   const getIntervalLengthInDays = () => {
     const start = new Date(start_date).getTime();
@@ -61,7 +83,7 @@ export const ActiveHabit = () => {
   };
 
   const handleCompletion = () => {
-    if (goal_completed) return;
+    if (habit_completed) return;
 
     const increment = getProgressIncrement();
 
@@ -71,7 +93,7 @@ export const ActiveHabit = () => {
       habit_progress = 100;
     }
 
-    goal_completed = true;
+    habit_completed = true;
   };
 
   const getFlameyGif = () => {
@@ -90,30 +112,40 @@ export const ActiveHabit = () => {
         </div>
         <div className="active-habit-card-container">
           <div className="active-habit-card-data">
-            <span>Habit: {name}</span>
-            <span>Goal: {goal}</span>
-            <span>Progress: {habit_progress.toFixed(0)}%</span>
+            {Object.keys(activeHabitData).length === 0 ? (
+              <span>No habit has been set as active</span>
+            ) : (
+              <>
+                <span>Habit: {habit_name}</span>
+                <span>Goal: {habit_task}</span>
+                <span>Progress: {habit_progress.toFixed(0)}%</span>
+              </>
+            )}
           </div>
-          <div className="active-habit-card-checkmark-outer rounded-circle">
-            <div
-              className="active-habit-card-checkmark-inner"
-              onClick={handleCompletion}
-            >
-              <svg viewBox="0 0 24 24" fill="none">
-                <path d="M5 13l4 4L19 7" />
-              </svg>
+          {Object.keys(activeHabitData).length > 0 && (
+            <div className="active-habit-card-checkmark-outer rounded-circle">
+              <div
+                className="active-habit-card-checkmark-inner"
+                onClick={handleCompletion}
+              >
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
             </div>
-          </div>
+          )}
         </div>
-        <span className="flamey-container">
-          <Image src={getFlameyGif()} alt="Flamey x1 speed" id="flamey" />
-          <span className="flamey-progress-bar-container">
-            <div
-              className="flamey-progress-bar"
-              style={{ width: `${habit_progress}%`, maxWidth: "100%" }}
-            ></div>
+        {Object.keys(activeHabitData).length > 0 && (
+          <span className="flamey-container">
+            <Image src={getFlameyGif()} alt="Flamey x1 speed" id="flamey" />
+            <span className="flamey-progress-bar-container">
+              <div
+                className="flamey-progress-bar"
+                style={{ width: `${habit_progress}%`, maxWidth: "100%" }}
+              ></div>
+            </span>
           </span>
-        </span>
+        )}
       </div>
     </div>
   );

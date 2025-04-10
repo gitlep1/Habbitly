@@ -1,5 +1,21 @@
 const { db } = require("../db/dbConfig.js");
 
+const habitFields = [
+  "user_id",
+  "habit_name",
+  "habit_task",
+  "habit_task_completed",
+  "habit_category",
+  "habit_interval",
+  "habit_progress",
+  "times_per_interval",
+  "start_date",
+  "last_completed_date",
+  "end_date",
+  "is_active",
+  "habit_completed",
+];
+
 const getAllHabbits = async () => {
   const query = "SELECT * FROM habbits";
   const allHabbits = await db.any(query);
@@ -24,46 +40,39 @@ const getHabbitByID = async (id) => {
 };
 
 const createHabbit = async (newHabbitData) => {
-  const query =
-    "INSERT INTO habbits (user_id, name, goal, category, interval, times_per_interval, start_date, last_completed_date, streak, end_date, is_active, completed) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *";
+  const columns = habitFields.join(", ");
+  const placeholders = habitFields
+    .map((_, index) => `$${index + 1}`)
+    .join(", ");
+  const values = habitFields.map((field) => newHabbitData[field]);
 
-  const newHabbit = await db.one(query, [
-    newHabbitData.user_id,
-    newHabbitData.name,
-    newHabbitData.goal,
-    newHabbitData.category,
-    newHabbitData.interval,
-    newHabbitData.times_per_interval,
-    newHabbitData.start_date,
-    newHabbitData.last_completed_date,
-    newHabbitData.streak,
-    newHabbitData.end_date,
-    newHabbitData.is_active,
-    newHabbitData.completed,
-  ]);
+  const query = `INSERT INTO habbits (${columns}) VALUES(${placeholders}) RETURNING *`;
 
+  const newHabbit = await db.one(query, values);
   return newHabbit;
 };
 
 const updateHabbit = async (id, updatedHabbitData) => {
-  const query =
-    "UPDATE habbits SET name = $1, goal = $2, category = $3, interval = $4, times_per_interval = $5, start_date = $6, last_completed_date = $7, streak = $8, end_date = $9, is_active = $10, completed = $11 WHERE id = $12 RETURNING *";
+  const validFields = habitFields.filter(
+    (field) =>
+      updatedHabbitData[field] !== undefined &&
+      updatedHabbitData[field] !== null
+  );
 
-  const updatedHabbit = await db.oneOrNone(query, [
-    updatedHabbitData.name,
-    updatedHabbitData.goal,
-    updatedHabbitData.category,
-    updatedHabbitData.interval,
-    updatedHabbitData.times_per_interval,
-    updatedHabbitData.start_date,
-    updatedHabbitData.last_completed_date,
-    updatedHabbitData.streak,
-    updatedHabbitData.end_date,
-    updatedHabbitData.is_active,
-    updatedHabbitData.completed,
-    id,
-  ]);
+  if (validFields.length === 0) {
+    throw new Error("No valid fields to update");
+  }
 
+  const setClause = validFields
+    .map((field, index) => `${field} = $${index + 1}`)
+    .join(", ");
+  const values = validFields.map((field) => updatedHabbitData[field]);
+
+  const query = `UPDATE habbits SET ${setClause} WHERE id = $${
+    validFields.length + 1
+  } RETURNING *`;
+
+  const updatedHabbit = await db.oneOrNone(query, [...values, id]);
   return updatedHabbit;
 };
 

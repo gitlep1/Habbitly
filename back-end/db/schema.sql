@@ -32,18 +32,18 @@ DROP TABLE IF EXISTS habbits;
 CREATE TABLE habbits (
   id UUID DEFAULT uuid_generate_v4() NOT NULL PRIMARY KEY,
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  name TEXT NOT NULL,
-  task TEXT,
-  task_completed BOOLEAN DEFAULT FALSE,
-  category TEXT,
-  habit_interval DEFAULT 'daily',
+  habit_name TEXT NOT NULL,
+  habit_task TEXT,
+  habit_task_completed BOOLEAN DEFAULT FALSE,
+  habit_category TEXT,
+  habit_interval TEXT DEFAULT 'daily',
   habit_progress INTEGER DEFAULT 0,
   times_per_interval INTEGER DEFAULT 1,
-  start_date DATE DEFAULT NOW(),
+  start_date DATE DEFAULT NOW() NOT NULL,
   last_completed_date DATE,
   end_date DATE,
   is_active BOOLEAN DEFAULT TRUE,
-  completed BOOLEAN DEFAULT FALSE
+  habit_completed BOOLEAN DEFAULT FALSE
 );
 
 DROP TABLE IF EXISTS timed_account_deletions;

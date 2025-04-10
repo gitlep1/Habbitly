@@ -98,17 +98,18 @@ habbits.post(
 
     const newHabbitData = {
       user_id: decoded.user.id,
-      name: req.body.name,
-      goal: req.body.goal,
-      category: req.body.category,
-      interval: req.body.interval,
+      habit_name: req.body.habit_name,
+      habit_task: req.body.habit_task,
+      habit_task_completed: req.body.habit_task_completed,
+      habit_category: req.body.habit_category,
+      habit_interval: req.body.habit_interval,
+      habit_progress: req.body.habit_progress,
       times_per_interval: req.body.times_per_interval,
       start_date: req.body.start_date,
       last_completed_date: req.body.last_completed_date,
-      streak: req.body.streak,
       end_date: req.body.end_date,
       is_active: req.body.is_active,
-      completed: req.body.completed,
+      habit_completed: req.body.habit_completed,
     };
 
     try {
@@ -137,17 +138,18 @@ habbits.put(
     const decoded = jwt.decode(token);
 
     const updatedHabbitData = {
-      name: req.body.name,
-      goal: req.body.goal,
-      category: req.body.category,
-      interval: req.body.interval,
+      habit_name: req.body.habit_name,
+      habit_task: req.body.habit_task,
+      habit_task_completed: req.body.habit_task_completed,
+      habit_category: req.body.habit_category,
+      habit_interval: req.body.habit_interval,
+      habit_progress: req.body.habit_progress,
       times_per_interval: req.body.times_per_interval,
       start_date: req.body.start_date,
       last_completed_date: req.body.last_completed_date,
-      streak: req.body.streak,
       end_date: req.body.end_date,
       is_active: req.body.is_active,
-      completed: req.body.completed,
+      habit_completed: req.body.habit_completed,
     };
 
     try {
