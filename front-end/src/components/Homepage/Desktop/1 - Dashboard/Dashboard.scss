@@ -1,3 +1,9 @@
+@mixin card-header($col1, $col2) {
+  display: grid;
+  grid-template-columns: $col1 $col2;
+  height: 45%;
+}
+
 .desktop-dashboard-container {
   height: 100dvh;
   width: 96dvw;
@@ -10,7 +16,7 @@
   .dashboard-header {
     grid-column: 1 / -1;
     display: grid;
-    grid-template-columns: 250px 1fr 250px;
+    grid-template-columns: 1fr 550px 1fr;
 
     .dashboard-title {
       grid-row: 1;
@@ -20,6 +26,8 @@
       align-items: center;
       justify-content: center;
       height: 8em;
+      width: 70%;
+      margin: 0 auto;
 
       .fancy-line {
         width: 100%;
@@ -45,16 +53,28 @@
     }
 
     .dashboard-welcome {
+      // border: 3px solid cyan;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      height: 8em;
+      // height: 8em;
+
+      p {
+        font-size: 18px;
+      }
+
+      h1 {
+        font-size: 50px;
+      }
     }
 
     .richard-container {
-      grid-column: 1;
+      // border: 3px solid cyan;
+      grid-column: 2;
       grid-row: 1;
+      // justify-self: center;
+      padding-left: 5em;
 
       #anchor {
         width: 300px;
@@ -78,6 +98,12 @@
           left: 174px;
         }
       }
+
+      .slogan {
+        // border: 3px solid green;
+        // justify-self: center;
+        padding-left: 1.8em;
+      }
     }
   }
 
@@ -94,9 +120,7 @@
       border-radius: 3em;
 
       .active-habit-card-header {
-        display: grid;
-        grid-template-columns: 250px 1fr;
-        height: 45%;
+        @include card-header(250px, 1fr);
 
         h3 {
           grid-column: 2;
@@ -197,12 +221,31 @@
     justify-content: flex-end;
 
     .calendar-card {
-      background-color: #fe8084;
+      background-color: #cc686b;
       width: 100%;
       height: 95%;
       text-align: center;
       margin-right: 1em;
       border-radius: 3em;
+
+      .calendar-card-header {
+        @include card-header(1fr, 1fr);
+
+        h3 {
+          grid-column: 1 / -1;
+          display: flex;
+          font-size: 50px;
+          justify-self: center;
+          margin-top: 1.5em;
+        }
+
+        #calendar-cloud {
+          position: absolute;
+          top: 130px;
+          right: 170px;
+          width: 300px;
+        }
+      }
     }
   }
 
@@ -214,12 +257,31 @@
     justify-content: flex-end;
 
     .notifications-card {
-      background-color: #9143bd;
+      background-color: #5e548e;
       width: 100%;
       height: 95%;
       margin-bottom: 1em;
       text-align: center;
       border-radius: 3em;
+
+      .notifications-card-header {
+        @include card-header(1fr, 250px);
+
+        h3 {
+          grid-column: 1;
+          display: flex;
+          font-size: 50px;
+          align-self: center;
+          justify-self: center;
+        }
+
+        #notifications-cloud {
+          position: absolute;
+          bottom: 180px;
+          left: 395px;
+          width: 270px;
+        }
+      }
     }
   }
 }

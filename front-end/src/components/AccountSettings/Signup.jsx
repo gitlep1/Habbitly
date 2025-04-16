@@ -67,8 +67,13 @@ export const Signup = ({ handleSignUpClick, handleAuthModalClose }) => {
         });
       })
       .catch((err) => {
+        const error = err.response.data.error;
+        const isExistingEmail = "Email already exists.";
+
         return toast.error(
-          "ERROR: Please try again. If this continues try again in a few hours as the server might be down.",
+          error === isExistingEmail
+            ? "ERROR: Email already taken."
+            : "ERROR: Please try again. If this continues try again in a few hours as the server might be down.",
           {
             containerId: "toast-notify",
           }

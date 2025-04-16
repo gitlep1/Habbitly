@@ -120,6 +120,7 @@ export const Dashboard = () => {
               alt="Habbitly Dashboard logo eyes"
             />
           </div>
+          <p className="slogan">Commit to Growth. Habbitly Helps.</p>
         </div>
       </div>
 
