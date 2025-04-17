@@ -53,12 +53,10 @@
     }
 
     .dashboard-welcome {
-      // border: 3px solid cyan;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      // height: 8em;
 
       p {
         font-size: 18px;
@@ -70,10 +68,8 @@
     }
 
     .richard-container {
-      // border: 3px solid cyan;
       grid-column: 2;
       grid-row: 1;
-      // justify-self: center;
       padding-left: 5em;
 
       #anchor {
@@ -100,8 +96,6 @@
       }
 
       .slogan {
-        // border: 3px solid green;
-        // justify-self: center;
         padding-left: 1.8em;
       }
     }
@@ -221,22 +215,23 @@
     justify-content: flex-end;
 
     .calendar-card {
+      display: grid;
+      grid-template-rows: 120px 1fr;
       background-color: #cc686b;
       width: 100%;
       height: 95%;
-      text-align: center;
       margin-right: 1em;
       border-radius: 3em;
 
       .calendar-card-header {
-        @include card-header(1fr, 1fr);
+        text-align: center;
 
         h3 {
           grid-column: 1 / -1;
           display: flex;
           font-size: 50px;
           justify-self: center;
-          margin-top: 1.5em;
+          margin-top: 1.3em;
         }
 
         #calendar-cloud {
@@ -244,6 +239,63 @@
           top: 130px;
           right: 170px;
           width: 300px;
+        }
+      }
+
+      .calendar-card-content {
+        border-left: 3px solid black;
+        border-right: 3px solid black;
+        border-bottom: 3px solid black;
+        height: 95%;
+        width: 95%;
+        margin: 0 auto;
+        text-align: center;
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        grid-template-rows: repeat(4, 1fr);
+        gap: 0.5em;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 1);
+        -webkit-border-radius: 0px 0px 25px 25px;
+        -moz-border-radius: 0px 0px 25px 25px;
+        border-radius: 0px 0px 25px 25px;
+
+        .calendar-card-content-header {
+          border-top: 3px solid black;
+          border-bottom: 3px solid black;
+          grid-column: 1 / -1;
+          display: grid;
+          grid-template-columns: 1;
+
+          .calendar-card-content-header-month {
+            display: grid;
+            grid-template-columns: 100px 1fr 100px;
+          }
+        }
+
+        .calendar-card-content-day {
+          position: relative;
+          background-color: #0095ff;
+          box-shadow:
+            3px 3px 5px rgba(0, 0, 0, 0.3),
+            inset -3px -3px 8px rgba(255, 255, 255, 0.4);
+          border-radius: 5px;
+          cursor: pointer;
+          display: grid;
+          grid-template-rows: 1;
+
+          h3 {
+            grid-row: 1;
+            font-size: 25px;
+            font-weight: bold;
+          }
+
+          &:nth-child(30) {
+            border-bottom-left-radius: 1.3em;
+          }
+        }
+
+        .current-day {
+          border: 3px solid black;
         }
       }
     }

@@ -55,7 +55,7 @@ export const Signup = ({ handleSignUpClick, handleAuthModalClose }) => {
 
     await axios
       .post(`${API}/email/send-verification`, newUser)
-      .then((res) => {
+      .then(() => {
         clearFields();
         handleAuthModalClose();
         navigate("/email-verification", {
@@ -68,10 +68,9 @@ export const Signup = ({ handleSignUpClick, handleAuthModalClose }) => {
       })
       .catch((err) => {
         const error = err.response.data.error;
-        const isExistingEmail = "Email already exists.";
 
         return toast.error(
-          error === isExistingEmail
+          error === "Email already exists."
             ? "ERROR: Email already taken."
             : "ERROR: Please try again. If this continues try again in a few hours as the server might be down.",
           {
