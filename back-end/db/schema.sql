@@ -61,3 +61,11 @@ CREATE TABLE profile_images (
   delete_hash TEXT NOT NULL,
   created_at TIMESTAMP DEFAULT NOW()
 );
+
+DROP TABLE IF EXISTS news;
+CREATE TABLE news (
+  id UUID DEFAULT uuid_generate_v4() NOT NULL PRIMARY KEY,
+  title TEXT NOT NULL,
+  content TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT NOW()
+);

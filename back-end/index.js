@@ -8,6 +8,7 @@ const usersController = require("./controllers/usersController");
 const habbitsController = require("./controllers/habbitsController");
 const emailAuthController = require("./controllers/emailAuthController");
 const imageUploaderController = require("./controllers/imageUploaderController");
+const newsController = require("./controllers/newsController");
 
 require("dotenv").config();
 
@@ -46,6 +47,9 @@ app.use("/habbits", habbitsController);
 
 // === Image Routes === \\
 app.use("/images", imageUploaderController);
+
+// === News Routes === \\
+app.use("/news", newsController);
 
 app.post("/login", (req, res) => {
   const { username, password } = req.body;

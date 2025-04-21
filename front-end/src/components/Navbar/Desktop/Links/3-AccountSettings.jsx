@@ -58,7 +58,7 @@ export const AccountSettingsLinks = ({
               themeState === "dark" ? "dark-button" : "light-button"
             }`}
             onClick={() => {
-              navigate("/");
+              navigate("/profile");
             }}
           >
             Profile
@@ -70,7 +70,7 @@ export const AccountSettingsLinks = ({
               themeState === "dark" ? "dark-button" : "light-button"
             }`}
             onClick={() => {
-              navigate("/summary");
+              navigate("/notifications");
             }}
           >
             Notifications
@@ -82,7 +82,7 @@ export const AccountSettingsLinks = ({
               themeState === "dark" ? "dark-button" : "light-button"
             }`}
             onClick={() => {
-              navigate("/insights");
+              navigate("/preferences");
             }}
           >
             Preferences

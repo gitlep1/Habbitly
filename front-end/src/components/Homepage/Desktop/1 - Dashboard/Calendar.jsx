@@ -1,6 +1,8 @@
-import { useState, useEffect } from "react";
-import { Image, Button } from "react-bootstrap";
-import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
+import { useState, useEffect, useContext } from "react";
+import { Image, Modal } from "react-bootstrap";
+import { Button as MUIButton } from "@mui/material";
+import { Calendar as ReactCalendar } from "react-calendar";
+import { format, startOfWeek, addDays, isSameDay, isWeekend } from "date-fns";
 import axios from "axios";
 
 import {
@@ -8,80 +10,126 @@ import {
   SetCookies,
 } from "../../../../CustomFunctions/HandleCookies";
 
+import { themeContext } from "../../../../CustomContexts/Contexts";
+
 import maxwell from "../../../../assets/images/Dashboard-images/Maxwell.png";
 
+const mockTasks = [
+  {
+    habit_name: "Meditation",
+    habit_task: "Meditate for 10 minutes",
+    habit_task_completed: false,
+    habit_category: "Mental Health",
+    habit_interval: "daily",
+    habit_progress: 0,
+    times_per_interval: 1,
+    start_date: "2025-04-20",
+    last_completed_date: null,
+    end_date: null,
+    is_active: true,
+    habit_completed: false,
+  },
+  {
+    habit_name: "Exercise",
+    habit_task: "Go for a 30-minute run",
+    habit_task_completed: false,
+    habit_category: "Physical Health",
+    habit_interval: "daily",
+    habit_progress: 0,
+    times_per_interval: 1,
+    start_date: "2025-04-20",
+    last_completed_date: null,
+    end_date: null,
+    is_active: true,
+    habit_completed: false,
+  },
+  {
+    habit_name: "Reading",
+    habit_task: "Read 20 pages of a book",
+    habit_task_completed: false,
+    habit_category: "Personal Development",
+    habit_interval: "daily",
+    habit_progress: 0,
+    times_per_interval: 1,
+    start_date: "2025-04-18",
+    last_completed_date: null,
+    end_date: null,
+    is_active: true,
+    habit_completed: false,
+  },
+  {
+    habit_name: "Journaling",
+    habit_task: "Write in my journal for 15 minutes",
+    habit_task_completed: false,
+    habit_category: "Mental Health",
+    habit_interval: "daily",
+    habit_progress: 0,
+    times_per_interval: 1,
+    start_date: "2025-04-18",
+    last_completed_date: null,
+    end_date: null,
+    is_active: true,
+    habit_completed: false,
+  },
+  {
+    habit_name: "Learning a new language",
+    habit_task: "Practice vocabulary and grammar for 30 minutes using an app",
+    habit_task_completed: false,
+    habit_category: "Personal Development",
+    habit_interval: "daily",
+    habit_progress: 0,
+    times_per_interval: 1,
+    start_date: "2025-04-27",
+    last_completed_date: null,
+    end_date: null,
+    is_active: true,
+    habit_completed: false,
+  },
+  {
+    habit_name: "Cooking a new recipe",
+    habit_task: "Try cooking a new recipe from a different cuisine for dinner",
+    habit_task_completed: false,
+    habit_category: "Culinary Skills",
+    habit_interval: "weekly",
+    habit_progress: 0,
+    times_per_interval: 1,
+    start_date: "2025-04-27",
+    last_completed_date: null,
+    end_date: null,
+    is_active: true,
+    habit_completed: false,
+  },
+];
+
 export const Calendar = ({}) => {
-  const [view, setView] = useState("monthly");
-  const [displayDates, setDisplayDates] = useState([]);
-  const [currentMonthOffset, setCurrentMonthOffset] = useState(0);
+  const { themeState } = useContext(themeContext);
 
-  useEffect(() => {
-    generateDates();
-  }, [view, currentMonthOffset]); // eslint-disable-line
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [habits, setHabits] = useState([]);
 
-  const getTargetDate = () => {
-    const today = new Date();
-    const target = new Date(
-      today.setMonth(today.getMonth() + currentMonthOffset)
-    );
-    return new Date(target.getFullYear(), target.getMonth(), 1);
+  const handleDayClicked = (date) => {
+    setSelectedDate(date);
+    setShowModal(true);
   };
 
-  const generateDates = () => {
-    const baseDate = getTargetDate();
-    const today = new Date();
-    const dates = [];
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setSelectedDate(null);
+  };
 
-    if (view === "daily") {
-      const year = baseDate.getFullYear();
-      const month = baseDate.getMonth();
-      const day = today.getDate();
-
-      const daysInTargetMonth = new Date(year, month + 1, 0).getDate();
-      const validDay = Math.min(day, daysInTargetMonth);
-
-      dates.push(new Date(year, month, validDay));
-    } else if (view === "weekly") {
-      for (let i = 0; i < 7; i++) {
-        const date = new Date(baseDate);
-        date.setDate(today.getDate() + i);
-        dates.push(date);
-      }
-    } else if (view === "monthly") {
-      const year = baseDate.getFullYear();
-      const month = baseDate.getMonth();
-      const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-      for (let i = 1; i <= daysInMonth; i++) {
-        dates.push(new Date(year, month, i));
-      }
+  const renderHabitTasks = () => {
+    if (habits.length > 0) {
+      return habits.map((habit, index) => {
+        return (
+          <div key={index} className="calendar-card-modal-tasks">
+            <p>{habit.habit_task}</p>
+          </div>
+        );
+      });
+    } else {
+      return <p>No tasks for this day</p>;
     }
-
-    setDisplayDates(dates);
-  };
-
-  const isToday = (date) => {
-    const today = new Date();
-    return (
-      today.getDate() === date.getDate() &&
-      today.getMonth() === date.getMonth() &&
-      today.getFullYear() === date.getFullYear()
-    );
-  };
-
-  const formatDateLabel = (date) => {
-    return date.toLocaleDateString("en-US", {
-      weekday: "short",
-      day: "numeric",
-    });
-  };
-
-  const getMonthLabel = () => {
-    const targetDate = getTargetDate();
-    return targetDate.toLocaleDateString("en-US", {
-      month: "long",
-      year: "numeric",
-    });
   };
 
   return (
@@ -93,51 +141,38 @@ export const Calendar = ({}) => {
             alt="maxwell-calendar-card"
             id="calendar-cloud"
           />
-          <h3>Calendar</h3>
         </div>
 
-        <div className="calendar-card-content">
-          <div className="calendar-card-content-header">
-            <div className="calendar-card-content-header-month">
-              <Button
-                variant="light"
-                onClick={() => setCurrentMonthOffset(currentMonthOffset - 1)}
-              >
-                <FaAngleLeft />
-              </Button>
-              <h2>{getMonthLabel()}</h2>
-              <Button
-                variant="light"
-                onClick={() => setCurrentMonthOffset(currentMonthOffset + 1)}
-              >
-                <FaAngleRight />
-              </Button>
-            </div>
-            <div className="calendar-card-content-header-buttons">
-              <Button variant="dark" onClick={() => setView("daily")}>
-                Daily
-              </Button>{" "}
-              <Button variant="dark" onClick={() => setView("weekly")}>
-                Weekly
-              </Button>{" "}
-              <Button variant="dark" onClick={() => setView("monthly")}>
-                Monthly
-              </Button>
-            </div>
-          </div>
-          {/* TODO: Add a feature where users can click on a day and it opens a modal showing any habits, goals, tasks the user has set for that day */}
-          {displayDates.map((date, i) => (
-            <div
-              className={`calendar-card-content-day ${
-                isToday(date) ? "current-day" : ""
-              }`}
-              key={i}
-            >
-              <h3>{formatDateLabel(date)}</h3>
-            </div>
-          ))}
-        </div>
+        <ReactCalendar
+          className="calendar-content"
+          onClickDay={(selectedDate) => handleDayClicked(selectedDate)}
+        />
       </div>
+
+      <Modal show={showModal} onHide={handleCloseModal} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>
+            {selectedDate && `${format(selectedDate, "eeee, MMMM do yyyy")}`}
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <h3>Habit tasks:</h3>
+          <div className="calendar-card-modal-tasks">
+            <p>Task 1</p>
+            <p>Task 2</p>
+            <p>Task 3</p>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <MUIButton
+            variant="outlined"
+            color="primary"
+            onClick={handleCloseModal}
+          >
+            Close
+          </MUIButton>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

@@ -9,7 +9,7 @@ import richardEye from "../../../../assets/images/Dashboard-images/richard-eye-2
 
 import { ActiveHabit } from "./ActiveHabit";
 import { Calendar } from "./Calendar";
-import { Notifications } from "./Notifications";
+import { SiteNews } from "./SiteNews";
 
 export const Dashboard = () => {
   const richardContainerRef = useRef(null);
@@ -126,7 +126,7 @@ export const Dashboard = () => {
 
       <ActiveHabit />
       <Calendar />
-      <Notifications />
+      <SiteNews />
     </section>
   );
 };
