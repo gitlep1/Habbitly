@@ -1,3 +1,7 @@
+$small-desktop: 800px;
+$medium-desktop: 1000px;
+$large-desktop: 1400px;
+
 @mixin card-header($col1, $col2) {
   display: grid;
   grid-template-columns: $col1 $col2;
@@ -7,31 +11,29 @@
 .desktop-dashboard-container {
   height: 100dvh;
   width: 96dvw;
-  margin: 0 2.5em;
+  margin: 0 1.5em;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: 200px repeat(2, 1fr);
+  grid-template-columns: 1;
+  grid-template-rows: 200px repeat(3, 1fr);
   gap: 1em;
 
   .dashboard-header {
     grid-column: 1 / -1;
     display: grid;
-    grid-template-columns: 1fr 550px 1fr;
+    grid-template-columns: 1fr 300px 1fr;
 
     .dashboard-title {
       grid-row: 1;
       grid-column: 3;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 8em;
-      width: 70%;
-      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1;
+      grid-template-rows: 50px 15px 1fr;
+      width: 100%;
+      margin: 0;
 
       .fancy-line {
         width: 100%;
-        height: 25%;
+        height: 100%;
         background: linear-gradient(to right, #fa8c97, #fdc5bd, #fbefdf, #9adcfb, #fe8084, #82b1df);
         border-radius: 1em;
       }
@@ -57,6 +59,7 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
+      padding-left: 0.5em;
 
       p {
         font-size: 18px;
@@ -70,7 +73,10 @@
     .richard-container {
       grid-column: 2;
       grid-row: 1;
-      padding-left: 5em;
+      display: block;
+      padding-left: 1em;
+      flex-direction: none;
+      justify-self: none;
 
       #anchor {
         width: 300px;
@@ -102,15 +108,18 @@
   }
 
   .active-habit-container {
-    grid-column: 1;
+    grid-row: 2;
+    grid-column: 1 / -1;
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-bottom: 1em;
 
     .active-habit-card {
       background-color: #4d88bb;
       width: 100%;
-      height: 85%;
+      height: 50dvh;
       border-radius: 3em;
 
       .active-habit-card-header {
@@ -122,13 +131,14 @@
           font-size: 50px;
           align-self: center;
           justify-self: flex-start;
+          margin-right: 0.3em;
         }
 
         #active-habit-cloud {
           position: absolute;
-          top: 200px;
-          left: 5px;
-          width: 250px;
+          top: -1em;
+          left: -1em;
+          width: 15em;
         }
       }
 
@@ -193,7 +203,7 @@
         .flamey-progress-bar-container {
           background-color: #0095ff;
           height: 1em;
-          width: 50%;
+          width: 30%;
           border-radius: 1em;
 
           .flamey-progress-bar {
@@ -208,8 +218,8 @@
   }
 
   .calendar-container {
-    grid-column: 2;
-    grid-row: 2 / -1;
+    grid-row: 3;
+    grid-column: 1 / -1;
     display: flex;
     align-items: center;
     justify-content: flex-end;
@@ -219,18 +229,17 @@
       grid-template-rows: 70px 1fr 150px;
       background-color: #c55a5a;
       width: 100%;
-      height: 95%;
-      margin-right: 1em;
+      height: 100%;
       border-radius: 3em;
 
       .calendar-card-header {
         text-align: center;
 
         #calendar-cloud {
-          position: absolute;
-          top: 130px;
-          right: 170px;
-          width: 300px;
+          position: relative;
+          top: -7em;
+          width: 20em;
+          margin: 0 auto;
         }
       }
 
@@ -263,8 +272,9 @@
   }
 
   .site-news-container {
-    grid-column: 1;
-    grid-row: 3;
+    position: relative;
+    grid-row: 4;
+    grid-column: 1 / -1;
     display: flex;
     align-items: center;
     justify-content: flex-end;
@@ -272,11 +282,11 @@
     .site-news-card {
       background-color: #5e548e;
       width: 100%;
-      height: 95%;
+      height: 100%;
       margin-bottom: 1em;
       border-radius: 3em;
-      overflow: auto;
       text-align: center;
+      overflow: auto;
 
       .site-news-card-header {
         @include card-header(1fr, 250px);
@@ -291,9 +301,9 @@
 
         #site-news-cloud {
           position: absolute;
-          bottom: 180px;
-          left: 395px;
-          width: 270px;
+          top: -2.5em;
+          right: 0;
+          width: 15em;
         }
       }
 
@@ -330,6 +340,684 @@
             font-size: 20px;
             display: flex;
             align-items: center;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media screen and (min-width: $medium-desktop) {
+  .desktop-dashboard-container {
+    height: 100dvh;
+    width: 96dvw;
+    margin: 0 2em;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: 200px repeat(2, 1fr);
+    gap: 1em;
+
+    .dashboard-header {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: 1fr 500px 1fr;
+
+      .dashboard-title {
+        grid-row: 1;
+        grid-column: 3;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 8em;
+        width: 100%;
+        margin: 0 auto;
+
+        .fancy-line {
+          width: 100%;
+          height: 25%;
+          background: linear-gradient(to right, #fa8c97, #fdc5bd, #fbefdf, #9adcfb, #fe8084, #82b1df);
+          border-radius: 1em;
+        }
+
+        .daily-date {
+          display: flex;
+          flex-direction: column;
+          width: 100%;
+
+          #today {
+            font-size: 18px;
+          }
+
+          #date {
+            justify-self: center;
+            align-self: center;
+          }
+        }
+      }
+
+      .dashboard-welcome {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        p {
+          font-size: 18px;
+        }
+
+        h1 {
+          font-size: 50px;
+        }
+      }
+
+      .richard-container {
+        grid-column: 2;
+        grid-row: 1;
+        padding-left: 5em;
+
+        #anchor {
+          width: 300px;
+        }
+
+        #eyes {
+          position: absolute;
+
+          .eye {
+            position: absolute;
+            width: 30px;
+          }
+
+          :nth-child(1) {
+            top: -108px;
+            left: 92px;
+          }
+
+          :nth-child(2) {
+            top: -108px;
+            left: 174px;
+          }
+        }
+
+        .slogan {
+          padding-left: 1.8em;
+        }
+      }
+    }
+
+    .active-habit-container {
+      position: relative;
+      grid-column: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .active-habit-card {
+        background-color: #4d88bb;
+        width: 100%;
+        height: 100%;
+        border-radius: 3em;
+
+        .active-habit-card-header {
+          @include card-header(250px, 1fr);
+
+          h3 {
+            grid-column: 2;
+            display: flex;
+            font-size: 50px;
+            align-self: center;
+            justify-self: flex-start;
+            margin-right: 0.3em;
+          }
+
+          #active-habit-cloud {
+            position: absolute;
+            top: -1em;
+            left: -1em;
+            width: 15em;
+          }
+        }
+
+        .active-habit-card-container {
+          display: grid;
+          grid-template-columns: 1fr 200px;
+          gap: 1em;
+
+          .active-habit-card-data {
+            display: flex;
+            flex-direction: column;
+            gap: 0.1em;
+            padding: 0.5em 0 0 2em;
+            font-size: 20px;
+          }
+
+          .active-habit-card-checkmark-outer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 55%;
+            margin: 0 auto;
+            background-color: #aed2e7;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+
+            .active-habit-card-checkmark-inner {
+              width: 90%;
+              height: 90%;
+              background-color: #4a90e2;
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+
+              &:hover {
+                cursor: pointer;
+                background-color: #62a5f3;
+              }
+
+              svg {
+                width: 90%;
+                height: 90%;
+                stroke: white;
+                stroke-width: 4;
+                stroke-linecap: round;
+                stroke-linejoin: round;
+              }
+            }
+          }
+        }
+
+        .flamey-container {
+          display: flex;
+          align-items: center;
+          margin-left: 1em;
+
+          #flamey {
+            width: 40px;
+          }
+
+          .flamey-progress-bar-container {
+            background-color: #0095ff;
+            height: 1em;
+            width: 50%;
+            border-radius: 1em;
+
+            .flamey-progress-bar {
+              background-color: orange;
+              height: inherit;
+              border-radius: inherit;
+              transition: width 0.5s ease-in-out;
+            }
+          }
+        }
+      }
+    }
+
+    .calendar-container {
+      grid-column: 2;
+      grid-row: 2 / -1;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+
+      .calendar-card {
+        display: grid;
+        grid-template-rows: 70px 1fr 150px;
+        background-color: #c55a5a;
+        width: 100%;
+        height: 98%;
+        margin-right: 1em;
+        border-radius: 3em;
+
+        .calendar-card-header {
+          text-align: center;
+
+          #calendar-cloud {
+            position: relative;
+            top: -5em;
+            width: 17em;
+            margin: 0 auto;
+          }
+        }
+
+        .calendar-content {
+          width: 100%;
+          background-color: transparent;
+          font-size: 30px;
+          border-radius: 1em;
+          border: none;
+
+          .react-calendar__tile {
+            color: black;
+            display: grid;
+            grid-template-rows: 1;
+          }
+
+          .react-calendar__tile--now {
+            background-color: rgb(186, 251, 235);
+          }
+
+          .react-calendar__month-view__days__day--neighboringMonth {
+            color: rgb(95, 25, 215);
+          }
+
+          .react-calendar__month-view__days__day--weekend {
+            color: #01ff8d;
+          }
+        }
+      }
+    }
+
+    .site-news-container {
+      position: relative;
+      grid-column: 1;
+      grid-row: 3;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+
+      .site-news-card {
+        background-color: #5e548e;
+        width: 100%;
+        height: 100%;
+        margin-bottom: 1em;
+        border-radius: 3em;
+        overflow: auto;
+        text-align: center;
+
+        .site-news-card-header {
+          @include card-header(1fr, 250px);
+
+          h3 {
+            grid-column: 1;
+            display: flex;
+            font-size: 50px;
+            align-self: center;
+            justify-self: center;
+          }
+
+          #site-news-cloud {
+            position: absolute;
+            top: -2.5em;
+            right: -1.1em;
+            width: 16em;
+          }
+        }
+
+        .site-news-card-content {
+          overflow: auto;
+          height: 10em;
+          display: grid;
+          gap: 1em;
+
+          .site-news-post-container {
+            border: 3px solid black;
+            width: 85%;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 100px;
+
+            .site-news-post-title {
+              grid-column: 1;
+              padding-bottom: 0.3em;
+              border-bottom: 1px solid #f0eded;
+            }
+
+            .site-news-post-content {
+              grid-column: 1;
+              height: 100%;
+              font-size: 18px;
+            }
+
+            .site-news-post-date {
+              border-left: 1px solid #f0eded;
+              grid-column: 2;
+              grid-row: 1 / span 2;
+              height: 100%;
+              font-size: 20px;
+              display: flex;
+              align-items: center;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media screen and (min-width: $large-desktop) {
+  .desktop-dashboard-container {
+    height: 100dvh;
+    width: 96dvw;
+    margin: 0 2em;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: 200px repeat(2, 1fr);
+    gap: 1em;
+
+    .dashboard-header {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: 1fr 700px 1fr;
+
+      .dashboard-title {
+        grid-row: 1;
+        grid-column: 3;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 8em;
+        width: 100%;
+        margin: 0 auto;
+
+        .fancy-line {
+          width: 100%;
+          height: 25%;
+          background: linear-gradient(to right, #fa8c97, #fdc5bd, #fbefdf, #9adcfb, #fe8084, #82b1df);
+          border-radius: 1em;
+        }
+
+        .daily-date {
+          display: flex;
+          flex-direction: column;
+          width: 100%;
+
+          #today {
+            font-size: 18px;
+          }
+
+          #date {
+            justify-self: center;
+            align-self: center;
+          }
+        }
+      }
+
+      .dashboard-welcome {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        p {
+          font-size: 18px;
+        }
+
+        h1 {
+          font-size: 50px;
+        }
+      }
+
+      .richard-container {
+        grid-column: 2;
+        grid-row: 1;
+        padding-left: 12em;
+
+        #anchor {
+          width: 300px;
+        }
+
+        #eyes {
+          position: absolute;
+
+          .eye {
+            position: absolute;
+            width: 30px;
+          }
+
+          :nth-child(1) {
+            top: -108px;
+            left: 92px;
+          }
+
+          :nth-child(2) {
+            top: -108px;
+            left: 174px;
+          }
+        }
+
+        .slogan {
+          padding-left: 1.8em;
+        }
+      }
+    }
+
+    .active-habit-container {
+      position: relative;
+      grid-column: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .active-habit-card {
+        background-color: #4d88bb;
+        width: 100%;
+        height: 100%;
+        border-radius: 3em;
+
+        .active-habit-card-header {
+          @include card-header(250px, 1fr);
+          height: 35%;
+
+          h3 {
+            grid-column: 2;
+            display: flex;
+            font-size: 50px;
+            align-self: center;
+            justify-self: flex-start;
+            margin-right: 0.3em;
+          }
+
+          #active-habit-cloud {
+            position: absolute;
+            top: -1em;
+            left: -1em;
+            width: 15em;
+          }
+        }
+
+        .active-habit-card-container {
+          display: grid;
+          grid-template-columns: 1fr 200px;
+          gap: 1em;
+
+          .active-habit-card-data {
+            display: flex;
+            flex-direction: column;
+            gap: 0.1em;
+            padding: 0.5em 0 0 2em;
+            font-size: 30px;
+          }
+
+          .active-habit-card-checkmark-outer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 75%;
+            margin: 0 auto;
+            background-color: #aed2e7;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+
+            .active-habit-card-checkmark-inner {
+              width: 90%;
+              height: 90%;
+              background-color: #4a90e2;
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+
+              &:hover {
+                cursor: pointer;
+                background-color: #62a5f3;
+              }
+
+              svg {
+                width: 90%;
+                height: 90%;
+                stroke: white;
+                stroke-width: 4;
+                stroke-linecap: round;
+                stroke-linejoin: round;
+              }
+            }
+          }
+        }
+
+        .flamey-container {
+          display: flex;
+          align-items: center;
+          margin-left: 1em;
+
+          #flamey {
+            max-width: 100px;
+          }
+
+          .flamey-progress-bar-container {
+            background-color: #0095ff;
+            height: 1em;
+            width: 50%;
+            border-radius: 1em;
+
+            .flamey-progress-bar {
+              background-color: orange;
+              height: inherit;
+              border-radius: inherit;
+              transition: width 0.5s ease-in-out;
+            }
+          }
+        }
+      }
+    }
+
+    .calendar-container {
+      grid-column: 2;
+      grid-row: 2 / -1;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+
+      .calendar-card {
+        display: grid;
+        grid-template-rows: 70px 1fr 150px;
+        background-color: #c55a5a;
+        width: 100%;
+        height: 98%;
+        margin-right: 1em;
+        border-radius: 3em;
+
+        .calendar-card-header {
+          text-align: center;
+
+          #calendar-cloud {
+            position: relative;
+            top: -5em;
+            width: 17em;
+            margin: 0 auto;
+          }
+        }
+
+        .calendar-content {
+          width: 100%;
+          background-color: transparent;
+          font-size: 30px;
+          border-radius: 1em;
+          border: none;
+
+          .react-calendar__tile {
+            color: black;
+            display: grid;
+            grid-template-rows: 1;
+          }
+
+          .react-calendar__tile--now {
+            background-color: rgb(186, 251, 235);
+          }
+
+          .react-calendar__month-view__days__day--neighboringMonth {
+            color: rgb(95, 25, 215);
+          }
+
+          .react-calendar__month-view__days__day--weekend {
+            color: #01ff8d;
+          }
+        }
+      }
+    }
+
+    .site-news-container {
+      position: relative;
+      grid-column: 1;
+      grid-row: 3;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+
+      .site-news-card {
+        background-color: #5e548e;
+        width: 100%;
+        height: 100%;
+        margin-bottom: 1em;
+        border-radius: 3em;
+        overflow: auto;
+        text-align: center;
+
+        .site-news-card-header {
+          @include card-header(1fr, 250px);
+          height: 35%;
+
+          h3 {
+            grid-column: 1;
+            display: flex;
+            font-size: 50px;
+            align-self: center;
+            justify-self: center;
+          }
+
+          #site-news-cloud {
+            position: absolute;
+            top: -2.5em;
+            right: -1.1em;
+            width: 16em;
+          }
+        }
+
+        .site-news-card-content {
+          overflow: auto;
+          height: 15em;
+          display: grid;
+          gap: 1em;
+
+          .site-news-post-container {
+            border: 3px solid black;
+            width: 85%;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 100px;
+
+            .site-news-post-title {
+              grid-column: 1;
+              padding-bottom: 0.3em;
+              border-bottom: 1px solid #f0eded;
+            }
+
+            .site-news-post-content {
+              grid-column: 1;
+              height: 100%;
+              font-size: 18px;
+            }
+
+            .site-news-post-date {
+              border-left: 1px solid #f0eded;
+              grid-column: 2;
+              grid-row: 1 / span 2;
+              height: 100%;
+              font-size: 20px;
+              display: flex;
+              align-items: center;
+            }
           }
         }
       }

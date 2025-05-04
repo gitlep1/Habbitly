@@ -19,27 +19,6 @@ export const ActiveHabit = () => {
   const [activeHabitData, setActiveHabitData] = useState({});
   const [error, setError] = useState(null);
 
-  const getActiveHabit = async () => {
-    const authToken = GetCookies("authToken");
-
-    await axios
-      .get(`${API}/habbits`, {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
-      })
-      .then((res) => {
-        const activeHabit = res.data.payload.filter(
-          (habit) => habit.is_active === true
-        );
-
-        setActiveHabitData(activeHabit[0]);
-      })
-      .catch((err) => {
-        setError(err);
-      });
-  };
-
   let {
     habit_name,
     habit_task,
@@ -54,6 +33,33 @@ export const ActiveHabit = () => {
     is_active,
     habit_completed,
   } = activeHabitData;
+
+  useEffect(() => {
+    getActiveHabit();
+  }, []);
+
+  const getActiveHabit = async () => {
+    const authToken = GetCookies("authToken");
+
+    await axios
+      .get(`${API}/habbits`, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      })
+      .then((res) => {
+        if (res.data.payload.length >= 1) {
+          const activeHabit = res.data.payload.filter(
+            (habit) => habit.is_active === true
+          );
+
+          setActiveHabitData(activeHabit[0]);
+        }
+      })
+      .catch((err) => {
+        setError(err);
+      });
+  };
 
   const getIntervalLengthInDays = () => {
     const start = new Date(start_date).getTime();

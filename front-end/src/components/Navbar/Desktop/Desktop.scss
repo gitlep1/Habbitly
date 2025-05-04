@@ -19,6 +19,7 @@
 .desktop-navbar-container {
   display: grid;
   grid-template-columns: 1fr 40px;
+  position: fixed;
 
   .desktop-navbar-links-container {
     position: relative;
