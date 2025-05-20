@@ -1,7 +1,5 @@
-const crypto = require("crypto");
+import { randomInt } from "crypto";
 
-const generateCode = () => {
-  return crypto.randomInt(100000, 999999).toString();
+export const generateCode = () => {
+  return randomInt(100000, 999999).toString();
 };
-
-module.exports = { generateCode };

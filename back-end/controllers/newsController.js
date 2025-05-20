@@ -1,7 +1,7 @@
-const express = require("express");
-const news = express.Router();
+import { Router } from "express";
+const news = Router();
 
-const { getAllNews } = require("../queries/newsQueries");
+import { getAllNews } from "../queries/newsQueries.js";
 
 news.get("/", async (req, res) => {
   try {
@@ -19,4 +19,4 @@ news.get("/", async (req, res) => {
   }
 });
 
-module.exports = news;
+export default news;

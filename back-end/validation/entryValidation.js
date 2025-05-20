@@ -1,6 +1,6 @@
-const validator = require("validator");
+import validator from "validator";
 
-const checkUserValues = (req, res, next) => {
+export const checkUserValues = (req, res, next) => {
   const { username, password, email } = req.body;
 
   const trimmedUsername = username?.trim() ?? "";
@@ -35,20 +35,14 @@ const createExtraEntryChecker = (validFields) => {
   };
 };
 
-const checkUserExtraEntries = createExtraEntryChecker([
+export const checkUserExtraEntries = createExtraEntryChecker([
   "username",
   "password",
   "email",
 ]);
 
-const checkProfileImageExtraEntries = createExtraEntryChecker([
+export const checkProfileImageExtraEntries = createExtraEntryChecker([
   "user_id",
   "image_url",
   "delete_hash",
 ]);
-
-module.exports = {
-  checkUserValues,
-  checkUserExtraEntries,
-  checkProfileImageExtraEntries,
-};

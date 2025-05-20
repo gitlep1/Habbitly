@@ -1,18 +1,18 @@
-const express = require("express");
-const habbits = express.Router();
+import { Router } from "express";
+const habbits = Router();
 
-const {
+import {
   getAllHabbits,
   getUserHabbits,
   getHabbitByID,
   createHabbit,
   updateHabbit,
   deleteHabbit,
-} = require("../queries/habbitsQueries");
+} from "../queries/habbitsQueries.js";
 
-const { getUserByID } = require("../queries/usersQueries");
+import { getUserByID } from "../queries/usersQueries.js";
 
-const { requireAuth } = require("../validation/requireAuthv2");
+import { requireAuth } from "../validation/requireAuthv2.js";
 
 habbits.get("/", requireAuth(), async (req, res) => {
   try {
@@ -187,4 +187,4 @@ habbits.delete("/:id", requireAuth(), async (req, res) => {
   }
 });
 
-module.exports = habbits;
+export default habbits;

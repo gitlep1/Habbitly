@@ -1,6 +1,6 @@
-const { google } = require("googleapis");
-const nodemailer = require("nodemailer");
-require("dotenv").config();
+import { google } from "googleapis";
+import { createTransport } from "nodemailer";
+import "dotenv/config";
 
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
@@ -27,7 +27,7 @@ if (REFRESH_TOKEN) {
   );
 }
 
-const createTransporter = async () => {
+export const createTransporter = async () => {
   try {
     const accessTokenResponse = await oAuth2Client.getAccessToken();
 
@@ -40,7 +40,7 @@ const createTransporter = async () => {
     const accessToken = accessTokenResponse.token;
     console.log("✅ createTransporter -> Access Token Retrieved/Refreshed");
 
-    const transporter = nodemailer.createTransport({
+    const transporter = createTransport({
       service: "gmail",
       secure: true,
       auth: {
@@ -65,5 +65,3 @@ const createTransporter = async () => {
     return null;
   }
 };
-
-module.exports = { createTransporter };

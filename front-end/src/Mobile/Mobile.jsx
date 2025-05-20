@@ -20,18 +20,19 @@ const Mobile = () => {
 
   return (
     <section className={screenVersion}>
+      {!authUser ? null : <Navbar />}
+
       <Routes>
         {!authUser ? (
           <Route path="/" element={<LandingDesktop />} />
         ) : (
           <>
-            <Navbar />
             <Route path="/" element={<Dashboard />} />
-            <Route path="/email-verification" element={<EmailVerification />} />
             <Route path="/homepage/summary" element={<Summary />} />
             <Route path="/homepage/insights" element={<Insights />} />
           </>
         )}
+        <Route path="/email-verification" element={<EmailVerification />} />
         <Route path="*" element={<Notfound />} />
       </Routes>
     </section>

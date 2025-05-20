@@ -1,12 +1,12 @@
-const jose = require("jose");
+import { SignJWT, jwtVerify, decodeJwt, errors } from "jose";
 
 const getSecretKey = async () => {
   return new TextEncoder().encode(process.env.JWT_SECRET);
 };
 
-const createToken = async (payload, expiresIn = "30d") => {
+export const createToken = async (payload, expiresIn = "30d") => {
   const key = await getSecretKey();
-  return await new jose.SignJWT(payload)
+  return await new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setExpirationTime(expiresIn)
     .setIssuedAt()
@@ -15,18 +15,18 @@ const createToken = async (payload, expiresIn = "30d") => {
 
 const verifyToken = async (token) => {
   const key = await getSecretKey();
-  const verifiedToken = await jose.jwtVerify(token, key);
+  const verifiedToken = await jwtVerify(token, key);
   console.log("=== verifyToken", { token }, { verifiedToken }, "===");
   return verifiedToken;
 };
 
 const decodeToken = (token) => {
-  const decoded = jose.decodeJwt(token);
+  const decoded = decodeJwt(token);
   console.log("=== decodeToken", { token }, { decoded }, "===");
   return decoded;
 };
 
-const requireAuth = () => {
+export const requireAuth = () => {
   return async (req, res, next) => {
     const authHeader = req.headers.authorization;
     const cookieHeader = req.headers.cookie;
@@ -34,6 +34,10 @@ const requireAuth = () => {
     let token = null;
 
     console.log("=== requireAuth", { authHeader }, { cookieHeader }, "===");
+
+    if (authHeader === "Bearer null" || !authHeader || !cookieHeader) {
+      return;
+    }
 
     if (authHeader && authHeader.startsWith("Bearer ")) {
       token = authHeader.split(" ")[1];
@@ -56,7 +60,7 @@ const requireAuth = () => {
       };
       return next();
     } catch (err) {
-      if (err instanceof jose.errors.JWTExpired) {
+      if (err instanceof errors.JWTExpired) {
         const expiredPayload = decodeToken(token);
 
         if (!expiredPayload?.user) {
@@ -87,9 +91,4 @@ const requireAuth = () => {
       return res.status(403).json({ error: "Invalid or malformed token" });
     }
   };
-};
-
-module.exports = {
-  createToken,
-  requireAuth,
 };

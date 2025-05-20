@@ -37,7 +37,8 @@ export const Signin = ({ handleSignUpClick, handleAuthModal }) => {
         handleAuthModal();
       })
       .catch((err) => {
-        setError(err.response.data);
+        console.log({ err });
+        setError(err?.response?.data);
       });
   };
 
@@ -49,7 +50,7 @@ export const Signin = ({ handleSignUpClick, handleAuthModal }) => {
       }
     );
     setTimeout(() => {
-      navigate("/");
+      window.location.reload();
     }, 4100);
 
     return clearFields();

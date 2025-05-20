@@ -1,24 +1,22 @@
-const express = require("express");
-const images = express.Router();
-const multer = require("multer");
-const upload = multer({ storage: multer.memoryStorage() });
+import { Router } from "express";
+const images = Router();
+import multer, { memoryStorage } from "multer";
+const upload = multer({ storage: memoryStorage() });
 
-const {
+import {
   getAllProfileImages,
   getProfileImageByID,
   createProfileImage,
   updateProfileImage,
   deleteProfileImage,
-} = require("../queries/imageUploaderQueries");
+} from "../queries/imageUploaderQueries.js";
 
-const { getUserByID, updateUser } = require("../queries/usersQueries");
+import { getUserByID, updateUser } from "../queries/usersQueries.js";
 
-const {
-  checkProfileImageExtraEntries,
-} = require("../validation/entryValidation");
-const { requireAuth } = require("../validation/requireAuthv2");
+import { checkProfileImageExtraEntries } from "../validation/entryValidation.js";
+import { requireAuth } from "../validation/requireAuthv2.js";
 
-const { uploadImageToImgur } = require("../controllers/imageUploaderFunction");
+import { uploadImageToImgur } from "../controllers/imageUploaderFunction.js";
 
 images.get("/", requireAuth(), async (req, res) => {
   try {
@@ -192,4 +190,4 @@ images.delete("/delete/:id", requireAuth(), async (req, res) => {
   }
 });
 
-module.exports = images;
+export default images;

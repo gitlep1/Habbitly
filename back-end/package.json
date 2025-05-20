@@ -3,6 +3,7 @@
   "description": "Use Habbitly for all your habbit tracking needs.",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module",
   "devDependencies": {
     "eslint": "^9.17.0"
   },

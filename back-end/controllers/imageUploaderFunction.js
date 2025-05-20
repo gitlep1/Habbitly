@@ -1,12 +1,12 @@
-const axios = require("axios");
+import post from "axios";
 
 const ClientID = process.env.IMGUR_CLIENT_ID;
 
-const uploadImageToImgur = async (fileBuffer) => {
+export const uploadImageToImgur = async (fileBuffer) => {
   try {
     const imageBase64 = fileBuffer.toString("base64");
 
-    const response = await axios.post(
+    const response = await post(
       "https://api.imgur.com/3/image",
       { image: imageBase64, type: "base64" },
       { headers: { Authorization: `Client-ID ${ClientID}` } }
@@ -23,5 +23,3 @@ const uploadImageToImgur = async (fileBuffer) => {
     throw new Error("Image upload failed");
   }
 };
-
-module.exports = { uploadImageToImgur };

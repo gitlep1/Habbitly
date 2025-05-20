@@ -1,6 +1,6 @@
-const jwt = require("jsonwebtoken");
+import { verify, decode, sign } from "jsonwebtoken";
 const JWTS = process.env.JWT_SECRET;
-const { promisify } = require("util");
+import { promisify } from "util";
 
 const requireAuth = () => {
   return async (req, res, next) => {
@@ -13,7 +13,7 @@ const requireAuth = () => {
     const token = authHeader.split(" ")[1];
 
     try {
-      const decoded = await promisify(jwt.verify)(token, JWTS);
+      const decoded = await promisify(verify)(token, JWTS);
 
       req.user = {
         token,
@@ -24,7 +24,7 @@ const requireAuth = () => {
     } catch (err) {
       console.log("=== requireAuth err", { err }, "===");
       if (err.name === "TokenExpiredError") {
-        const decoded = jwt.decode(token);
+        const decoded = decode(token);
 
         console.log(`${decoded.user.username}'s token expired`);
 
@@ -36,7 +36,7 @@ const requireAuth = () => {
             scopes: ["read:user", "write:user"],
           };
 
-          const newToken = jwt.sign(newClientTokenPayload, JWTS, {
+          const newToken = sign(newClientTokenPayload, JWTS, {
             expiresIn: "30d",
           });
 
@@ -62,4 +62,4 @@ const requireAuth = () => {
   };
 };
 
-module.exports = { requireAuth };
+export default { requireAuth };

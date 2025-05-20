@@ -1,9 +1,15 @@
-const express = require("express");
-const oauthRouter = express.Router();
-const { google } = require("googleapis");
-require("dotenv").config();
-const fs = require("fs").promises;
-const path = require("path");
+import { Router } from "express";
+const oauthRouter = Router();
+import { google } from "googleapis";
+import "dotenv/config";
+
+import { promises as fs } from "fs";
+import { join } from "path";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
@@ -21,7 +27,7 @@ const SCOPES = [
   "https://www.googleapis.com/auth/gmail.send",
 ];
 
-const TEMP_TOKEN_PATH = path.join(__dirname, "temp_tokens_for_setup.json");
+const TEMP_TOKEN_PATH = join(__dirname, "temp_tokens_for_setup.json");
 
 oauthRouter.get("/authorize", (req, res) => {
   if (process.env.ALLOW_OAUTH_SETUP !== "true") {
@@ -81,4 +87,4 @@ oauthRouter.get("/view-temp-tokens", async (req, res) => {
   }
 });
 
-module.exports = oauthRouter;
+export default oauthRouter;

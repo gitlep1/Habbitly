@@ -1,4 +1,4 @@
-const { db } = require("../db/dbConfig.js");
+import { db } from "../db/dbConfig.js";
 
 const habitFields = [
   "user_id",
@@ -16,19 +16,19 @@ const habitFields = [
   "habit_completed",
 ];
 
-const getAllHabbits = async () => {
+export const getAllHabbits = async () => {
   const query = "SELECT * FROM habbits";
   const allHabbits = await db.any(query);
   return allHabbits;
 };
 
-const getUserHabbits = async (userId) => {
+export const getUserHabbits = async (userId) => {
   const query = "SELECT * FROM habbits WHERE user_id = $1";
   const userHabbits = await db.manyOrNone(query, [userId]);
   return userHabbits;
 };
 
-const getHabbitByID = async (id) => {
+export const getHabbitByID = async (id) => {
   const query = "SELECT * FROM habbits WHERE id = $1";
   const habbit = await db.oneOrNone(query, [id]);
 
@@ -39,7 +39,7 @@ const getHabbitByID = async (id) => {
   return habbit;
 };
 
-const createHabbit = async (newHabbitData) => {
+export const createHabbit = async (newHabbitData) => {
   const columns = habitFields.join(", ");
   const placeholders = habitFields
     .map((_, index) => `$${index + 1}`)
@@ -52,7 +52,7 @@ const createHabbit = async (newHabbitData) => {
   return newHabbit;
 };
 
-const updateHabbit = async (id, updatedHabbitData) => {
+export const updateHabbit = async (id, updatedHabbitData) => {
   const validFields = habitFields.filter(
     (field) =>
       updatedHabbitData[field] !== undefined &&
@@ -76,17 +76,8 @@ const updateHabbit = async (id, updatedHabbitData) => {
   return updatedHabbit;
 };
 
-const deleteHabbit = async (id) => {
+export const deleteHabbit = async (id) => {
   const query = "DELETE FROM habbits WHERE id = $1 RETURNING *";
   const deletedHabbit = await db.oneOrNone(query, [id]);
   return deletedHabbit;
-};
-
-module.exports = {
-  getAllHabbits,
-  getUserHabbits,
-  getHabbitByID,
-  createHabbit,
-  updateHabbit,
-  deleteHabbit,
 };

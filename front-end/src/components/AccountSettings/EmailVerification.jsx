@@ -1,11 +1,12 @@
 import "./EmailVerification.scss";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Form, Button } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 
 const API = import.meta.env.VITE_PUBLIC_API_BASE;
+const RESEND_COOLDOWN_SECONDS = 60;
 
 export const EmailVerification = () => {
   const navigate = useNavigate();
@@ -13,6 +14,57 @@ export const EmailVerification = () => {
   const { email, username, password } = location.state || {};
 
   const [codeInput, setCodeInput] = useState("");
+  const [cooldown, setCooldown] = useState(0);
+  const cooldownIntervalRef = useRef(null);
+
+  useEffect(() => {
+    if (cooldown > 0) {
+      cooldownIntervalRef.current = setInterval(() => {
+        setCooldown((prevCooldown) => prevCooldown - 1);
+      }, 1000);
+    } else if (cooldown === 0 && cooldownIntervalRef.current) {
+      clearInterval(cooldownIntervalRef.current);
+      cooldownIntervalRef.current = null;
+    }
+
+    return () => {
+      if (cooldownIntervalRef.current) {
+        clearInterval(cooldownIntervalRef.current);
+      }
+    };
+  }, [cooldown]);
+
+  const handleResendCode = async () => {
+    if (cooldown > 0) {
+      toast.info(`Please wait ${cooldown} seconds before resending.`, {
+        containerId: "toast-notify",
+      });
+      return;
+    }
+
+    if (!email) {
+      toast.error("No email found to resend code to.", {
+        containerId: "toast-notify",
+      });
+      return;
+    }
+
+    try {
+      await axios.post(`${API}/email/send-verification`, { email });
+      toast.success("Verification code sent! Please check your inbox.", {
+        containerId: "toast-notify",
+      });
+      setCooldown(RESEND_COOLDOWN_SECONDS);
+    } catch (error) {
+      console.error("Error resending code:", error);
+      toast.error(
+        error.response?.data?.error || "Failed to resend verification code.",
+        {
+          containerId: "toast-notify",
+        }
+      );
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -40,15 +92,15 @@ export const EmailVerification = () => {
                 containerId: "toast-notify",
               }
             );
+            setTimeout(() => {
+              navigate("/");
+            }, 4500);
           })
           .catch((error) => {
             return toast.error(`Sign up failed: ${error.response.data.error}`, {
               containerId: "toast-notify",
             });
           });
-        setTimeout(() => {
-          navigate("/");
-        }, 4500);
       })
       .catch((error) => {
         toast.error(error.response.data.error, {
@@ -81,7 +133,16 @@ export const EmailVerification = () => {
             </span>
             <br />
             <br />
-            <Button type="submit">Verify Email</Button>
+            <div className="d-flex justify-content-between align-items-center">
+              <Button type="submit">Verify Email</Button>
+              <Button
+                variant="secondary"
+                onClick={handleResendCode}
+                disabled={cooldown > 0}
+              >
+                Resend Code {cooldown > 0 && `(${cooldown}s)`}
+              </Button>
+            </div>
           </Form>
         </div>
       ) : (

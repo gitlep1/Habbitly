@@ -27,11 +27,11 @@ const Desktop = () => {
         ) : (
           <>
             <Route path="/" element={<Dashboard />} />
-            <Route path="/email-verification" element={<EmailVerification />} />
             <Route path="/homepage/summary" element={<Summary />} />
             <Route path="/homepage/insights" element={<Insights />} />
           </>
         )}
+        <Route path="/email-verification" element={<EmailVerification />} />
         <Route path="*" element={<Notfound />} />
       </Routes>
     </section>

@@ -1,15 +1,15 @@
-const express = require("express");
-const cors = require("cors");
-const http = require("http");
+import express, { json, urlencoded } from "express";
+import cors from "cors";
+import { createServer } from "http";
 
-const usersController = require("./controllers/usersController");
-const habbitsController = require("./controllers/habbitsController");
-const emailAuthController = require("./controllers/emailAuthController");
-const imageUploaderController = require("./controllers/imageUploaderController");
-const newsController = require("./controllers/newsController");
-const oauthRouter = require("./Utils/oauthRoutes");
+import usersController from "./controllers/usersController.js";
+import habbitsController from "./controllers/habbitsController.js";
+import emailAuthController from "./controllers/emailAuthController.js";
+import imageUploaderController from "./controllers/imageUploaderController.js";
+import newsController from "./controllers/newsController.js";
+import oauthRouter from "./Utils/oauthRoutes.js";
 
-require("dotenv").config();
+import "dotenv/config";
 
 const app = express();
 const PORT = process.env.PORT || 5173;
@@ -34,8 +34,8 @@ app.use(
   })
 );
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(json());
+app.use(urlencoded({ extended: true }));
 
 if (process.env.ALLOW_OAUTH_SETUP === "true") {
   console.log("✅ OAuth setup routes are ENABLED.");
@@ -92,7 +92,7 @@ app.get("*", (req, res) => {
     .send("GET OUT OF HERE OR HABBITLY WILL PULL YOU INTO ITS REALM!!!");
 });
 
-const server = http.createServer(app);
+const server = createServer(app);
 
 if (process.env.NODE_ENV !== "test") {
   server.listen(PORT, () => {
@@ -106,4 +106,4 @@ if (process.env.NODE_ENV !== "test") {
   });
 }
 
-module.exports = app;
+export default app;
