@@ -8,7 +8,7 @@ import defaultProfilePic from "../../assets/images/default-profile-pic.png";
 
 const API = import.meta.env.VITE_PUBLIC_API_BASE;
 
-export const Signup = ({ handleSignUpClick, handleAuthModalClose }) => {
+export const Signup = ({ handleSignUpClick, handleAuthModal }) => {
   let error = "";
 
   const navigate = useNavigate();
@@ -57,7 +57,7 @@ export const Signup = ({ handleSignUpClick, handleAuthModalClose }) => {
       .post(`${API}/email/send-verification`, newUser)
       .then(() => {
         clearFields();
-        handleAuthModalClose();
+        handleAuthModal();
         navigate("/email-verification", {
           state: {
             email: email,
@@ -139,7 +139,7 @@ export const Signup = ({ handleSignUpClick, handleAuthModalClose }) => {
           <Button
             variant="danger"
             onClick={() => {
-              handleAuthModalClose();
+              handleAuthModal();
             }}
           >
             Close

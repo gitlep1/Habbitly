@@ -5,16 +5,16 @@ import {
   screenVersionContext,
   themeContext,
   userContext,
-  tokenContext,
   errorContext,
 } from "./Contexts";
 import DetectScreenSize from "../CustomFunctions/DetectScreenSize";
 
+import { GetCookies } from "../CustomFunctions/HandleCookies";
+
 const GlobalContextProvider = ({ children }) => {
   const [screenVersion, setScreenVersion] = useState("desktop");
   const [themeState, setThemeState] = useState("dark");
-  const [authUser, setAuthUser] = useState(null);
-  const [authToken, setAuthToken] = useState(null);
+  const [authUser, setAuthUser] = useState(GetCookies("authUser") || null);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -35,11 +35,9 @@ const GlobalContextProvider = ({ children }) => {
     <screenVersionContext.Provider value={screenVersion}>
       <themeContext.Provider value={{ themeState, setThemeState }}>
         <userContext.Provider value={{ authUser, setAuthUser }}>
-          <tokenContext.Provider value={{ authToken, setAuthToken }}>
-            <errorContext.Provider value={{ error, setError }}>
-              {children}
-            </errorContext.Provider>
-          </tokenContext.Provider>
+          <errorContext.Provider value={{ error, setError }}>
+            {children}
+          </errorContext.Provider>
         </userContext.Provider>
       </themeContext.Provider>
     </screenVersionContext.Provider>

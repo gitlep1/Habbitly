@@ -1,24 +1,18 @@
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Form, Button } from "react-bootstrap";
 import { toast } from "react-toastify";
 import axios from "axios";
 
-import { userContext, tokenContext } from "../../CustomContexts/Contexts";
-import { SetCookies } from "../../CustomFunctions/HandleCookies";
-
 const API = import.meta.env.VITE_PUBLIC_API_BASE;
 
-export const Signin = ({ handleSignUpClick, handleAuthModalClose }) => {
-  let error = "";
-
+export const Signin = ({ handleSignUpClick, handleAuthModal }) => {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const { setAuthUser } = useContext(userContext);
-  const { setAuthToken } = useContext(tokenContext);
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,44 +29,29 @@ export const Signin = ({ handleSignUpClick, handleAuthModalClose }) => {
     }
 
     await axios
-      .post(`${API}/users/signin`, existingUser)
+      .post(`${API}/users/signin`, existingUser, {
+        withCredentials: true,
+      })
       .then((res) => {
-        notify(res.data);
-        handleAuthModalClose();
-
-        setAuthUser(res.data.payload);
-        setAuthToken(res.data.token);
-
-        SetCookies("authUser", res.data.payload, 30);
-        SetCookies("authToken", res.data.token, 30);
+        notify(res.data.payload);
+        handleAuthModal();
       })
       .catch((err) => {
-        error = err.response.data;
-        notify("error");
+        setError(err.response.data);
       });
   };
 
   const notify = (existingUser) => {
-    if (existingUser === "error") {
-      return toast.error(
-        "No user with those credentials have been found. \n Please make sure your email and password are correct.",
-        {
-          containerId: "toast-notify",
-        }
-      );
-    } else {
-      toast.success(
-        `Welcome ${existingUser.payload.username}, You have been signed in.`,
-        {
-          containerId: "toast-notify",
-        }
-      );
-      setTimeout(() => {
-        setAuthUser(existingUser.payload);
-        setAuthToken(existingUser.token);
-        navigate("/");
-      }, 4100);
-    }
+    toast.success(
+      `Welcome ${existingUser.username}, You have been signed in.`,
+      {
+        containerId: "toast-notify",
+      }
+    );
+    setTimeout(() => {
+      navigate("/");
+    }, 4100);
+
     return clearFields();
   };
 
@@ -109,11 +88,16 @@ export const Signin = ({ handleSignUpClick, handleAuthModalClose }) => {
           <Button
             variant="danger"
             onClick={() => {
-              handleAuthModalClose();
+              handleAuthModal();
             }}
           >
             Close
           </Button>
+          {error && (
+            <div className="error-container">
+              <p className="error-message">{error}</p>
+            </div>
+          )}
         </Form>
         <p className="switch-auth-mode-container">
           Don&apos;t have an account?{" "}

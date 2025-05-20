@@ -66,7 +66,7 @@ emailAuth.post("/send-verification", async (req, res) => {
 
     if (!transporter) {
       console.error(
-        "Error: Transporter was not created. Check logs for details."
+        `Error: Transporter was not created. Transported returned: ${transporter}`
       );
       return res
         .status(500)

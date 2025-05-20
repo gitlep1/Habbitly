@@ -115,7 +115,7 @@ export const Dashboard = () => {
               alt="Habbitly Dashboard logo eyes"
             />
             <Image
-              className="eye eye2"
+              className="eye"
               src={richardEye}
               alt="Habbitly Dashboard logo eyes"
             />

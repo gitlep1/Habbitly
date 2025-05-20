@@ -1,6 +1,6 @@
 import "./Desktop.scss";
 import { useState, useEffect, useContext } from "react";
-import { Button, Image, Modal } from "react-bootstrap";
+import { Button, Image } from "react-bootstrap";
 import { useSpring, animated } from "react-spring";
 import { useLocation } from "react-router-dom";
 import { IoIosSunny } from "react-icons/io";
@@ -11,8 +11,6 @@ import { MdArrowBackIos } from "react-icons/md";
 import { themeContext } from "../../../CustomContexts/Contexts";
 import { GetCookies, SetCookies } from "../../../CustomFunctions/HandleCookies";
 
-import { Signup } from "../../AccountSettings/Signup";
-import { Signin } from "../../AccountSettings/Signin";
 import { Signout } from "../../AccountSettings/Signout";
 
 import StellyHappy from "../../../assets/images/StellyHappy.png";
@@ -33,21 +31,11 @@ export default function Desktop() {
 
   const [showDropdown, setShowDropdown] = useState(expandedList);
 
-  const [showAuthModal, setShowAuthModal] = useState(false);
   const [showSignoutModal, setShowSignoutModal] = useState(false);
-  const [isSignin, setIsSignin] = useState(true);
 
   const [expandSidebar, setExpandSidebar] = useState(
     expandCookie ? true : false
   );
-
-  const handleAuthModalShow = () => {
-    setShowAuthModal(true);
-  };
-
-  const handleAuthModalClose = () => {
-    setShowAuthModal(false);
-  };
 
   const handleSignoutModalShow = () => {
     setShowSignoutModal(true);
@@ -55,35 +43,6 @@ export default function Desktop() {
 
   const handleSignoutModalClose = () => {
     setShowSignoutModal(false);
-  };
-
-  const toggleForm = () => setIsSignin(!isSignin);
-
-  const renderAuthModal = () => {
-    return (
-      <Modal
-        show={showAuthModal}
-        onHide={handleAuthModalClose}
-        className="navbar-auth-modal"
-      >
-        <Modal.Header closeButton className="navbar-auth-modal-header">
-          <Modal.Title>{isSignin ? "Sign In" : "Sign Up"}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body className="navbar-auth-modal-body">
-          {isSignin ? (
-            <Signin
-              handleSignUpClick={toggleForm}
-              handleAuthModalClose={handleAuthModalClose}
-            />
-          ) : (
-            <Signup
-              handleSignUpClick={toggleForm}
-              handleAuthModalClose={handleAuthModalClose}
-            />
-          )}
-        </Modal.Body>
-      </Modal>
-    );
   };
 
   const handleButtonToggle = (e) => {
@@ -200,7 +159,7 @@ export default function Desktop() {
         )}
 
         <div className="navbar-auth-buttons">
-          {userData ? (
+          {userData && (
             <Button
               id={`${themeState === "dark" ? "dark-button" : "light-button"}`}
               className="signout-button"
@@ -209,34 +168,8 @@ export default function Desktop() {
             >
               Sign Out
             </Button>
-          ) : (
-            <>
-              <Button
-                id={`${themeState === "dark" ? "dark-button" : "light-button"}`}
-                className="signin-button"
-                variant="success"
-                onClick={() => {
-                  setIsSignin(true);
-                  handleAuthModalShow();
-                }}
-              >
-                Sign In
-              </Button>
-              <Button
-                id={`${themeState === "dark" ? "dark-button" : "light-button"}`}
-                className="signup-button"
-                onClick={() => {
-                  setIsSignin(false);
-                  handleAuthModalShow();
-                }}
-              >
-                Sign Up
-              </Button>
-            </>
           )}
         </div>
-
-        {renderAuthModal()}
 
         <Signout
           showSignoutModal={showSignoutModal}

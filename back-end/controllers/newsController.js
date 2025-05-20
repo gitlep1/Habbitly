@@ -1,5 +1,4 @@
 const express = require("express");
-const jwt = require("jsonwebtoken");
 const news = express.Router();
 
 const { getAllNews } = require("../queries/newsQueries");

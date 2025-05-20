@@ -27,7 +27,7 @@ export const SiteNews = ({}) => {
         setSiteNews(res.data.payload);
       })
       .catch((err) => {
-        setSiteNewsError(err.response.data.error);
+        setSiteNewsError(err?.response?.data?.error);
       })
       .finally(() => {
         setSiteNewsLoading(false);
@@ -86,9 +86,11 @@ export const SiteNews = ({}) => {
       return <p>Loading site news...</p>;
     } else if (siteNewsError) {
       return <p>Error loading site news: {siteNewsError}</p>;
+    } else if (!siteNews || siteNews?.length === 0) {
+      return <p>No site news available.</p>;
     } else {
-      siteNews.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-      return siteNews.map((news) => {
+      siteNews?.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      return siteNews?.map((news) => {
         return (
           <div key={news.id} className="site-news-post-container">
             <h4 className="site-news-post-title">{news.title}</h4>

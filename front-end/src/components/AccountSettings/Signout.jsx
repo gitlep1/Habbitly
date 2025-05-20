@@ -1,19 +1,19 @@
-import { useContext } from "react";
 import { Modal, Button } from "react-bootstrap";
 import { toast } from "react-toastify";
+import PropTypes from "prop-types";
+import axios from "axios";
 
-import { tokenContext, userContext } from "../../CustomContexts/Contexts";
-import { RemoveCookies } from "../../CustomFunctions/HandleCookies";
+const API = import.meta.env.VITE_PUBLIC_API_BASE;
 
 export const Signout = ({ showSignoutModal, handleSignoutModalClose }) => {
-  const { setAuthUser } = useContext(userContext);
-  const { setAuthToken } = useContext(tokenContext);
-
-  const handleSignout = () => {
-    RemoveCookies("authUser");
-    RemoveCookies("authToken");
-    setAuthUser(null);
-    setAuthToken(null);
+  const handleSignout = async () => {
+    await axios.post(
+      `${API}/users/signout`,
+      {},
+      {
+        withCredentials: true,
+      }
+    );
 
     handleSignoutModalClose();
 
@@ -21,7 +21,7 @@ export const Signout = ({ showSignoutModal, handleSignoutModalClose }) => {
       containerId: "toast-notify",
     });
 
-    setTimeout(() => {
+    return setTimeout(() => {
       window.location.reload();
     }, 4100);
   };
@@ -44,4 +44,9 @@ export const Signout = ({ showSignoutModal, handleSignoutModalClose }) => {
       </Modal.Footer>
     </Modal>
   );
+};
+
+Signout.propTypes = {
+  showSignoutModal: PropTypes.bool.isRequired,
+  handleSignoutModalClose: PropTypes.func.isRequired,
 };

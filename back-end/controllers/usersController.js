@@ -1,5 +1,4 @@
 const express = require("express");
-const jwt = require("jsonwebtoken");
 const users = express.Router();
 
 const {
@@ -15,12 +14,9 @@ const {
   checkUserValues,
   checkUserExtraEntries,
 } = require("../validation/entryValidation");
-const { requireAuth } = require("../validation/requireAuth");
-const { scopeAuth } = require("../validation/scopeAuth");
+const { createToken, requireAuth } = require("../validation/requireAuthv2");
 
-const JSK = process.env.JWT_SECRET;
-
-users.get("/", requireAuth(), scopeAuth(["read:user"]), async (req, res) => {
+users.get("/", requireAuth(), async (req, res) => {
   try {
     const allUsers = await getAllUsers();
     console.log("=== GET all users", allUsers, "===");
@@ -36,38 +32,32 @@ users.get("/", requireAuth(), scopeAuth(["read:user"]), async (req, res) => {
   }
 });
 
-users.get(
-  "/user",
-  requireAuth(),
-  scopeAuth(["read:user", "write:user"]),
-  async (req, res) => {
-    const { token } = req.user;
-    const decoded = jwt.decode(token);
+users.get("/user", requireAuth(), async (req, res) => {
+  const decodedUserData = req.user.decodedUser;
 
-    try {
-      const getAUser = await getUserByID(decoded.user.id);
+  try {
+    const getAUser = await getUserByID(decodedUserData.id);
 
-      if (getAUser) {
-        console.log("=== GET user by ID", getAUser, "===");
+    if (getAUser) {
+      console.log("=== GET user by ID", getAUser, "===");
 
-        const userData = {
-          id: getAUser.id,
-          profileimg: getAUser.profileimg,
-          username: getAUser.username,
-          theme: getAUser.theme,
-          last_online: getAUser.last_online,
-        };
+      const userData = {
+        id: getAUser.id,
+        profileimg: getAUser.profileimg,
+        username: getAUser.username,
+        theme: getAUser.theme,
+        last_online: getAUser.last_online,
+      };
 
-        res.status(200).json({ payload: userData });
-      } else {
-        res.status(404).send("user not found");
-      }
-    } catch (error) {
-      console.error("users.GET /user", { error });
-      res.status(500).send("Internal Server Error");
+      res.status(200).json({ payload: userData });
+    } else {
+      res.status(404).send("user not found");
     }
+  } catch (error) {
+    console.error("users.GET /user", { error });
+    res.status(500).send("Internal Server Error");
   }
-);
+});
 
 users.post(
   "/signup",
@@ -93,35 +83,42 @@ users.post(
       if (checkCreds) {
         res.status(409).send("Email/Username already taken!");
       } else {
-        newUserData.profileimg;
         const createdUser = await createUser(newUserData);
 
-        if (createdUser) {
-          const clientTokenPayload = {
-            user: createdUser,
-            scopes: ["read:user", "write:user"],
-          };
-          console.log(
-            "=== POST user signup (clientTokenPayload)",
-            clientTokenPayload,
-            "==="
-          );
-          const token = jwt.sign(clientTokenPayload, JSK, {
-            expiresIn: "30d",
-          });
-
-          const userData = {
-            id: createdUser.id,
-            profileimg: createdUser.profileimg,
-            username: createdUser.username,
-            theme: createdUser.theme,
-            last_online: createdUser.last_online,
-          };
-
-          res.status(200).json({ payload: userData, token });
-        } else {
-          res.status(404).send("user not created");
+        if (!createdUser) {
+          return res.status(404).send("user not created");
         }
+
+        const createdToken = await createToken(createdUser);
+
+        if (!createdToken) {
+          return res.status(404).send("token not created");
+        }
+
+        res.cookie("authToken", createdToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "Strict",
+          maxAge: 30 * 24 * 60 * 60 * 1000,
+        });
+
+        res.cookie("authUser", createdUser, {
+          httpOnly: false,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "Strict",
+          maxAge: 30 * 24 * 60 * 60 * 1000,
+        });
+
+        const userData = {
+          id: createdUser.id,
+          profileimg: createdUser.profileimg,
+          email: createdUser.email,
+          username: createdUser.username,
+          theme: createdUser.theme,
+          last_online: createdUser.last_online,
+        };
+
+        res.status(200).json({ payload: userData });
       }
     } catch (error) {
       console.error("users.POST /signup", { error });
@@ -145,32 +142,42 @@ users.post("/signin", async (req, res) => {
     if (checkUser) {
       const getUserData = await getUserByID(checkUser.id);
 
-      if (getUserData) {
-        const clientTokenPayload = {
-          user: getUserData,
-          scopes: ["read:user", "write:user"],
-        };
-        console.log(
-          "=== POST user signin (clientTokenPayload)",
-          clientTokenPayload,
-          "==="
-        );
-        const token = jwt.sign(clientTokenPayload, JSK, {
-          expiresIn: "30d",
-        });
-
-        const userData = {
-          id: getUserData.id,
-          profileimg: getUserData.profileimg,
-          username: getUserData.username,
-          theme: getUserData.theme,
-          last_online: getUserData.last_online,
-        };
-
-        res.status(200).json({ payload: userData, token });
-      } else {
-        res.status(404).send(`Data for: ${checkUser.id} not found`);
+      if (!getUserData) {
+        return res.status(404).send("user not found");
       }
+
+      const userData = {
+        id: getUserData.id,
+        profileimg: getUserData.profileimg,
+        username: getUserData.username,
+        theme: getUserData.theme,
+        last_online: getUserData.last_online,
+      };
+
+      const createdToken = await createToken(userData);
+
+      if (!createdToken) {
+        return res.status(404).send("token not created");
+      }
+
+      console.log("=== POST user signin (tokenData)", createdToken, "===");
+
+      res.cookie("authToken", JSON.stringify(createdToken), {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "Strict",
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+      });
+
+      res.cookie("authUser", JSON.stringify(userData), {
+        httpOnly: false,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "Strict",
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+      });
+
+      console.log("=== POST user signin", userData, "===");
+      res.status(200).json({ payload: userData });
     } else {
       res.status(404).send("user not found");
     }
@@ -180,81 +187,118 @@ users.post("/signin", async (req, res) => {
   }
 });
 
-users.put(
-  "/update",
-  requireAuth(),
-  scopeAuth(["read:user", "write:user"]),
-  checkUserExtraEntries,
-  async (req, res) => {
-    const { token } = req.user;
-    const decoded = jwt.decode(token);
-    const { profileimg, username, password, email, theme, last_online } =
-      req.body;
+users.post("/signout", (req, res) => {
+  res.clearCookie("authToken", {
+    httpOnly: true,
+    sameSite: "Strict",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+  });
 
-    try {
-      const checkIfUserExists = await getUserByID(decoded.user.id);
+  res.clearCookie("authUser", {
+    sameSite: "Strict",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+  });
 
-      const updatedUserData = {
-        profileimg: profileimg || checkIfUserExists.profileimg,
-        username: username || checkIfUserExists.username,
-        password: password || checkIfUserExists.password,
-        email: email || checkIfUserExists.email,
-        theme: theme || checkIfUserExists.theme,
-        last_online: last_online || checkIfUserExists.last_online,
-      };
+  res.status(200).json({ payload: "Signed out successfully" });
+});
 
-      const updatedUser = await updateUser(
-        checkIfUserExists.id,
-        updatedUserData
-      );
+users.put("/update", requireAuth(), checkUserExtraEntries, async (req, res) => {
+  const decodedUserData = req.user.decodedUser;
+  const { profileimg, username, password, email, theme, last_online } =
+    req.body;
 
-      if (updatedUser) {
-        console.log("=== PUT user", updatedUser, "===");
-        res.status(200).json({ payload: updatedUser });
-      } else {
-        res.status(404).send("user not found");
-      }
-    } catch (error) {
-      console.error("users.PUT /update", { error });
-      res.status(500).send("Internal Server Error");
+  try {
+    const existingUser = await getUserByID(decodedUserData.id);
+
+    if (!existingUser) {
+      return res.status(404).send("user not found");
     }
+
+    const updatedUserData = {
+      profileimg: profileimg || existingUser.profileimg,
+      username: username || existingUser.username,
+      password: password || existingUser.password,
+      email: email || existingUser.email,
+      theme: theme || existingUser.theme,
+      last_online: last_online || existingUser.last_online,
+    };
+
+    const updatedUser = await updateUser(userId, updatedUserData);
+
+    if (!updatedUser) {
+      return res.status(404).send("user not updated");
+    }
+
+    const createdToken = await createToken(updatedUser);
+
+    if (!createdToken) {
+      return res.status(404).send("token not created");
+    }
+
+    res.cookie("authToken", createdToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "Strict",
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+    });
+
+    res.cookie("authUser", updatedUser, {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "Strict",
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+    });
+
+    console.log("=== PUT user", updatedUser, "===");
+    res.status(200).json({ payload: updatedUser });
+  } catch (error) {
+    console.error("users.PUT /update", { error });
+    res.status(500).send("Internal Server Error");
   }
-);
+});
 
-users.delete(
-  "/delete",
-  requireAuth(),
-  scopeAuth(["read:user", "write:user"]),
-  async (req, res) => {
-    const { token } = req.user;
-    const decoded = jwt.decode(token);
+users.delete("/delete", requireAuth(), async (req, res) => {
+  const decodedUserData = req.user.decodedUser;
 
-    try {
-      const deletedUser = await deleteUser(decoded.user.id);
+  try {
+    const deletedUser = await deleteUser(decodedUserData.id);
 
-      if (deletedUser) {
-        console.log("=== DELETE user", deletedUser, "===");
-        res.status(200).send(
-          `
+    if (deletedUser) {
+      console.log("=== DELETE user", deletedUser, "===");
+
+      res.clearCookie("authToken", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "Strict",
+      });
+      res.clearCookie("authUser", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "Strict",
+      });
+
+      res.status(200).send(
+        `
           ID: ${deletedUser.id}
-          User: ${deletedUser.username} 
+          User: ${deletedUser.user} 
           SUCCESS: user has been deleted.
         `
-        );
-      } else {
-        res.status(404).send(
-          `
-          ID: ${decoded.user.id} 
-          User: ${decoded.user.username}
+      );
+    } else {
+      res.status(404).send(
+        `
+          ID: ${deletedUser.id} 
+          User: ${deletedUser.username}
           ERROR: user does not exist.
         `
-        );
-      }
-    } catch (error) {
-      console.error("users.DELETE /delete", { error });
-      res.status(500).send("Internal Server Error");
+      );
     }
+  } catch (error) {
+    console.error("users.DELETE /delete", { error });
+    res.status(500).send("Internal Server Error");
   }
-);
+});
 
 module.exports = users;

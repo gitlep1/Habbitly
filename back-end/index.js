@@ -1,14 +1,13 @@
 const express = require("express");
 const cors = require("cors");
 const http = require("http");
-const multer = require("multer");
-const upload = multer();
 
 const usersController = require("./controllers/usersController");
 const habbitsController = require("./controllers/habbitsController");
 const emailAuthController = require("./controllers/emailAuthController");
 const imageUploaderController = require("./controllers/imageUploaderController");
 const newsController = require("./controllers/newsController");
+const oauthRouter = require("./Utils/oauthRoutes");
 
 require("dotenv").config();
 
@@ -19,6 +18,7 @@ const allowedOrigins = [
   "http://localhost:5173",
   "https://habbitly.vercel.app",
   "http://localhost:4000",
+  "https://habbitly-backend.vercel.app",
 ];
 
 app.use(
@@ -36,7 +36,13 @@ app.use(
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-// app.use(upload.any());
+
+if (process.env.ALLOW_OAUTH_SETUP === "true") {
+  console.log("✅ OAuth setup routes are ENABLED.");
+  app.use("/oauth", oauthRouter);
+} else {
+  console.log("OAuth setup routes are DISABLED.");
+}
 
 // === Account Routes === \\
 app.use("/email", emailAuthController);
@@ -58,7 +64,7 @@ app.post("/login", (req, res) => {
   const adminPassword = process.env.ADMIN_PASSWORD;
 
   if (username === adminUsername && password === adminPassword) {
-    res.send("Login successful! Welcome, Admin.");
+    res.send("✅ Login successful! Welcome, Admin.");
   } else {
     res.status(401).send("Invalid username or password.");
   }
@@ -90,7 +96,13 @@ const server = http.createServer(app);
 
 if (process.env.NODE_ENV !== "test") {
   server.listen(PORT, () => {
-    console.log(`Habbitly is running on port ${PORT}`);
+    console.log(`✅ Habbitly is running on port ${PORT}`);
+
+    if (process.env.ALLOW_OAUTH_SETUP === "true") {
+      console.log(
+        `Maps to http://localhost:${PORT}/oauth/authorize to perform initial Google OAuth authorization.`
+      );
+    }
   });
 }
 

@@ -1,5 +1,4 @@
 const express = require("express");
-const jwt = require("jsonwebtoken");
 const images = express.Router();
 const multer = require("multer");
 const upload = multer({ storage: multer.memoryStorage() });
@@ -12,16 +11,16 @@ const {
   deleteProfileImage,
 } = require("../queries/imageUploaderQueries");
 
+const { getUserByID, updateUser } = require("../queries/usersQueries");
+
 const {
-  checkProfileImageValues,
   checkProfileImageExtraEntries,
 } = require("../validation/entryValidation");
-const { requireAuth } = require("../validation/requireAuth");
-const { scopeAuth } = require("../validation/scopeAuth");
+const { requireAuth } = require("../validation/requireAuthv2");
 
 const { uploadImageToImgur } = require("../controllers/imageUploaderFunction");
 
-images.get("/", requireAuth(), scopeAuth(["read:user"]), async (req, res) => {
+images.get("/", requireAuth(), async (req, res) => {
   try {
     const allProfileImages = await getAllProfileImages();
     console.log("=== GET all profile images", allProfileImages, "===");
@@ -37,45 +36,45 @@ images.get("/", requireAuth(), scopeAuth(["read:user"]), async (req, res) => {
   }
 });
 
-images.get(
-  "/image/:id",
-  requireAuth(),
-  scopeAuth(["read:user"]),
-  async (req, res) => {
-    const { id } = req.params;
-    const { token } = req.user;
-    const decoded = jwt.decode(token);
+images.get("/image/:id", requireAuth(), async (req, res) => {
+  const { id } = req.params;
+  const decodedUserData = req.user.decodedUser;
 
-    try {
-      const getProfileImage = await getProfileImageByID(id);
-      console.log("=== GET profile image by ID", getProfileImage, "===");
+  try {
+    const getProfileImage = await getProfileImageByID(id);
+    console.log("=== GET profile image by ID", getProfileImage, "===");
 
-      if (getProfileImage) {
-        if (getProfileImage.user_id !== decoded.user.id) {
-          res.status(401).send("Unauthorized");
-          return;
-        }
-
-        res.status(200).json({ payload: getProfileImage });
-      } else {
-        res.status(404).send("Cannot find profile image");
+    if (getProfileImage) {
+      if (getProfileImage.user_id !== decodedUserData.id) {
+        res.status(401).send("Unauthorized");
+        return;
       }
-    } catch (error) {
-      console.error("ERROR images.GET /:id", { error });
-      res.status(500).send("Internal Server Error");
+
+      res.status(200).json({ payload: getProfileImage });
+    } else {
+      res.status(404).send("Cannot find profile image");
     }
+  } catch (error) {
+    console.error("ERROR images.GET /:id", { error });
+    res.status(500).send("Internal Server Error");
   }
-);
+});
 
 images.post(
   "/upload",
   requireAuth(),
-  scopeAuth(["write:user"]),
   upload.single("image"),
-  checkProfileImageValues,
-  checkProfileImageExtraEntries,
   async (req, res) => {
+    const decodedUserData = req.user.decodedUser;
+
     try {
+      const checkIfUserExists = await getUserByID(decodedUserData.id);
+
+      if (!checkIfUserExists) {
+        res.status(404).send("User not found");
+        return;
+      }
+
       if (!req.file) {
         return res.status(400).json({ error: "No file uploaded" });
       }
@@ -84,7 +83,7 @@ images.post(
       const { image_url, delete_hash } = await uploadImageToImgur(fileBuffer);
 
       const newProfileImageData = {
-        user_id: req.body.user_id,
+        user_id: checkIfUserExists.id,
         image_url,
         delete_hash,
       };
@@ -93,7 +92,25 @@ images.post(
       console.log("=== POST new profile image", createdProfileImage, "===");
 
       if (createdProfileImage) {
-        res.status(200).json({ payload: createdProfileImage });
+        const updatedUser = {
+          profileimg: createdProfileImage.image_url,
+          username: checkIfUserExists.username,
+          password: checkIfUserExists.password,
+          email: checkIfUserExists.email,
+          last_online: new Date(),
+        };
+
+        const updatedUserResult = await updateUser(
+          checkIfUserExists.id,
+          updatedUser
+        );
+        console.log("=== PUT updated user", updatedUserResult, "===");
+
+        if (updatedUserResult) {
+          res.status(200).json({ payload: updatedUserResult });
+        } else {
+          res.status(404).send("User profile image not updated");
+        }
       } else {
         res.status(404).send("Profile image not created");
       }
@@ -107,12 +124,10 @@ images.post(
 images.put(
   "/update/:id",
   requireAuth(),
-  scopeAuth(["write:user"]),
   checkProfileImageExtraEntries,
   async (req, res) => {
     const { id } = req.params;
-    const { token } = req.user;
-    const decoded = jwt.decode(token);
+    const decodedUserData = req.user.decodedUser;
 
     const updatedProfileImageData = {
       image_url: req.body.image_url,
@@ -122,7 +137,7 @@ images.put(
     try {
       const getProfileImage = await getProfileImageByID(id);
 
-      if (getProfileImage.user_id !== decoded.user.id) {
+      if (getProfileImage.user_id !== decodedUserData.id) {
         res.status(401).send("Unauthorized");
         return;
       } else if (!getProfileImage) {
@@ -148,39 +163,33 @@ images.put(
   }
 );
 
-images.delete(
-  "/delete/:id",
-  requireAuth(),
-  scopeAuth(["write:user"]),
-  async (req, res) => {
-    const { id } = req.params;
-    const { token } = req.user;
-    const decoded = jwt.decode(token);
+images.delete("/delete/:id", requireAuth(), async (req, res) => {
+  const { id } = req.params;
+  const decodedUserData = req.user.decodedUser;
 
-    try {
-      const getProfileImage = await getProfileImageByID(id);
+  try {
+    const getProfileImage = await getProfileImageByID(id);
 
-      if (getProfileImage.user_id !== decoded.user.id) {
-        res.status(401).send("Unauthorized");
-        return;
-      } else if (!getProfileImage) {
-        res.status(404).send("Profile image not found");
-        return;
-      }
-
-      const deletedProfileImage = await deleteProfileImage(id);
-      console.log("=== DELETE profile image", deletedProfileImage, "===");
-
-      if (deletedProfileImage) {
-        res.status(200).json({ payload: deletedProfileImage });
-      } else {
-        res.status(404).send("Profile image not deleted");
-      }
-    } catch (error) {
-      console.error("ERROR images.DELETE /:id", { error });
-      res.status(500).send("Internal Server Error");
+    if (getProfileImage.user_id !== decodedUserData.id) {
+      res.status(401).send("Unauthorized");
+      return;
+    } else if (!getProfileImage) {
+      res.status(404).send("Profile image not found");
+      return;
     }
+
+    const deletedProfileImage = await deleteProfileImage(id);
+    console.log("=== DELETE profile image", deletedProfileImage, "===");
+
+    if (deletedProfileImage) {
+      res.status(200).json({ payload: deletedProfileImage });
+    } else {
+      res.status(404).send("Profile image not deleted");
+    }
+  } catch (error) {
+    console.error("ERROR images.DELETE /:id", { error });
+    res.status(500).send("Internal Server Error");
   }
-);
+});
 
 module.exports = images;

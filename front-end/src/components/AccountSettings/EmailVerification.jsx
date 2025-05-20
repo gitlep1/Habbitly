@@ -1,12 +1,9 @@
 import "./EmailVerification.scss";
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { Form, Button } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-
-import { userContext, tokenContext } from "../../CustomContexts/Contexts";
-import { SetCookies } from "../../CustomFunctions/HandleCookies";
 
 const API = import.meta.env.VITE_PUBLIC_API_BASE;
 
@@ -14,9 +11,6 @@ export const EmailVerification = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { email, username, password } = location.state || {};
-
-  const { setAuthUser } = useContext(userContext);
-  const { setAuthToken } = useContext(tokenContext);
 
   const [codeInput, setCodeInput] = useState("");
 
@@ -46,21 +40,12 @@ export const EmailVerification = () => {
                 containerId: "toast-notify",
               }
             );
-            setAuthUser(res.data.payload);
-            setAuthToken(res.data.token);
-
-            SetCookies("authUser", res.data.payload, 30);
-            SetCookies("authToken", res.data.token, 30);
           })
           .catch((error) => {
             return toast.error(`Sign up failed: ${error.response.data.error}`, {
               containerId: "toast-notify",
             });
           });
-
-        toast.success(res.data.message, {
-          containerId: "toast-notify",
-        });
         setTimeout(() => {
           navigate("/");
         }, 4500);

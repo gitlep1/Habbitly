@@ -28,6 +28,22 @@ CREATE TABLE users (
   last_online TIMESTAMP DEFAULT NOW()
 );
 
+DROP TABLE IF EXISTS profile_images;
+CREATE TABLE profile_images (
+  id UUID DEFAULT uuid_generate_v4() NOT NULL PRIMARY KEY,
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  image_url TEXT NOT NULL,
+  delete_hash TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+DROP TABLE IF EXISTS timed_account_deletions;
+CREATE TABLE timed_account_deletions (
+  id UUID DEFAULT uuid_generate_v4() NOT NULL PRIMARY KEY,
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  deletion_date TIMESTAMP NOT NULL
+);
+
 DROP TABLE IF EXISTS habbits;
 CREATE TABLE habbits (
   id UUID DEFAULT uuid_generate_v4() NOT NULL PRIMARY KEY,
@@ -44,22 +60,6 @@ CREATE TABLE habbits (
   end_date DATE,
   is_active BOOLEAN DEFAULT TRUE,
   habit_completed BOOLEAN DEFAULT FALSE
-);
-
-DROP TABLE IF EXISTS timed_account_deletions;
-CREATE TABLE timed_account_deletions (
-  id UUID DEFAULT uuid_generate_v4() NOT NULL PRIMARY KEY,
-  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  deletion_date TIMESTAMP NOT NULL
-);
-
-DROP TABLE IF EXISTS profile_images;
-CREATE TABLE profile_images (
-  id UUID DEFAULT uuid_generate_v4() NOT NULL PRIMARY KEY,
-  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  image_url TEXT NOT NULL,
-  delete_hash TEXT NOT NULL,
-  created_at TIMESTAMP DEFAULT NOW()
 );
 
 DROP TABLE IF EXISTS news;
