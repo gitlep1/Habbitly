@@ -135,6 +135,7 @@ users.post(
 );
 
 users.post("/signin", async (req, res) => {
+  console.log("processssssssss: ", process.env.NODE_ENV);
   const existingUserData = {
     email: req.body.email,
     password: req.body.password,
@@ -177,7 +178,7 @@ users.post("/signin", async (req, res) => {
       });
 
       res.cookie("authUser", JSON.stringify(userData), {
-        httpOnly: false,
+        httpOnly: true,
         secure: true,
         sameSite: "None",
         maxAge: 30 * 24 * 60 * 60 * 1000,

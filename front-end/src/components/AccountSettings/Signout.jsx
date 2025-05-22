@@ -31,7 +31,7 @@ export const Signout = ({ showSignoutModal, handleSignoutModalClose }) => {
           containerId: "toast-notify",
         });
         return setTimeout(() => {
-          navigate("/");
+          window.location.reload();
         }, 4100);
       })
       .catch((err) => {

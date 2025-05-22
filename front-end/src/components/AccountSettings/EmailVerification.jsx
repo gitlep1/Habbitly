@@ -56,7 +56,13 @@ export const EmailVerification = () => {
     setIsLoading(true);
 
     await axios
-      .post(`${API}/email/send-verification`, { email })
+      .post(
+        `${API}/email/send-verification`,
+        { email },
+        {
+          withCredentials: true,
+        }
+      )
       .then(() => {
         toast.success("Verification code sent! Please check your inbox.", {
           containerId: "toast-notify",
@@ -94,7 +100,9 @@ export const EmailVerification = () => {
     setIsLoading(true);
 
     await axios
-      .post(`${API}/email/verify-code`, userCodeData)
+      .post(`${API}/email/verify-code`, userCodeData, {
+        withCredentials: true,
+      })
       .then(async () => {
         await axios
           .post(`${API}/users/signup`, userInfoData, { withCredentials: true })
