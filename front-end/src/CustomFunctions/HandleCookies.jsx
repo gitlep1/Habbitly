@@ -3,6 +3,8 @@ import Cookies from "js-cookie";
 const GetCookies = (name) => {
   let data = null;
 
+  console.log("inside GetCookies");
+
   if (Cookies.get(name)) {
     data = JSON.parse(Cookies.get(name));
   }
@@ -11,6 +13,8 @@ const GetCookies = (name) => {
 };
 
 const SetCookies = (name, data, expirationDate) => {
+  console.log("inside SetCookies");
+
   Cookies.set(name, JSON.stringify(data), {
     expires: expirationDate,
     path: "/",
@@ -19,6 +23,7 @@ const SetCookies = (name, data, expirationDate) => {
 };
 
 const RemoveCookies = (name) => {
+  console.log("inside RemoveCookies");
   Cookies.remove(name);
 };
 
