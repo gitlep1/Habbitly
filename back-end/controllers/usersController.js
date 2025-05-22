@@ -175,16 +175,16 @@ users.post("/signin", async (req, res) => {
 
       res.cookie("authToken", createdToken, {
         httpOnly: true,
-        secure: true,
-        sameSite: "None",
+        secure: false,
+        sameSite: "Strict",
         partitioned: true,
         maxAge: 30 * 24 * 60 * 60 * 1000,
       });
 
       res.cookie("authUser", JSON.stringify(userData), {
         httpOnly: false,
-        secure: true,
-        sameSite: "None",
+        secure: false,
+        sameSite: "Strict",
         partitioned: true,
         maxAge: 30 * 24 * 60 * 60 * 1000,
       });
