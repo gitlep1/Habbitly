@@ -171,21 +171,24 @@ users.post("/signin", async (req, res) => {
 
       console.log("=== POST user signin (tokenData)", createdToken, "===");
 
-      // res.cookie("authToken", createdToken, {
-      //   httpOnly: true,
-      //   secure: true,
-      //   sameSite: "None",
-      //   partitioned: true,
-      //   maxAge: 30 * 24 * 60 * 60 * 1000,
-      // });
+      const expirationDate = new Date();
+      expirationDate.setDate(expirationDate.getDate() + 30);
 
-      // res.cookie("authUser", JSON.stringify(userData), {
-      //   httpOnly: false,
-      //   secure: true,
-      //   sameSite: "None",
-      //   partitioned: true,
-      //   maxAge: 30 * 24 * 60 * 60 * 1000,
-      // });
+      res.cookie("authToken", createdToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "None",
+        partitioned: true,
+        maxAge: expirationDate,
+      });
+
+      res.cookie("authUser", JSON.stringify(userData), {
+        httpOnly: false,
+        secure: true,
+        sameSite: "None",
+        partitioned: true,
+        maxAge: expirationDate,
+      });
 
       console.log("=== POST user signin", userData, "===");
       res.status(200).json({ payload: userData, token: createdToken });
