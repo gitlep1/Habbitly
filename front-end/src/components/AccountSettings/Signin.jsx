@@ -44,7 +44,9 @@ export const Signin = ({ handleSignUpClick, handleAuthModal }) => {
 
         // SetCookies("authUser", res.data.payload, expirationDate);
         // SetCookies("authToken", res.data.token, expirationDate);
+        console.log("BEFORE", res.data.payload);
         handleAuthModal();
+        console.log("AFTER", res.data.payload);
         notify(res.data.payload);
       })
       .catch((err) => {
