@@ -1,0 +1,61 @@
+.habit-tracker-container {
+  .top-section {
+    .rainbow-cloud-container {
+      .corey {
+        width: 300px;
+      }
+    }
+  }
+
+  .habit-title {
+    font-size: 100px;
+  }
+
+  .habit-cards-container {
+    height: 70dvh;
+    overflow: auto;
+
+    .add-habit-card {
+      border: 2px dashed #ccc;
+      transition: background-color 0.2s ease-in-out;
+
+      &:hover {
+        background-color: rgb(0, 142, 163);
+      }
+
+      span {
+        font-size: 4rem;
+        color: #aaa;
+      }
+    }
+
+    .habit-card {
+      padding: 1rem;
+      box-sizing: border-box;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      transition: transform 0.2s ease-in-out;
+      min-height: 300px;
+
+      &:hover {
+        transform: translateY(-5px);
+      }
+
+      h3 {
+        font-size: 2rem;
+      }
+    }
+
+    .habit-card-button {
+      font-weight: bold;
+      transition: background-color 0.2s ease-in-out;
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+
+    .habit-card-icon {
+      color: #a0a0a0;
+    }
+  }
+}
