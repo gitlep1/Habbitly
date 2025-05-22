@@ -172,14 +172,14 @@ users.post("/signin", async (req, res) => {
       res.cookie("authToken", JSON.stringify(createdToken), {
         httpOnly: true,
         secure: true,
-        SameSite: "None",
+        sameSite: "None",
         maxAge: 30 * 24 * 60 * 60 * 1000,
       });
 
       res.cookie("authUser", JSON.stringify(userData), {
         httpOnly: false,
         secure: true,
-        SameSite: "None",
+        sameSite: "None",
         maxAge: 30 * 24 * 60 * 60 * 1000,
       });
 
@@ -280,11 +280,13 @@ users.delete("/delete", requireAuth(), async (req, res) => {
         httpOnly: true,
         secure: true,
         sameSite: "Strict",
+        path: "/",
       });
       res.clearCookie("authUser", {
         httpOnly: true,
         secure: true,
         sameSite: "Strict",
+        path: "/",
       });
 
       res.status(200).send(
