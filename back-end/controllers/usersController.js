@@ -104,6 +104,7 @@ users.post(
         httpOnly: true,
         secure: true,
         sameSite: "None",
+        partitioned: true,
         maxAge: 30 * 24 * 60 * 60 * 1000,
       });
 
@@ -111,6 +112,7 @@ users.post(
         httpOnly: false,
         secure: true,
         sameSite: "None",
+        partitioned: true,
         maxAge: 30 * 24 * 60 * 60 * 1000,
       });
 
@@ -201,6 +203,7 @@ users.post("/signout", (req, res) => {
     httpOnly: true,
     secure: true,
     sameSite: "None",
+    partitioned: true,
     path: "/",
   });
 
@@ -208,6 +211,7 @@ users.post("/signout", (req, res) => {
     httpOnly: false,
     secure: true,
     sameSite: "None",
+    partitioned: true,
     path: "/",
   });
 
@@ -251,7 +255,7 @@ users.put("/update", requireAuth(), checkUserExtraEntries, async (req, res) => {
       httpOnly: true,
       secure: true,
       sameSite: "None",
-      partioned: true,
+      partitioned: true,
       maxAge: 30 * 24 * 60 * 60 * 1000,
     });
 
@@ -259,7 +263,7 @@ users.put("/update", requireAuth(), checkUserExtraEntries, async (req, res) => {
       httpOnly: false,
       secure: true,
       sameSite: "None",
-      partioned: true,
+      partitioned: true,
       maxAge: 30 * 24 * 60 * 60 * 1000,
     });
 
@@ -283,13 +287,14 @@ users.delete("/delete", requireAuth(), async (req, res) => {
       res.clearCookie("authToken", {
         httpOnly: true,
         secure: true,
-        sameSite: "Strict",
+        sameSite: "None",
+        partitioned: true,
         path: "/",
       });
       res.clearCookie("authUser", {
         httpOnly: true,
         secure: true,
-        sameSite: "Strict",
+        sameSite: "None",
         path: "/",
       });
 
