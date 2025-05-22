@@ -102,14 +102,14 @@ users.post(
 
       res.cookie("authToken", JSON.stringify(createdToken), {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
+        secure: true,
         sameSite: "None",
         maxAge: 30 * 24 * 60 * 60 * 1000,
       });
 
       res.cookie("authUser", JSON.stringify(createdUser), {
         httpOnly: false,
-        secure: process.env.NODE_ENV === "production",
+        secure: true,
         sameSite: "None",
         maxAge: 30 * 24 * 60 * 60 * 1000,
       });
@@ -171,15 +171,15 @@ users.post("/signin", async (req, res) => {
 
       res.cookie("authToken", JSON.stringify(createdToken), {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "None",
+        secure: true,
+        same_site: "None",
         maxAge: 30 * 24 * 60 * 60 * 1000,
       });
 
       res.cookie("authUser", JSON.stringify(userData), {
         httpOnly: false,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "None",
+        secure: true,
+        same_site: "None",
         maxAge: 30 * 24 * 60 * 60 * 1000,
       });
 
@@ -197,14 +197,14 @@ users.post("/signin", async (req, res) => {
 users.post("/signout", (req, res) => {
   res.clearCookie("authToken", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: true,
     sameSite: "None",
     path: "/",
   });
 
   res.clearCookie("authUser", {
     httpOnly: false,
-    secure: process.env.NODE_ENV === "production",
+    secure: true,
     sameSite: "None",
     path: "/",
   });
@@ -278,12 +278,12 @@ users.delete("/delete", requireAuth(), async (req, res) => {
 
       res.clearCookie("authToken", {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
+        secure: true,
         sameSite: "Strict",
       });
       res.clearCookie("authUser", {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
+        secure: true,
         sameSite: "Strict",
       });
 
