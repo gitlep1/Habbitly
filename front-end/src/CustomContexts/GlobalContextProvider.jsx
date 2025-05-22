@@ -33,13 +33,13 @@ const GlobalContextProvider = ({ children }) => {
 
   return (
     <screenVersionContext.Provider value={screenVersion}>
-      <themeContext.Provider value={{ themeState, setThemeState }}>
-        <userContext.Provider value={{ authUser, setAuthUser }}>
+      <userContext.Provider value={{ authUser, setAuthUser }}>
+        <themeContext.Provider value={{ themeState, setThemeState }}>
           <errorContext.Provider value={{ error, setError }}>
             {children}
           </errorContext.Provider>
-        </userContext.Provider>
-      </themeContext.Provider>
+        </themeContext.Provider>
+      </userContext.Provider>
     </screenVersionContext.Provider>
   );
 };

@@ -12,8 +12,6 @@ import {
 
 import { themeContext } from "../../../../CustomContexts/Contexts";
 
-import maxwell from "../../../../assets/images/Dashboard-images/Maxwell.png";
-
 const mockTasks = [
   {
     habit_name: "Meditation",

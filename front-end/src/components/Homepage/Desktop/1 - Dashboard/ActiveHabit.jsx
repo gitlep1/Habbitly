@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Image } from "react-bootstrap";
 import axios from "axios";
 
-import Luna from "../../../../assets/images/Dashboard-images/Luna.png";
 import flamey1x from "../../../../assets/images/Dashboard-images/flamey-1x.gif";
 import flamey2x from "../../../../assets/images/Dashboard-images/flamey-2x.gif";
 import flamey3x from "../../../../assets/images/Dashboard-images/flamey-3x.gif";
