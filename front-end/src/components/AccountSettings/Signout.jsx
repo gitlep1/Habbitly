@@ -40,7 +40,6 @@ export const Signout = ({ showSignoutModal, handleSignoutModalClose }) => {
         });
       })
       .finally(() => {
-        window.location.reload();
         setIsLoading(false);
       });
   };

@@ -107,7 +107,6 @@ export const EmailVerification = () => {
             );
             return setTimeout(() => {
               navigate("/");
-              window.location.reload();
             }, 4500);
           })
           .catch((error) => {

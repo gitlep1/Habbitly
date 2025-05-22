@@ -50,7 +50,6 @@ export const Signin = ({ handleSignUpClick, handleAuthModal }) => {
         });
       })
       .finally(() => {
-        window.location.reload();
         setIsLoading(false);
       });
   };
