@@ -13,7 +13,7 @@ import { GetCookies } from "../CustomFunctions/HandleCookies";
 
 const GlobalContextProvider = ({ children }) => {
   const [screenVersion, setScreenVersion] = useState("desktop");
-  const [themeState, setThemeState] = useState("dark");
+  const [themeState, setThemeState] = useState(GetCookies("theme") || "dark");
   const [authUser, setAuthUser] = useState(GetCookies("authUser") || null);
   const [error, setError] = useState("");
 

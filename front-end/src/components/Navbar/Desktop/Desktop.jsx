@@ -80,6 +80,16 @@ export default function Desktop() {
     setExpandSidebar(!expandSidebar);
   };
 
+  const handleThemeStateCookie = () => {
+    if (themeState === "dark") {
+      SetCookies("theme", "light", 365);
+      setThemeState("light");
+    } else {
+      SetCookies("theme", "dark", 365);
+      setThemeState("dark");
+    }
+  };
+
   return (
     <animated.nav
       className={`desktop-navbar desktop-navbar-container ${
@@ -106,7 +116,7 @@ export default function Desktop() {
                     : { border: "1px solid black" }
                 }
                 onClick={() => {
-                  setThemeState(themeState === "dark" ? "light" : "dark");
+                  handleThemeStateCookie();
                 }}
               >
                 <div

@@ -1,10 +1,13 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useContext } from "react";
 import * as THREE from "three";
+
+import { themeContext } from "../../CustomContexts/Contexts";
 
 import Cloud3Texture from "../../../public/BadCloud.png";
 
 export default function CloudsBackground() {
   const mountRef = useRef(null);
+  const { themeState } = useContext(themeContext);
 
   useEffect(() => {
     const currentRef = mountRef.current;
@@ -13,7 +16,7 @@ export default function CloudsBackground() {
       return;
     }
 
-    // --- Scene Setup ---
+    // === Scene Setup === \\
     const scene = new THREE.Scene();
     scene.background = null;
 
@@ -30,7 +33,7 @@ export default function CloudsBackground() {
     renderer.setClearColor(0x000000, 0);
     currentRef.appendChild(renderer.domElement);
 
-    // --- Lighting ---
+    // === Lighting === \\
     const ambientLight = new THREE.AmbientLight(0x555555);
     scene.add(ambientLight);
 
@@ -38,7 +41,7 @@ export default function CloudsBackground() {
     directionalLight.position.set(0, 0, 1).normalize();
     scene.add(directionalLight);
 
-    // --- Cloud Particles ---
+    // === Cloud Particles === \\
     const cloudParticles = [];
     const loader = new THREE.TextureLoader();
 
@@ -50,11 +53,11 @@ export default function CloudsBackground() {
         const cloudMaterial = new THREE.MeshLambertMaterial({
           map: texture,
           transparent: true,
-          opacity: 0.3,
+          opacity: themeState === "dark" ? 0.3 : 0.5,
           side: THREE.DoubleSide,
         });
 
-        for (let i = 0; i < 25; i++) {
+        for (let i = 0; i < 30; i++) {
           const cloud = new THREE.Mesh(cloudGeo, cloudMaterial);
 
           cloud.position.set(
@@ -74,7 +77,7 @@ export default function CloudsBackground() {
       }
     );
 
-    // --- Animation Loop ---
+    // === Animation Loop === \\
     const animate = () => {
       cloudParticles.forEach((p) => {
         p.rotation.z -= 0.0005;
@@ -87,10 +90,8 @@ export default function CloudsBackground() {
       renderer.render(scene, camera);
       requestAnimationFrame(animate);
     };
-
     animate();
 
-    // --- Handle Window Resize ---
     const handleResize = () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
@@ -113,7 +114,7 @@ export default function CloudsBackground() {
       });
       renderer.dispose();
     };
-  }, []);
+  }, [themeState]);
 
   return (
     <div

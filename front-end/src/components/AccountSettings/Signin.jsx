@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Form, Button } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
 
@@ -8,6 +9,8 @@ import { Loading } from "../../CustomFunctions/Loading/Loading";
 const API = import.meta.env.VITE_PUBLIC_API_BASE;
 
 export const Signin = ({ handleSignUpClick, handleAuthModal }) => {
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -47,6 +50,7 @@ export const Signin = ({ handleSignUpClick, handleAuthModal }) => {
         });
       })
       .finally(() => {
+        window.location.reload();
         setIsLoading(false);
       });
   };
@@ -59,7 +63,7 @@ export const Signin = ({ handleSignUpClick, handleAuthModal }) => {
       }
     );
     setTimeout(() => {
-      window.location.reload();
+      navigate("/");
     }, 4100);
 
     return clearFields();

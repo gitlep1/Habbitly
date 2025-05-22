@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Modal, Button } from "react-bootstrap";
 import { toast } from "react-toastify";
 import PropTypes from "prop-types";
@@ -9,6 +10,8 @@ import { Loading } from "../../CustomFunctions/Loading/Loading";
 const API = import.meta.env.VITE_PUBLIC_API_BASE;
 
 export const Signout = ({ showSignoutModal, handleSignoutModalClose }) => {
+  const navigate = useNavigate();
+
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSignout = async () => {
@@ -22,13 +25,13 @@ export const Signout = ({ showSignoutModal, handleSignoutModalClose }) => {
           withCredentials: true,
         }
       )
-      .then((res) => {
+      .then(() => {
         handleSignoutModalClose();
         toast.success("You have been signed out", {
           containerId: "toast-notify",
         });
         return setTimeout(() => {
-          window.location.reload();
+          navigate("/");
         }, 4100);
       })
       .catch((err) => {
@@ -37,6 +40,7 @@ export const Signout = ({ showSignoutModal, handleSignoutModalClose }) => {
         });
       })
       .finally(() => {
+        window.location.reload();
         setIsLoading(false);
       });
   };
