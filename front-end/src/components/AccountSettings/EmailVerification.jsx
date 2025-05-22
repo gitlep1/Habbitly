@@ -41,17 +41,15 @@ export const EmailVerification = () => {
 
   const handleResendCode = async () => {
     if (cooldown > 0) {
-      toast.info(`Please wait ${cooldown} seconds before resending.`, {
+      return toast.info(`Please wait ${cooldown} seconds before resending.`, {
         containerId: "toast-notify",
       });
-      return;
     }
 
     if (!email) {
-      toast.error("No email found to resend code to.", {
+      return toast.error("No email found to resend code to.", {
         containerId: "toast-notify",
       });
-      return;
     }
 
     setIsResending(true);

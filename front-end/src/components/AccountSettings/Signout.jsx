@@ -1,12 +1,19 @@
+import { useState } from "react";
 import { Modal, Button } from "react-bootstrap";
 import { toast } from "react-toastify";
 import PropTypes from "prop-types";
 import axios from "axios";
 
+import { Loading } from "../../CustomFunctions/Loading/Loading";
+
 const API = import.meta.env.VITE_PUBLIC_API_BASE;
 
 export const Signout = ({ showSignoutModal, handleSignoutModalClose }) => {
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleSignout = async () => {
+    setIsLoading(true);
+
     await axios
       .post(
         `${API}/users/signout`,
@@ -28,6 +35,9 @@ export const Signout = ({ showSignoutModal, handleSignoutModalClose }) => {
         return toast.error(`Sign out failed: ${err?.response?.data?.err}`, {
           containerId: "toast-notify",
         });
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   };
 
@@ -47,6 +57,8 @@ export const Signout = ({ showSignoutModal, handleSignoutModalClose }) => {
           Cancel
         </Button>
       </Modal.Footer>
+
+      {isLoading ? <Loading message="Signing in..." /> : null}
     </Modal>
   );
 };

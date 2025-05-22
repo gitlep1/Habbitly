@@ -2,11 +2,6 @@ import { useState, useEffect } from "react";
 import { Image } from "react-bootstrap";
 import axios from "axios";
 
-import {
-  GetCookies,
-  SetCookies,
-} from "../../../../CustomFunctions/HandleCookies";
-
 import harrold from "../../../../assets/images/Dashboard-images/Harrold.png";
 
 const API = import.meta.env.VITE_PUBLIC_API_BASE;

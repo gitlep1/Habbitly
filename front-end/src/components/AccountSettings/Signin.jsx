@@ -12,7 +12,6 @@ export const Signin = ({ handleSignUpClick, handleAuthModal }) => {
   const [password, setPassword] = useState("");
 
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -39,8 +38,16 @@ export const Signin = ({ handleSignUpClick, handleAuthModal }) => {
         handleAuthModal();
       })
       .catch((err) => {
-        console.log({ err });
-        setError(err?.response?.data);
+        const error = err?.response?.data?.error
+          ? err?.response?.data?.error
+          : err?.response?.data;
+
+        return toast.error(`Sign in failed: ${error}`, {
+          containerId: "toast-notify",
+        });
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   };
 
@@ -96,11 +103,6 @@ export const Signin = ({ handleSignUpClick, handleAuthModal }) => {
           >
             Close
           </Button>
-          {error && (
-            <div className="error-container">
-              <p className="error-message">{error}</p>
-            </div>
-          )}
         </Form>
         <p className="switch-auth-mode-container">
           Don&apos;t have an account?{" "}
