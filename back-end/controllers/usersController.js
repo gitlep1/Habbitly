@@ -173,7 +173,7 @@ users.post("/signin", async (req, res) => {
         httpOnly: true,
         secure: true,
         sameSite: "None",
-        partioned: true,
+        partitioned: true,
         maxAge: 30 * 24 * 60 * 60 * 1000,
       });
 
@@ -181,7 +181,7 @@ users.post("/signin", async (req, res) => {
         httpOnly: false,
         secure: true,
         sameSite: "None",
-        partioned: true,
+        partitioned: true,
         maxAge: 30 * 24 * 60 * 60 * 1000,
       });
 
