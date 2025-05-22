@@ -175,19 +175,21 @@ users.post("/signin", async (req, res) => {
       expirationDate.setDate(expirationDate.getDate() + 30);
 
       res.cookie("authToken", createdToken, {
+        expires: expirationDate,
+        path: "/",
         httpOnly: true,
         secure: true,
         sameSite: "None",
         partitioned: true,
-        maxAge: expirationDate,
       });
 
       res.cookie("authUser", JSON.stringify(userData), {
+        expires: expirationDate,
+        path: "/",
         httpOnly: false,
         secure: true,
         sameSite: "None",
         partitioned: true,
-        maxAge: expirationDate,
       });
 
       console.log("=== POST user signin", userData, "===");
