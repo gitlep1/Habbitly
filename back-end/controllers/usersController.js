@@ -174,9 +174,9 @@ users.post("/signin", async (req, res) => {
       console.log("=== POST user signin (tokenData)", createdToken, "===");
 
       res.cookie("authToken", createdToken, {
-        httpOnly: true,
+        httpOnly: false,
         secure: false,
-        sameSite: "Strict",
+        sameSite: "None",
         partitioned: true,
         maxAge: 30 * 24 * 60 * 60 * 1000,
       });
@@ -184,7 +184,7 @@ users.post("/signin", async (req, res) => {
       res.cookie("authUser", JSON.stringify(userData), {
         httpOnly: false,
         secure: false,
-        sameSite: "Strict",
+        sameSite: "None",
         partitioned: true,
         maxAge: 30 * 24 * 60 * 60 * 1000,
       });
