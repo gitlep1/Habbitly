@@ -3,7 +3,7 @@ import * as THREE from "three";
 
 import { themeContext } from "../../CustomContexts/Contexts";
 
-import Cloud3Texture from "../../../public/BadCloud.png";
+import Cloud3Texture from "../../assets/images/BadCloud.png";
 
 export default function CloudsBackground() {
   const mountRef = useRef(null);

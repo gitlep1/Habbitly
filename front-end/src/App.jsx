@@ -1,6 +1,5 @@
 import "./app.scss";
 import { useState, useEffect, useContext } from "react";
-// import * as THREE from "three";
 
 import {
   screenVersionContext,
