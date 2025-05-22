@@ -35,6 +35,7 @@ export const Signin = ({ handleSignUpClick, handleAuthModal }) => {
     await axios
       .post(`${API}/users/signin`, existingUser, {
         withCredentials: true,
+        credentials: "include",
       })
       .then((res) => {
         notify(res.data.payload);
