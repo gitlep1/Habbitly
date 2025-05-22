@@ -1,0 +1,57 @@
+@use "sass:color";
+
+$card-dark: #1e293b;
+$card-highlight: #f97316;
+$card-highlight-gradient: linear-gradient(135deg, #fb923c, #f97316);
+$text-muted: #1f78f5;
+
+.summary-container {
+  margin: 0 auto;
+  padding: 2rem 0;
+  font-family: "Inter", sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+
+  .sunny {
+    width: 300px;
+  }
+
+  /* Utility Box Styles */
+  .summary-box {
+    border-radius: 1.5rem;
+    padding: 1.25rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .task-completed-box {
+    grid-column: 1 / -1;
+    justify-self: center;
+  }
+
+  /* Orange gradient box */
+  .bg-orange-gradient {
+    background: $card-highlight-gradient;
+  }
+
+  /* Section headers */
+  .summary-title {
+    font-size: 2.25rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .summary-subtitle {
+    font-size: 1rem;
+    color: $text-muted;
+    margin-bottom: 2rem;
+  }
+
+  /* Icon/text helpers */
+  .habit-check-icon {
+    color: #60a5fa;
+    font-size: 1.25rem;
+    margin-right: 0.5rem;
+  }
+}

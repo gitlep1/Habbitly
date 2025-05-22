@@ -168,9 +168,7 @@ export const ActiveHabit = () => {
             })}
           </div>
         ) : (
-          <span className="flex justify-self-center">
-            No habit(s) has been set as active
-          </span>
+          <span className="flex justify-self-center">No active habits set</span>
         )}
       </div>
     </div>
