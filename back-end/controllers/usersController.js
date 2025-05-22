@@ -142,6 +142,8 @@ users.post("/signin", async (req, res) => {
     password: req.body.password,
   };
 
+  console.log("SET COOKIE ONCE: ", Date.now());
+
   try {
     const checkUser = await checkUserCredentials(
       existingUserData,
