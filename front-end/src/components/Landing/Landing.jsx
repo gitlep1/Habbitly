@@ -1,16 +1,20 @@
 import "./Landing.scss";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button, Image, Modal } from "react-bootstrap";
 
 import { Signin } from "../AccountSettings/Signin";
 import { Signup } from "../AccountSettings/Signup";
+
+import { GetCookies } from "../../CustomFunctions/HandleCookies";
 
 import LandingBackgroundCloud from "../../assets/images/LandingPage/LandingBackgroundCloud.png";
 import LeftSideCloud from "../../assets/images/LandingPage/LeftSideCloud.png";
 import RightSideCloud from "../../assets/images/LandingPage/RightSideCloud.png";
 
 export const Landing = () => {
+  const authUserData = GetCookies("authUser") || null;
+
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [isSignin, setIsSignin] = useState(true);
 
@@ -19,6 +23,14 @@ export const Landing = () => {
   };
 
   const toggleForm = () => setIsSignin(!isSignin);
+
+  useEffect(() => {
+    if (authUserData) {
+      setTimeout(() => {
+        window.location.reload();
+      }, 4000);
+    }
+  }, [authUserData]);
 
   const renderAuthModal = () => {
     return (
