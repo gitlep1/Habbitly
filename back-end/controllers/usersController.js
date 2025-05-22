@@ -177,7 +177,7 @@ users.post("/signin", async (req, res) => {
       res.cookie("authToken", createdToken, {
         expires: expirationDate,
         path: "/",
-        httpOnly: true,
+        httpOnly: false,
         secure: true,
         sameSite: "None",
         partitioned: true,
