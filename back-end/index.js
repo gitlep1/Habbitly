@@ -23,6 +23,8 @@ const allowedOrigins = [
   "https://habbitly-backend.vercel.app",
 ];
 
+app.set("trust proxy", 1);
+
 app.use(
   cors({
     credentials: true,
