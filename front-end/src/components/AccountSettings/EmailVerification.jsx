@@ -5,6 +5,8 @@ import { toast } from "react-toastify";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 
+import { Loading } from "../../CustomFunctions/Loading/Loading";
+
 const API = import.meta.env.VITE_PUBLIC_API_BASE;
 const RESEND_COOLDOWN_SECONDS = 60;
 
@@ -16,6 +18,9 @@ export const EmailVerification = () => {
   const [codeInput, setCodeInput] = useState("");
   const [cooldown, setCooldown] = useState(0);
   const cooldownIntervalRef = useRef(null);
+
+  const [isResending, setIsResending] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (cooldown > 0) {
@@ -49,21 +54,28 @@ export const EmailVerification = () => {
       return;
     }
 
-    try {
-      await axios.post(`${API}/email/send-verification`, { email });
-      toast.success("Verification code sent! Please check your inbox.", {
-        containerId: "toast-notify",
-      });
-      setCooldown(RESEND_COOLDOWN_SECONDS);
-    } catch (error) {
-      console.error("Error resending code:", error);
-      toast.error(
-        error.response?.data?.error || "Failed to resend verification code.",
-        {
+    setIsResending(true);
+    setIsLoading(true);
+
+    await axios
+      .post(`${API}/email/send-verification`, { email })
+      .then(() => {
+        toast.success("Verification code sent! Please check your inbox.", {
           containerId: "toast-notify",
-        }
-      );
-    }
+        });
+        return setCooldown(RESEND_COOLDOWN_SECONDS);
+      })
+      .catch((error) => {
+        return toast.error(
+          error.response?.data?.error || "Failed to resend verification code.",
+          {
+            containerId: "toast-notify",
+          }
+        );
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   const handleSubmit = async (e) => {
@@ -80,11 +92,14 @@ export const EmailVerification = () => {
       password,
     };
 
+    setIsResending(false);
+    setIsLoading(true);
+
     await axios
       .post(`${API}/email/verify-code`, userCodeData)
-      .then(async (res) => {
+      .then(async () => {
         await axios
-          .post(`${API}/users/signup`, userInfoData)
+          .post(`${API}/users/signup`, userInfoData, { withCredentials: true })
           .then((res) => {
             toast.success(
               `Welcome ${res.data.payload.username}, You have been signed up successfully.`,
@@ -92,20 +107,30 @@ export const EmailVerification = () => {
                 containerId: "toast-notify",
               }
             );
-            setTimeout(() => {
+            return setTimeout(() => {
               navigate("/");
+              window.location.reload();
             }, 4500);
           })
           .catch((error) => {
-            return toast.error(`Sign up failed: ${error.response.data.error}`, {
-              containerId: "toast-notify",
-            });
+            return toast.error(
+              `Sign up failed: ${error?.response?.data?.error}`,
+              {
+                containerId: "toast-notify",
+              }
+            );
+          })
+          .finally(() => {
+            setIsLoading(false);
           });
       })
       .catch((error) => {
-        toast.error(error.response.data.error, {
+        toast.error(error?.response?.data?.error, {
           containerId: "toast-notify",
         });
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   };
 
@@ -144,6 +169,14 @@ export const EmailVerification = () => {
               </Button>
             </div>
           </Form>
+
+          {isLoading ? (
+            isResending ? (
+              <Loading message="Re-sending Code..." />
+            ) : (
+              <Loading message="Verifying Code..." />
+            )
+          ) : null}
         </div>
       ) : (
         <p>No email provided</p>

@@ -10,7 +10,10 @@ import {
   checkUserCredentials,
 } from "../queries/usersQueries.js";
 
-import { registerUserAndSetCookies } from "../Services/userServices.js";
+import {
+  getRegisteredCount,
+  updateRegisteredCount,
+} from "../queries/registeredCountQueries.js";
 
 import {
   checkUserValues,
@@ -67,9 +70,9 @@ users.post(
   checkUserExtraEntries,
   async (req, res) => {
     const newUserData = {
-      email: req.body.email,
       username: req.body.username,
       password: req.body.password,
+      email: req.body.email,
     };
 
     console.log("=== POST (newUserData)", newUserData, "===");
@@ -77,7 +80,7 @@ users.post(
     try {
       const checkCreds = await checkUserCredentials(
         newUserData,
-        "email&username"
+        "email|username"
       );
 
       console.log("=== POST user signup (checkCreds)", checkCreds, "===");
@@ -85,31 +88,48 @@ users.post(
       if (checkCreds) {
         return res.status(409).send("Email/Username already taken!");
       }
+      const createdUser = await createUser(newUserData);
 
-      const createdUser = await registerUserAndSetCookies(newUserData, res);
-
-      return res.status(200).json({ payload: createdUser });
-    } catch (error) {
-      console.error("users.POST /signup error:", {
-        error: error.message,
-        stack: error.stack,
-      });
-
-      let userFriendlyMessage =
-        "An unexpected error occurred. Please try again later.";
-      let statusCode = 500;
-
-      if (error.message.includes("USER")) {
-        userFriendlyMessage =
-          "Failed to create your account. Please try again.";
-        statusCode = 500;
-      } else if (error.message.includes("TOKEN")) {
-        userFriendlyMessage =
-          "Account created, but failed to set up your session. Please try logging in.";
-        statusCode = 500;
+      if (!createdUser) {
+        return res.status(404).send("user not created");
       }
 
-      return res.status(statusCode).json({ error: userFriendlyMessage });
+      const createdToken = await createToken(createdUser);
+
+      if (!createdToken) {
+        return res.status(404).send("token not created");
+      }
+
+      res.cookie("authToken", JSON.stringify(createdToken), {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "Strict",
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+      });
+
+      res.cookie("authUser", JSON.stringify(createdUser), {
+        httpOnly: false,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "Strict",
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+      });
+
+      const userData = {
+        id: createdUser.id,
+        profileimg: createdUser.profileimg,
+        email: createdUser.email,
+        username: createdUser.username,
+        theme: createdUser.theme,
+        last_online: createdUser.last_online,
+      };
+
+      const registeredCount = await getRegisteredCount();
+      const newCount = registeredCount?.count + 1;
+      await updateRegisteredCount(newCount, registeredCount.id);
+      res.status(200).json({ payload: userData });
+    } catch (error) {
+      console.error("users.POST /signup", { error });
+      res.status(500).send("Internal Server Error");
     }
   }
 );

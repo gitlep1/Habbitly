@@ -7,23 +7,28 @@ const API = import.meta.env.VITE_PUBLIC_API_BASE;
 
 export const Signout = ({ showSignoutModal, handleSignoutModalClose }) => {
   const handleSignout = async () => {
-    await axios.post(
-      `${API}/users/signout`,
-      {},
-      {
-        withCredentials: true,
-      }
-    );
-
-    handleSignoutModalClose();
-
-    toast.success("You have been signed out", {
-      containerId: "toast-notify",
-    });
-
-    return setTimeout(() => {
-      window.location.reload();
-    }, 4100);
+    await axios
+      .post(
+        `${API}/users/signout`,
+        {},
+        {
+          withCredentials: true,
+        }
+      )
+      .then((res) => {
+        handleSignoutModalClose();
+        toast.success("You have been signed out", {
+          containerId: "toast-notify",
+        });
+        return setTimeout(() => {
+          window.location.reload();
+        }, 4100);
+      })
+      .catch((err) => {
+        return toast.error(`Sign out failed: ${err?.response?.data?.err}`, {
+          containerId: "toast-notify",
+        });
+      });
   };
 
   return (

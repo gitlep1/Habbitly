@@ -13,18 +13,8 @@ import {
 
 import { checkUserCredentials } from "../queries/usersQueries.js";
 
-import { registerUserAndSetCookies } from "../Services/userServices.js";
-
 emailAuth.post("/verify-code", async (req, res) => {
-  const { email, code, username, password } = req.body;
-
-  const checkCreds = await checkUserCredentials(newUserData, "email&username");
-
-  console.log("=== POST verify-code (checkCreds)", checkCreds, "===");
-
-  if (checkCreds) {
-    return res.status(409).send("Email/Username already taken!");
-  }
+  const { email, code } = req.body;
 
   try {
     const emailVerification = await getEmailVerification(email);
@@ -50,14 +40,6 @@ emailAuth.post("/verify-code", async (req, res) => {
 
     await deleteEmailVerification(email);
 
-    const userData = {
-      email,
-      username,
-      password,
-    };
-
-    await registerUserAndSetCookies(userData, res);
-
     res.status(200).json({ message: "Verification successful." });
   } catch (error) {
     console.error(error);
@@ -68,12 +50,20 @@ emailAuth.post("/verify-code", async (req, res) => {
 emailAuth.post("/send-verification", async (req, res) => {
   const userData = {
     email: req.body.email,
+    username: req.body.username,
   };
 
   try {
-    const userExists = await checkUserCredentials(userData, "email");
+    const userExists = await checkUserCredentials(userData, "email|username");
     if (userExists) {
-      return res.status(400).json({ error: "Email already exists." });
+      return res
+        .status(400)
+        .json({ error: "Email or Username already exists." });
+    }
+
+    const emailVerification = await getEmailVerification(userData.email);
+    if (emailVerification) {
+      await deleteEmailVerification(userData.email);
     }
 
     const transporter = await createTransporter();

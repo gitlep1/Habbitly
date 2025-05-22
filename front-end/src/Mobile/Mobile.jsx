@@ -8,11 +8,14 @@ import { Notfound } from "../components/Notfound/Notfound";
 import { Navbar } from "../components/Navbar/Navbar";
 import { EmailVerification } from "../components/AccountSettings/EmailVerification";
 
-import { LandingMobile } from "../components/Landing/Mobile/LandingMobile";
-import { LandingDesktop } from "../components/Landing/Desktop/LandingDesktop";
-import { Dashboard } from "../components/Homepage/Mobile/1 - Dashboard/Dashboard";
-import { Summary } from "../components/Homepage/Mobile/2 - DailySummary/Summary";
-import { Insights } from "../components/Homepage/Mobile/3 - Insights & Analytics/Insights";
+import { Landing } from "../components/Landing/Landing";
+// import { Dashboard } from "../components/Homepage/Mobile/1 - Dashboard/Dashboard";
+// import { Summary } from "../components/Homepage/Mobile/2 - DailySummary/Summary";
+// import { Insights } from "../components/Homepage/Mobile/3 - Insights & Analytics/Insights";
+
+import { Dashboard } from "../components/Homepage/Desktop/1 - Dashboard/Dashboard";
+import { Summary } from "../components/Homepage/Desktop/2 - DailySummary/Summary";
+import { Insights } from "../components/Homepage/Desktop/3 - Insights & Analytics/Insights";
 
 const Mobile = () => {
   const screenVersion = useContext(screenVersionContext);
@@ -24,12 +27,12 @@ const Mobile = () => {
 
       <Routes>
         {!authUser ? (
-          <Route path="/" element={<LandingDesktop />} />
+          <Route path="/" element={<Landing />} />
         ) : (
           <>
             <Route path="/" element={<Dashboard />} />
-            <Route path="/homepage/summary" element={<Summary />} />
-            <Route path="/homepage/insights" element={<Insights />} />
+            <Route path="/summary" element={<Summary />} />
+            <Route path="/insights" element={<Insights />} />
           </>
         )}
         <Route path="/email-verification" element={<EmailVerification />} />

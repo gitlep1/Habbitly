@@ -21,9 +21,9 @@ export const createUser = async (newUserData) => {
   const query =
     "INSERT INTO users (username, password, email, created_at) VALUES ($1, $2, $3, NOW())  RETURNING id, profileimg, username, theme, last_online";
   const newUser = await db.oneOrNone(query, [
-    newUserData.email,
     newUserData.username,
     newUserData.password,
+    newUserData.email,
   ]);
   return newUser;
 };
@@ -56,27 +56,31 @@ export const deleteUser = async (id) => {
 
 // prettier-ignore
 export const checkUserCredentials = async (userData, checker) => {
-  if (checker === "email") {
-    const query = `SELECT id FROM users WHERE email = $1`;
-    const userCredentials = await db.oneOrNone(query, userData.email);
-    return userCredentials;
+  let query = 'SELECT id FROM users WHERE ';
+  const params = [];
+  const conditions = [];
 
-  } else if (checker === "email&username") {
-    console.log("=== checkUserCredentials", { userData, checker }, "===");
-
-    const query = `SELECT id FROM users WHERE email = $1 OR username = $2`;
-    const userCredentials = await db.oneOrNone(query, [
-      userData.email,
-      userData.username,
-    ]);
-    return userCredentials;
-
-  } else if (checker === "email&password") {
-    const query = `SELECT id FROM users WHERE email = $1 AND password = $2`;
-    const userCredentials = await db.oneOrNone(query, [
-      userData.email,
-      userData.password
-    ]);
-    return userCredentials;
+  if (checker.includes('email') && userData.email) {
+    params.push(userData.email);
+    conditions.push(`email = $${params.length}`);
   }
+
+  if (checker.includes('username') && userData.username) {
+    params.push(userData.username);
+    conditions.push(`username = $${params.length}`);
+  }
+
+  if (checker.includes('password') && userData.password) {
+    params.push(userData.password);
+    conditions.push(`password = $${params.length}`);
+  }
+
+  if (conditions.length === 0) return null;
+
+  const joiner = checker === 'email|username' ? ' OR ' : ' AND ';
+  query += conditions.join(joiner);
+
+  const userCredentials = await db.oneOrNone(query, params);
+  console.log(`=== checkUserCredentials ${checker}`, { userData, checker, userCredentials }, "===");
+  return userCredentials;
 };

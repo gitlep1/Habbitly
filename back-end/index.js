@@ -7,6 +7,7 @@ import habbitsController from "./controllers/habbitsController.js";
 import emailAuthController from "./controllers/emailAuthController.js";
 import imageUploaderController from "./controllers/imageUploaderController.js";
 import newsController from "./controllers/newsController.js";
+import registeredCountController from "./controllers/registeredCountController.js";
 import oauthRouter from "./Utils/oauthRoutes.js";
 
 import "dotenv/config";
@@ -56,6 +57,8 @@ app.use("/images", imageUploaderController);
 
 // === News Routes === \\
 app.use("/news", newsController);
+
+app.use("/registered-count", registeredCountController);
 
 app.post("/login", (req, res) => {
   const { username, password } = req.body;

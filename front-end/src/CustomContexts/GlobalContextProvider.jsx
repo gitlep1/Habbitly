@@ -20,7 +20,7 @@ const GlobalContextProvider = ({ children }) => {
   useEffect(() => {
     const checkScreenVersion = () => {
       const { width } = DetectScreenSize();
-      setScreenVersion(width >= 800 ? "desktop" : "mobile");
+      setScreenVersion(width >= 768 ? "desktop" : "mobile");
     };
 
     checkScreenVersion();

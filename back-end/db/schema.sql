@@ -69,3 +69,9 @@ CREATE TABLE news (
   content TEXT NOT NULL,
   created_at TIMESTAMP DEFAULT NOW()
 );
+
+DROP TABLE IF EXISTS registered_count;
+CREATE TABLE registered_count (
+  id UUID DEFAULT uuid_generate_v4() NOT NULL PRIMARY KEY,
+  count INTEGER DEFAULT 0
+);

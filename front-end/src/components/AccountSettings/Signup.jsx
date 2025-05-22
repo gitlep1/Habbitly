@@ -4,13 +4,11 @@ import { Form, Button } from "react-bootstrap";
 import { toast } from "react-toastify";
 import axios from "axios";
 
-import defaultProfilePic from "../../assets/images/default-profile-pic.png";
+import { Loading } from "../../CustomFunctions/Loading/Loading";
 
 const API = import.meta.env.VITE_PUBLIC_API_BASE;
 
 export const Signup = ({ handleSignUpClick, handleAuthModal }) => {
-  let error = "";
-
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -18,19 +16,20 @@ export const Signup = ({ handleSignUpClick, handleAuthModal }) => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const newUser = {
-      profilePic: defaultProfilePic,
       username,
       password,
       email,
     };
 
-    if (newUser.username.length > 12) {
+    if (newUser.username.length > 20) {
       return toast.error(
-        `Your current username:(${newUser.username}) is ${newUser.username.length} characters long. \n The max chracter length allowed is 12.`,
+        `Your current username:(${newUser.username}) is ${newUser.username.length} characters long. \n The max chracter length allowed is 20.`,
         {
           containerId: "toast-notify",
         }
@@ -53,6 +52,8 @@ export const Signup = ({ handleSignUpClick, handleAuthModal }) => {
       });
     }
 
+    setIsLoading(true);
+
     await axios
       .post(`${API}/email/send-verification`, newUser)
       .then(() => {
@@ -67,16 +68,19 @@ export const Signup = ({ handleSignUpClick, handleAuthModal }) => {
         });
       })
       .catch((err) => {
-        const error = err.response.data.error;
+        const error = err?.response?.data?.error;
 
         return toast.error(
-          error === "Email already exists."
-            ? "ERROR: Email already taken."
+          error.includes("Email")
+            ? error
             : "ERROR: Please try again. If this continues try again in a few hours as the server might be down.",
           {
             containerId: "toast-notify",
           }
         );
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   };
 
@@ -144,7 +148,6 @@ export const Signup = ({ handleSignUpClick, handleAuthModal }) => {
           >
             Close
           </Button>
-          {error && <p className="error-message">{error}</p>}
         </Form>
         <p className="switch-auth-mode-container">
           Already have an account?{" "}
@@ -157,6 +160,8 @@ export const Signup = ({ handleSignUpClick, handleAuthModal }) => {
             Sign In
           </span>
         </p>
+
+        {isLoading ? <Loading message="Signing up..." /> : null}
       </div>
     );
   };

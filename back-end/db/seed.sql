@@ -9,3 +9,5 @@ INSERT INTO news (title, content, created_at) VALUES
 ('Bug Fixes and Performance Boosts', 'We squashed a few bugs and improved the speed of habit tracking.'),
 ('Team Spotlight: Meet the Devs', 'Get to know the passionate developers behind Habbitly in our new blog series.'),
 ('Upcoming: Social Habit Circles', 'Soon, you will be able to join habit circles with friends or the community for accountability.');
+
+INSERT INTO registered_count (count) VALUES (0);

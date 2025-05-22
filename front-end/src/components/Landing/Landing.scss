@@ -1,0 +1,110 @@
+.landing-container {
+  display: grid;
+  grid-template-rows: 100px 1fr 200px;
+
+  .landing-header {
+    grid-row: 1;
+
+    .landing-auth-buttons {
+      .signin-button {
+        border: none;
+        background: linear-gradient(to bottom right, #00a060, #76cb00);
+
+        &:hover {
+          background: linear-gradient(to bottom right, #47d579, #8bda41);
+          box-shadow: 0 0 12px rgba(75, 226, 127, 0.4);
+        }
+      }
+
+      .signup-button {
+        border: none;
+        background: linear-gradient(to bottom right, #770ed3, #5922bf);
+
+        &:hover {
+          background: linear-gradient(to bottom right, #985eff, #6d3cff);
+          box-shadow: 0 0 12px rgba(134, 77, 245, 0.5);
+        }
+      }
+    }
+  }
+
+  .landing-main-content {
+    grid-row: 2;
+
+    .landing-main-content-side-container {
+      flex-direction: column;
+      justify-content: space-between;
+      width: 200%;
+      z-index: 1;
+
+      h1 {
+        text-align: center;
+      }
+    }
+
+    .landing-main-content-get-started-container {
+      grid-column: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+
+      .landing-background-cloud {
+        width: 80%;
+      }
+
+      .get-started-button {
+        font-size: 30px;
+        width: 50%;
+        border: none;
+        border-radius: 2em;
+        background-image: linear-gradient(to right, #ff6b6b, #ffa500);
+        text-shadow:
+          1px 1px 2px rgba(255, 255, 255, 0.5),
+          -1px -1px 2px rgba(255, 255, 255, 0.5),
+          1px -1px 2px rgba(255, 255, 255, 0.5),
+          -1px 1px 2px rgba(255, 255, 255, 0.5);
+
+        &:hover {
+          transform: scale(1.1);
+        }
+      }
+    }
+  }
+
+  .landing-features {
+    grid-row: 3;
+    width: 100%;
+    padding: 3rem 1rem;
+
+    .feature-card {
+      background: linear-gradient(to bottom right, #770ed3, #5922bf);
+      color: #fff;
+
+      &:nth-child(odd) {
+        background: linear-gradient(to bottom right, #770ed3, #5922bf);
+      }
+
+      &:nth-child(even) {
+        background: linear-gradient(to bottom right, #00a060, #76cb00);
+      }
+
+      h3 {
+        font-size: 1.25rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+      }
+
+      p {
+        font-size: 0.9rem;
+        color: #f0f0f0;
+      }
+
+      &:hover {
+        transform: scale(1.05);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+      }
+    }
+  }
+}

@@ -1,17 +1,17 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Form, Button } from "react-bootstrap";
 import { toast } from "react-toastify";
 import axios from "axios";
 
+import { Loading } from "../../CustomFunctions/Loading/Loading";
+
 const API = import.meta.env.VITE_PUBLIC_API_BASE;
 
 export const Signin = ({ handleSignUpClick, handleAuthModal }) => {
-  const navigate = useNavigate();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
@@ -27,6 +27,8 @@ export const Signin = ({ handleSignUpClick, handleAuthModal }) => {
         containerId: "toast-notify",
       });
     }
+
+    setIsLoading(true);
 
     await axios
       .post(`${API}/users/signin`, existingUser, {
@@ -111,6 +113,8 @@ export const Signin = ({ handleSignUpClick, handleAuthModal }) => {
             Sign Up
           </span>
         </p>
+
+        {isLoading ? <Loading message="Signing in..." /> : null}
       </div>
     );
   };

@@ -281,7 +281,6 @@ $large-desktop: 1400px;
   }
 
   .site-news-container {
-    position: relative;
     grid-row: 4;
     grid-column: 1 / -1;
     display: flex;
@@ -296,6 +295,7 @@ $large-desktop: 1400px;
       border-radius: 3em;
       text-align: center;
       overflow: auto;
+      overflow: hidden;
 
       .site-news-card-header {
         @include card-header(1fr, 250px);
