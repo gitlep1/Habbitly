@@ -136,11 +136,12 @@ export const Calendar = ({}) => {
     <div className="calendar-container">
       <div className="calendar-card">
         <div className="calendar-card-header">
-          <Image
+          {/* <Image
             src={maxwell}
             alt="maxwell-calendar-card"
             id="calendar-cloud"
-          />
+          /> */}
+          <h1>Calendar</h1>
         </div>
 
         <ReactCalendar

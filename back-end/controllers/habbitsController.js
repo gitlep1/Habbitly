@@ -35,7 +35,6 @@ habbits.get("/user", requireAuth(), async (req, res) => {
 
   try {
     const userHabbits = await getUserHabbits(decodedUserData.id);
-    console.log("=== GET user habbits", userHabbits, "===");
 
     if (userHabbits) {
       res.status(200).json({ payload: userHabbits });

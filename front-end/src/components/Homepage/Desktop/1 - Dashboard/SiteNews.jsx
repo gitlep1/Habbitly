@@ -108,11 +108,6 @@ export const SiteNews = ({}) => {
     <div className="site-news-container">
       <div className="site-news-card">
         <div className="site-news-card-header">
-          {/* <Image
-            src={harrold}
-            alt="harrold-site-news-card"
-            id="site-news-cloud"
-          /> */}
           <h3>Site News</h3>
         </div>
 

@@ -33,19 +33,24 @@ export const requireAuth = () => {
 
     let token = null;
 
-    console.log("=== requireAuth", { authHeader }, { cookieHeader }, "===");
-
-    if (authHeader === "Bearer null" || !authHeader || !cookieHeader) {
-      return;
+    if (authHeader === "Bearer null" || (!authHeader && !cookieHeader)) {
+      return res
+        .status(401)
+        .json({ error: "No authHeader or cookieHeader provided" });
     }
 
     if (authHeader && authHeader.startsWith("Bearer ")) {
       token = authHeader.split(" ")[1];
     } else if (cookieHeader) {
-      token = cookieHeader
+      let rawTokenFromCookie = cookieHeader
         ?.split(";")
         ?.find((cookie) => cookie.trim().startsWith("authToken="))
         ?.split("=")[1];
+
+      if (rawTokenFromCookie) {
+        let decodedToken = decodeURIComponent(rawTokenFromCookie);
+        token = decodedToken.replace(/^"|"$/g, "");
+      }
     }
 
     if (!token) {
@@ -56,7 +61,7 @@ export const requireAuth = () => {
       const { payload } = await verifyToken(token);
       req.user = {
         token,
-        decodedUser: payload.user,
+        decodedUser: payload,
       };
       return next();
     } catch (err) {
