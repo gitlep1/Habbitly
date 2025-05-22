@@ -100,9 +100,7 @@ export const EmailVerification = () => {
     setIsLoading(true);
 
     await axios
-      .post(`${API}/email/verify-code`, userCodeData, {
-        withCredentials: true,
-      })
+      .post(`${API}/email/verify-code`, userCodeData)
       .then(async () => {
         await axios
           .post(`${API}/users/signup`, userInfoData, { withCredentials: true })

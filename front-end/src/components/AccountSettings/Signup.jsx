@@ -55,9 +55,7 @@ export const Signup = ({ handleSignUpClick, handleAuthModal }) => {
     setIsLoading(true);
 
     await axios
-      .post(`${API}/email/send-verification`, newUser, {
-        withCredentials: true,
-      })
+      .post(`${API}/email/send-verification`, newUser)
       .then(() => {
         clearFields();
         handleAuthModal();

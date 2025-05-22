@@ -72,20 +72,26 @@ export default function Desktop() {
   }, [location]);
 
   const expandSidebarCookie = () => {
+    const expirationDate = new Date();
+    expirationDate.setDate(expirationDate.getDate() + 30);
+
     if (expandSidebar) {
-      SetCookies("expandCookie", false, 365);
+      SetCookies("expandCookie", false, expirationDate);
     } else {
-      SetCookies("expandCookie", true, 365);
+      SetCookies("expandCookie", true, expirationDate);
     }
     setExpandSidebar(!expandSidebar);
   };
 
   const handleThemeStateCookie = () => {
+    const expirationDate = new Date();
+    expirationDate.setDate(expirationDate.getDate() + 30);
+
     if (themeState === "dark") {
-      SetCookies("theme", "light", 365);
+      SetCookies("theme", "light", expirationDate);
       setThemeState("light");
     } else {
-      SetCookies("theme", "dark", 365);
+      SetCookies("theme", "dark", expirationDate);
       setThemeState("dark");
     }
   };

@@ -108,10 +108,13 @@ export default function Mobile() {
   }, [location]);
 
   const expandSidebarCookie = () => {
+    const expirationDate = new Date();
+    expirationDate.setDate(expirationDate.getDate() + 30);
+
     if (expanded) {
-      SetCookies("expandCookie", false, 365);
+      SetCookies("expandCookie", false, expirationDate);
     } else {
-      SetCookies("expandCookie", true, 365);
+      SetCookies("expandCookie", true, expirationDate);
     }
     setExpanded(!expanded);
   };
