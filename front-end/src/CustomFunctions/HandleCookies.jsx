@@ -14,7 +14,7 @@ const SetCookies = (name, data, expirationDate) => {
   Cookies.set(name, JSON.stringify(data), {
     expires: expirationDate,
     path: "/",
-    sameSite: "None",
+    sameSite: "Strict",
   });
 };
 
