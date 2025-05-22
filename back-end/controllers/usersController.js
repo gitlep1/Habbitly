@@ -171,14 +171,14 @@ users.post("/signin", async (req, res) => {
 
       res.cookie("authToken", JSON.stringify(createdToken), {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
+        secure: true,
         sameSite: "None",
         maxAge: 30 * 24 * 60 * 60 * 1000,
       });
 
       res.cookie("authUser", JSON.stringify(userData), {
         httpOnly: false,
-        secure: process.env.NODE_ENV === "production",
+        secure: true,
         sameSite: "None",
         maxAge: 30 * 24 * 60 * 60 * 1000,
       });
@@ -246,14 +246,14 @@ users.put("/update", requireAuth(), checkUserExtraEntries, async (req, res) => {
 
     res.cookie("authToken", createdToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: true,
       sameSite: "None",
       maxAge: 30 * 24 * 60 * 60 * 1000,
     });
 
     res.cookie("authUser", updatedUser, {
       httpOnly: false,
-      secure: process.env.NODE_ENV === "production",
+      secure: true,
       sameSite: "None",
       maxAge: 30 * 24 * 60 * 60 * 1000,
     });
