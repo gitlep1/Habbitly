@@ -100,7 +100,7 @@ users.post(
         return res.status(404).send("token not created");
       }
 
-      res.cookie("authToken", JSON.stringify(createdToken), {
+      res.cookie("authToken", createdToken, {
         httpOnly: true,
         secure: true,
         sameSite: "None",
@@ -173,7 +173,7 @@ users.post("/signin", async (req, res) => {
 
       console.log("=== POST user signin (tokenData)", createdToken, "===");
 
-      res.cookie("authToken", JSON.stringify(createdToken), {
+      res.cookie("authToken", createdToken, {
         httpOnly: true,
         secure: true,
         sameSite: "None",
