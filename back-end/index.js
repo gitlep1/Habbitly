@@ -18,6 +18,7 @@ const PORT = process.env.PORT || 5173;
 const allowedOrigins = [
   "http://localhost:5173",
   "https://habbitly.vercel.app",
+  "https://habbitly.netlify.app",
   "http://localhost:4000",
   "https://habbitly-backend.vercel.app",
 ];
