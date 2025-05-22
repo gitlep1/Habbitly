@@ -135,7 +135,6 @@ users.post(
 );
 
 users.post("/signin", async (req, res) => {
-  console.log("processssssssss: ", process.env.NODE_ENV);
   const existingUserData = {
     email: req.body.email,
     password: req.body.password,
@@ -172,14 +171,14 @@ users.post("/signin", async (req, res) => {
 
       res.cookie("authToken", JSON.stringify(createdToken), {
         httpOnly: true,
-        secure: true,
+        secure: process.env.NODE_ENV === "production",
         sameSite: "None",
         maxAge: 30 * 24 * 60 * 60 * 1000,
       });
 
       res.cookie("authUser", JSON.stringify(userData), {
-        httpOnly: true,
-        secure: true,
+        httpOnly: false,
+        secure: process.env.NODE_ENV === "production",
         sameSite: "None",
         maxAge: 30 * 24 * 60 * 60 * 1000,
       });
@@ -198,14 +197,15 @@ users.post("/signin", async (req, res) => {
 users.post("/signout", (req, res) => {
   res.clearCookie("authToken", {
     httpOnly: true,
-    sameSite: "Strict",
     secure: process.env.NODE_ENV === "production",
+    sameSite: "None",
     path: "/",
   });
 
   res.clearCookie("authUser", {
-    sameSite: "Strict",
+    httpOnly: false,
     secure: process.env.NODE_ENV === "production",
+    sameSite: "None",
     path: "/",
   });
 
