@@ -6,6 +6,8 @@ import axios from "axios";
 
 import { Loading } from "../../CustomFunctions/Loading/Loading";
 
+import { GetCookies, SetCookies } from "../../CustomFunctions/HandleCookies";
+
 const API = import.meta.env.VITE_PUBLIC_API_BASE;
 
 export const Signin = ({ handleSignUpClick, handleAuthModal }) => {
@@ -39,6 +41,11 @@ export const Signin = ({ handleSignUpClick, handleAuthModal }) => {
       .then((res) => {
         notify(res.data.payload);
         handleAuthModal();
+        const expirationDate = new Date();
+        expirationDate.setDate(expirationDate.getDate() + 30);
+
+        SetCookies("authUser", res.data.payload, expirationDate);
+        SetCookies("authToken", res.data.token, expirationDate);
       })
       .catch((err) => {
         const error = err?.response?.data?.error

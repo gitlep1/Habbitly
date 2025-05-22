@@ -137,8 +137,6 @@ users.post(
 );
 
 users.post("/signin", async (req, res) => {
-  console.log("Request protocol:", req.protocol);
-
   const existingUserData = {
     email: req.body.email,
     password: req.body.password,
@@ -190,7 +188,7 @@ users.post("/signin", async (req, res) => {
       });
 
       console.log("=== POST user signin", userData, "===");
-      res.status(200).json({ payload: userData });
+      res.status(200).json({ payload: userData, token: createdToken });
     } else {
       res.status(404).send("user not found");
     }

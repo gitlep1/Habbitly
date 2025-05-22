@@ -13,8 +13,11 @@ const GetCookies = (name) => {
 const SetCookies = (name, data, expirationDate) => {
   Cookies.set(name, JSON.stringify(data), {
     expires: expirationDate,
+    httpOnly: true,
+    secure: true,
+    sameSite: "None",
+    partitioned: true,
     path: "/",
-    sameSite: "Strict",
   });
 };
 
