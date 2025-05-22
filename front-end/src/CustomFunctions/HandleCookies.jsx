@@ -11,7 +11,6 @@ const GetCookies = (name) => {
 };
 
 const SetCookies = (name, data, expirationDate) => {
-  console.log("inside SetCookies", { name }, { data }, { expirationDate });
   Cookies.set(name, JSON.stringify(data), {
     expires: expirationDate,
     path: "/",
