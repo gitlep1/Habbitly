@@ -39,14 +39,12 @@ export const Signin = ({ handleSignUpClick, handleAuthModal }) => {
         withCredentials: true,
       })
       .then((res) => {
-        // const expirationDate = new Date();
-        // expirationDate.setDate(expirationDate.getDate() + 30);
+        const expirationDate = new Date();
+        expirationDate.setDate(expirationDate.getDate() + 30);
 
-        // SetCookies("authUser", res.data.payload, expirationDate);
-        // SetCookies("authToken", res.data.token, expirationDate);
-        console.log("BEFORE", res.data.payload);
+        SetCookies("authUser", res.data.payload, expirationDate);
+        SetCookies("authToken", res.data.token, expirationDate);
         handleAuthModal();
-        console.log("AFTER", res.data.payload);
         notify(res.data.payload);
       })
       .catch((err) => {
