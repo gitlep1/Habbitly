@@ -39,13 +39,13 @@ export const Signin = ({ handleSignUpClick, handleAuthModal }) => {
         withCredentials: true,
       })
       .then((res) => {
-        notify(res.data.payload);
-        handleAuthModal();
         const expirationDate = new Date();
         expirationDate.setDate(expirationDate.getDate() + 30);
 
         SetCookies("authUser", res.data.payload, expirationDate);
         SetCookies("authToken", res.data.token, expirationDate);
+        handleAuthModal();
+        notify(res.data.payload);
       })
       .catch((err) => {
         const error = err?.response?.data?.error
