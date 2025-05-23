@@ -1,11 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState, useContext } from "react";
 import { toast } from "react-toastify";
 import { Modal, Image, Button, Form } from "react-bootstrap";
 import axios from "axios";
 
+import { habitContext } from "../../../CustomContexts/Contexts";
+
 const API = import.meta.env.VITE_PUBLIC_API_BASE;
 
-export const AddAHabit = ({ showAddModal, onHide, getUserHabits }) => {
+export const AddAHabit = ({ showAddModal, onHide }) => {
+  const { getUserHabits } = useContext(habitContext);
+
   const [habitData, setHabitData] = useState({
     habit_name: "",
     habit_task: "",
@@ -50,16 +54,19 @@ export const AddAHabit = ({ showAddModal, onHide, getUserHabits }) => {
       .post(`${API}/habbits/create`, habitData, {
         withCredentials: true,
       })
-      .then(() => {
+      .then(async () => {
         toast.success("Habit added successfully", {
           containerId: "toast-notify",
         });
-        getUserHabits();
+
+        await getUserHabits();
+
         return setTimeout(() => {
           onHide();
         }, 4100);
       })
-      .catch((error) => {
+      .catch((err) => {
+        console.log(err.response);
         return toast.error("Failed to add habit", {
           containerId: "toast-notify",
         });

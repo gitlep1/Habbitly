@@ -1,8 +1,11 @@
+import { useState } from "react";
 import { PropTypes } from "prop-types";
 import { useNavigate } from "react-router-dom";
 import { Button } from "react-bootstrap";
 import { useSpring, animated } from "react-spring";
 import { FaLongArrowAltUp } from "react-icons/fa";
+
+import { AddAHabit } from "../../../HabitTracker/1 - Habits/AddAHabit";
 
 export const HabitTrackerLinks = ({
   handleButtonToggle,
@@ -10,6 +13,8 @@ export const HabitTrackerLinks = ({
   themeState,
 }) => {
   const navigate = useNavigate();
+
+  const [showAddModal, setShowAddModal] = useState(false);
 
   const slideDropdownHabitTracker = useSpring({
     opacity: showDropdown.includes("habitTracker") ? 1 : 0,
@@ -25,6 +30,10 @@ export const HabitTrackerLinks = ({
       : "rotate(0deg)",
     config: { tension: 200, friction: 15 },
   });
+
+  const handleAddClick = () => {
+    setShowAddModal(true);
+  };
 
   return (
     <div className="desktop-navbar-link-container">
@@ -69,6 +78,7 @@ export const HabitTrackerLinks = ({
             className={`desktop-navbar-button ${
               themeState === "dark" ? "dark-button" : "light-button"
             }`}
+            onClick={() => handleAddClick()}
           >
             Create New Habit
           </Button>
@@ -85,6 +95,13 @@ export const HabitTrackerLinks = ({
             Habit History
           </Button>
         </animated.div>
+      )}
+
+      {showAddModal && (
+        <AddAHabit
+          showAddModal={showAddModal}
+          onHide={() => setShowAddModal(false)}
+        />
       )}
     </div>
   );
