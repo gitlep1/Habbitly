@@ -37,17 +37,14 @@ const GlobalContextProvider = ({ children }) => {
   }, []);
 
   const getUserHabits = async () => {
-    const res = await axios
-      .get(`${API}/habbits/user`, {
-        withCredentials: true,
-      })
-      .then((res) => {
-        console.log("resssss: ", res);
-        console.log("payloadddddd: ", res.data.payload);
-      })
-      .catch((err) => {
-        console.log("errrrrrrrrrrrr: ", err);
-      });
+    const userData = GetCookies("authUser");
+    const tokenData = GetCookies("authToken");
+    console.log("userData: ", userData);
+    console.log("tokenData: ", tokenData);
+
+    const res = await axios.get(`${API}/habbits/user`, {
+      withCredentials: true,
+    });
     setUserHabits(res.data.payload);
   };
 
