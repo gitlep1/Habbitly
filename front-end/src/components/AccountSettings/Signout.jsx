@@ -31,7 +31,7 @@ export const Signout = ({ showSignoutModal, handleSignoutModalClose }) => {
         const checkIfUser = GetCookies("authUser");
         const checkIfToken = GetCookies("authToken");
 
-        if (!checkIfUser && !checkIfToken) {
+        if (checkIfUser && checkIfToken) {
           RemoveCookies("authToken");
           RemoveCookies("authUser");
         }

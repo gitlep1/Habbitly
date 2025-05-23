@@ -39,6 +39,8 @@ export const checkUserExtraEntries = createExtraEntryChecker([
   "username",
   "password",
   "email",
+  "about_me",
+  "theme",
 ]);
 
 export const checkProfileImageExtraEntries = createExtraEntryChecker([

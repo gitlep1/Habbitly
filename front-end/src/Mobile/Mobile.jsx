@@ -9,7 +9,6 @@ import { Navbar } from "../components/Navbar/Navbar";
 import { EmailVerification } from "../components/AccountSettings/EmailVerification";
 
 import { Landing } from "../components/Landing/Landing";
-// import { Dashboard } from "../components/Homepage/Mobile/1 - Dashboard/Dashboard";
 
 import { Dashboard } from "../components/Homepage/Desktop/1 - Dashboard/Dashboard";
 import { Summary } from "../components/Homepage/Desktop/2 - DailySummary/Summary";

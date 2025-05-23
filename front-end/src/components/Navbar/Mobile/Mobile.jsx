@@ -1,6 +1,6 @@
 import "./Mobile.scss";
 import { useState, useEffect, useContext } from "react";
-import { Button, Image, Modal } from "react-bootstrap";
+import { Button, Image } from "react-bootstrap";
 import { useSpring, animated } from "react-spring";
 import { useLocation } from "react-router-dom";
 import { IoIosSunny } from "react-icons/io";
@@ -8,9 +8,6 @@ import { FaMoon } from "react-icons/fa";
 
 import { GetCookies, SetCookies } from "../../../CustomFunctions/HandleCookies";
 import { themeContext } from "../../../CustomContexts/Contexts";
-
-import { Signin } from "../../AccountSettings/Signin";
-import { Signup } from "../../AccountSettings/Signup";
 
 import StellyHappy from "../../../assets/images/StellyHappy.png";
 import StellyAngry from "../../../assets/images/StellyAngry.png";

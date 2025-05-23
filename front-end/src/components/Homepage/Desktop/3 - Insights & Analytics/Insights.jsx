@@ -14,7 +14,7 @@ import {
 
 import { themeContext } from "../../../../CustomContexts/Contexts";
 
-import luna from "../../../../assets/images/insights-images/Luna.png";
+import anthony from "../../../../assets/images/insights-images/Anthony.png";
 
 ChartJS.register(
   CategoryScale,
@@ -124,7 +124,11 @@ export const Insights = () => {
     <section className="insights-container p-4 md:p-8 min-h-screen">
       <div className="max-w-5xl mx-auto">
         <div className="flex items-center justify-center space-x-4 mb-6">
-          <Image src={luna} alt="Luna" className="luna object-contain" />
+          <Image
+            src={anthony}
+            alt="Anthony"
+            className="anthony object-contain"
+          />
 
           <div>
             <h1 className="text-4xl font-bold">Insights & Analytics</h1>

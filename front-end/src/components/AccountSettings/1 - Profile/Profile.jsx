@@ -15,6 +15,7 @@ export const Profile = () => {
     username: userCookieData?.username || "",
     email: userCookieData?.email || "",
     password: "",
+    aboutMe: userCookieData?.about_me || "",
   });
 
   const [profileImg, setProfileImg] = useState(
@@ -28,6 +29,7 @@ export const Profile = () => {
   const [originalData] = useState({
     username: userCookieData?.username || "",
     email: userCookieData?.email || "",
+    aboutMe: userCookieData?.about_me || "",
   });
 
   useEffect(() => {
@@ -40,7 +42,7 @@ export const Profile = () => {
     document.addEventListener("visibilitychange", handleVisibilityChange);
     return () =>
       document.removeEventListener("visibilitychange", handleVisibilityChange);
-  }, []); // eslint-disable-line
+  }, []);
 
   const getUserData = async () => {
     await axios
@@ -55,10 +57,11 @@ export const Profile = () => {
 
         setFormData((prev) => ({
           ...prev,
-          username: userCookieData.username || "",
-          email: userCookieData.email || "",
+          username: res.data.payload.username || "",
+          email: res.data.payload.email || "",
+          aboutMe: res.data.payload.about_me || "",
         }));
-        setProfileImg(userCookieData.profileimg || "");
+        setProfileImg(res.data.payload.profileimg || "");
       })
       .catch((err) => {
         toast.error("Failed to fetch user data: " + err.message);
@@ -97,6 +100,7 @@ export const Profile = () => {
         toast.success("Profile image updated!");
         setShowModal(false);
         setNewProfileImgFile(null);
+        setProfileImg(res.data.payload.profileimg);
 
         return toast.success("Profile image updated Successfully", {
           containerId: "general-toast",
@@ -116,12 +120,16 @@ export const Profile = () => {
     if (formData.username.length > 20) {
       return toast.error("Username cannot exceed 20 characters");
     }
+    if (formData.aboutMe.length > 500) {
+      return toast.error("About Me cannot exceed 500 characters");
+    }
 
     setIsLoading(true);
     const updatePayload = {
       username: formData.username,
       email: formData.email,
       password: formData.password || undefined,
+      about_me: formData.aboutMe,
     };
 
     await axios
@@ -141,6 +149,7 @@ export const Profile = () => {
         });
       })
       .catch((error) => {
+        console.log({ error });
         toast.error("Failed to update profile: " + error.message);
       })
       .finally(() => {
@@ -152,34 +161,38 @@ export const Profile = () => {
     isLoading ||
     (formData.username === originalData.username &&
       formData.email === originalData.email &&
+      formData.aboutMe === originalData.aboutMe &&
       formData.password === "");
 
   return (
     <div className="profile-container p-4 md:p-8 min-h-screen">
-      <div className="max-w-3xl mx-auto mt-[6em] md:mt-20 rounded-2xl shadow-xl profile-card">
-        <div className="flex flex-col md:flex-row items-center gap-6 p-6 md:p-10">
+      <div className="profile-card max-w-5xl mx-auto mt-[6em] md:mt-0 rounded-2xl shadow-xl">
+        <div className="profile-avatar-wrapper">
           <div
             className="relative cursor-pointer"
             onClick={() => setShowModal(true)}
           >
             <Image
-              src={profileImg || "https://via.placeholder.com/120"}
+              src={profileImg || "https://via.placeholder.com/200"}
               roundedCircle
-              className="profile-avatar object-cover border-4 border-primary shadow-sm"
+              className="profile-avatar object-cover"
               alt="Profile"
             />
-            <div className="absolute bottom-0 right-0 bg-primary text-white text-xs px-2 py-1 rounded-full">
-              Edit
-            </div>
+            <div className="absolute profile-edit-badge">Edit</div>
           </div>
+          <h2 className="text-2xl font-bold mt-4 text-center">
+            {userCookieData?.username || "Your Profile"}
+          </h2>
+          <p className="text-lg text-gray-400 text-center">
+            {userCookieData?.email}
+          </p>
+        </div>
 
-          <div className="flex-1 w-full">
-            <h2 className="text-2xl font-semibold mb-6 text-center md:text-left">
-              {userCookieData?.username + "'s" + " Profile" ||
-                "Edit Your Profile"}
-            </h2>
-            <Form onSubmit={handleSubmit} className="space-y-5">
-              <Form.Group>
+        <div className="profile-details-form-container flex flex-col gap-6">
+          <div>
+            <h3 className="profile-section-title">Edit Profile Details</h3>
+            <Form onSubmit={handleSubmit} className="space-y-6">
+              <Form.Group controlId="formUsername">
                 <Form.Label className="profile-label">Username</Form.Label>
                 <Form.Control
                   type="text"
@@ -187,13 +200,13 @@ export const Profile = () => {
                   value={formData.username}
                   onChange={handleChange}
                   className="profile-input"
-                  maxLength={15}
-                  placeholder="Username"
+                  maxLength={20}
+                  placeholder="Enter your username"
                   autoComplete="username"
                 />
               </Form.Group>
 
-              <Form.Group>
+              <Form.Group controlId="formEmail">
                 <Form.Label className="profile-label">Email</Form.Label>
                 <Form.Control
                   type="email"
@@ -201,12 +214,12 @@ export const Profile = () => {
                   value={formData.email}
                   onChange={handleChange}
                   className="profile-input"
-                  placeholder="Email"
+                  placeholder="Enter your email"
                   autoComplete="email"
                 />
               </Form.Group>
 
-              <Form.Group>
+              <Form.Group controlId="formPassword">
                 <Form.Label className="profile-label">New Password</Form.Label>
                 <Form.Control
                   type="password"
@@ -219,7 +232,24 @@ export const Profile = () => {
                 />
               </Form.Group>
 
-              <div className="text-center md:text-left pt-4">
+              <Form.Group controlId="formAboutMe">
+                <Form.Label className="profile-label">About Me</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  name="aboutMe"
+                  rows={4}
+                  value={formData.aboutMe}
+                  onChange={handleChange}
+                  className="profile-input"
+                  maxLength={500}
+                  placeholder="Tell us a little about yourself..."
+                />
+                <Form.Text className="text-muted">
+                  {formData.aboutMe.length}/500 characters
+                </Form.Text>
+              </Form.Group>
+
+              <div className="text-center pt-4">
                 <Button
                   type="submit"
                   className="px-6"
@@ -230,6 +260,29 @@ export const Profile = () => {
               </div>
             </Form>
           </div>
+
+          <div className="profile-about-me">
+            <h3 className="profile-section-title">About Me</h3>
+            <p>{formData.aboutMe || userCookieData?.about_me}</p>
+          </div>
+        </div>
+
+        <div className="profile-recent-activity">
+          <h3 className="profile-section-title">Recent Activity</h3>
+          <ul>
+            <li>
+              <strong>Logged in:</strong> Just now
+            </li>
+            <li>
+              <strong>Last post:</strong> 2 days ago
+            </li>
+            <li>
+              <strong>Comments made:</strong> 15
+            </li>
+            <li>
+              <strong>Likes received:</strong> 42
+            </li>
+          </ul>
         </div>
       </div>
 

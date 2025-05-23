@@ -19,7 +19,7 @@ export const getUserByID = async (id) => {
 
 export const createUser = async (newUserData) => {
   const query =
-    "INSERT INTO users (username, password, email, created_at) VALUES ($1, $2, $3, NOW())  RETURNING id, profileimg, username, theme, last_online";
+    "INSERT INTO users (username, password, email, created_at) VALUES ($1, $2, $3, NOW())  RETURNING id, profileimg, username, email, about_me, theme, last_online";
   const newUser = await db.oneOrNone(query, [
     newUserData.username,
     newUserData.password,
@@ -30,7 +30,7 @@ export const createUser = async (newUserData) => {
 
 export const updateUser = async (id, updatedUserData) => {
   const query =
-    "UPDATE users SET profileimg = $1, username = $2, password = $3, email = $4, theme = $5, updated_at = NOW(), last_online = $6 WHERE id = $7 RETURNING id, profileimg, username, email, theme, last_online";
+    "UPDATE users SET profileimg = $1, username = $2, password = $3, email = $4, theme = $5, updated_at = NOW(), last_online = $6, about_me = $7 WHERE id = $8 RETURNING id, profileimg, username, email, about_me, theme, last_online";
   const updateUser = await db.oneOrNone(query, [
     updatedUserData.profileimg,
     updatedUserData.username,
@@ -38,6 +38,7 @@ export const updateUser = async (id, updatedUserData) => {
     updatedUserData.email,
     updatedUserData.theme,
     updatedUserData.last_online,
+    updatedUserData.about_me,
     id,
   ]);
   return updateUser;

@@ -51,6 +51,7 @@ users.get("/user", requireAuth(), async (req, res) => {
         profileimg: getAUser.profileimg,
         username: getAUser.username,
         email: getAUser.email,
+        about_me: getAUser.about_me,
         theme: getAUser.theme,
         last_online: getAUser.last_online,
       };
@@ -122,6 +123,7 @@ users.post(
         profileimg: createdUser.profileimg,
         email: createdUser.email,
         username: createdUser.username,
+        about_me: createdUser.about_me,
         theme: createdUser.theme,
         last_online: createdUser.last_online,
       };
@@ -160,6 +162,8 @@ users.post("/signin", async (req, res) => {
         id: getUserData.id,
         profileimg: getUserData.profileimg,
         username: getUserData.username,
+        email: getUserData.email,
+        about_me: getUserData.about_me,
         theme: getUserData.theme,
         last_online: getUserData.last_online,
       };
@@ -226,8 +230,15 @@ users.post("/signout", (req, res) => {
 
 users.put("/update", requireAuth(), checkUserExtraEntries, async (req, res) => {
   const decodedUserData = req.user.decodedUser;
-  const { profileimg, username, password, email, theme, last_online } =
-    req.body;
+  const {
+    profileimg,
+    username,
+    password,
+    email,
+    about_me,
+    theme,
+    last_online,
+  } = req.body;
 
   try {
     const existingUser = await getUserByID(decodedUserData.id);
@@ -241,6 +252,7 @@ users.put("/update", requireAuth(), checkUserExtraEntries, async (req, res) => {
       username: username || existingUser.username,
       password: password || existingUser.password,
       email: email || existingUser.email,
+      about_me: about_me || existingUser.about_me,
       theme: theme || existingUser.theme,
       last_online: last_online || existingUser.last_online,
     };
@@ -290,19 +302,19 @@ users.delete("/delete", requireAuth(), async (req, res) => {
     if (deletedUser) {
       console.log("=== DELETE user", deletedUser, "===");
 
-      res.clearCookie("authToken", {
-        httpOnly: true,
-        secure: true,
-        sameSite: "None",
-        partitioned: true,
-        path: "/",
-      });
-      res.clearCookie("authUser", {
-        httpOnly: true,
-        secure: true,
-        sameSite: "None",
-        path: "/",
-      });
+      // res.clearCookie("authToken", {
+      //   httpOnly: true,
+      //   secure: true,
+      //   sameSite: "None",
+      //   partitioned: true,
+      //   path: "/",
+      // });
+      // res.clearCookie("authUser", {
+      //   httpOnly: false,
+      //   secure: true,
+      //   sameSite: "None",
+      //   path: "/",
+      // });
 
       res.status(200).send(
         `

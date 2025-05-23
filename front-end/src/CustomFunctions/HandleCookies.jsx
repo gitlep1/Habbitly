@@ -17,7 +17,6 @@ const SetCookies = (name, data, expirationDate) => {
     httpOnly: false,
     secure: true,
     sameSite: "None",
-    partitioned: true,
   });
 };
 
@@ -25,8 +24,9 @@ const RemoveCookies = (name) => {
   Cookies.remove(name);
   return Cookies.remove(name, {
     path: "/",
-    sameSite: "None",
+    httpOnly: false,
     secure: true,
+    sameSite: "None",
   });
 };
 
