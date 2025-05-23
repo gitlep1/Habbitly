@@ -79,6 +79,9 @@ export const Preferences = () => {
         toast.success("Preferences saved successfully!", {
           containerId: "notify-success",
         });
+        setTimeout(() => {
+          window.location.reload();
+        }, 3000);
       } else {
         toast.error("User data not found in cookie. Cannot save preferences.", {
           containerId: "general-toast",
@@ -118,7 +121,7 @@ export const Preferences = () => {
               controlId="animatedBackground"
             >
               <Form.Label column sm="8">
-                Animated Background
+                3D Animated Background
               </Form.Label>
               <Col sm="4" className="text-end">
                 <Form.Check

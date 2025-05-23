@@ -4,7 +4,6 @@ import { Image } from "react-bootstrap";
 import { Button } from "@mui/material";
 import axios from "axios";
 
-import CloudsBackground from "../../../3D-Background/CloudsBackground";
 import Sunny from "../../../../assets/images/summary-images/Sunny.png";
 
 const API = import.meta.env.VITE_PUBLIC_API_BASE;
@@ -53,8 +52,6 @@ export const Summary = () => {
           <p className="mt-1">Better than yesterday</p>
         </div>
       </div>
-
-      <CloudsBackground />
     </section>
   );
 };

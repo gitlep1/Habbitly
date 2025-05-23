@@ -9,11 +9,17 @@ import {
 import CustomToastContainers from "./CustomFunctions/CustomToasts/CustomToastContainers";
 import DetectScreenSize from "./CustomFunctions/DetectScreenSize";
 import SmallResolution from "./CustomFunctions/SmallResolution/SmallResolution";
+import { GetCookies } from "./CustomFunctions/HandleCookies";
 
 import Desktop from "./Desktop/Desktop";
 import Mobile from "./Mobile/Mobile";
 
+import CloudsBackground from "./components/3D-Background/CloudsBackground";
+
 const App = () => {
+  const checkPreferences = GetCookies("preferences");
+  const allowAnimatedBackground = checkPreferences.animatedBackground;
+
   const screenVersion = useContext(screenVersionContext);
   const { themeState } = useContext(themeContext);
   const { authUser } = useContext(userContext);
@@ -34,6 +40,7 @@ const App = () => {
     <section
       className={`App ${themeState === "dark" ? "darkmode" : "lightmode"}`}
     >
+      {allowAnimatedBackground && <CloudsBackground />}
       <CustomToastContainers />
       {screenSize < 400 && <SmallResolution />}
       {screenVersion === "desktop" ? <Desktop /> : <Mobile />}
