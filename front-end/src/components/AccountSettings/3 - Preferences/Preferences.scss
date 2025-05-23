@@ -46,19 +46,12 @@
   --page-bg: #1a1a1a;
 }
 
-body {
-  background-color: var(--page-bg);
-  transition: background-color 0.3s ease;
-  min-height: 100vh;
-}
-
 .preferences-container {
   display: flex;
   justify-content: center;
   align-items: flex-start;
   padding: 1rem;
   flex-grow: 1;
-  background-color: var(--page-bg) !important;
 
   @media (min-width: 768px) {
     padding: 2rem;

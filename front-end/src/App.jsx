@@ -22,7 +22,6 @@ const App = () => {
 
   const screenVersion = useContext(screenVersionContext);
   const { themeState } = useContext(themeContext);
-  const { authUser } = useContext(userContext);
 
   const [screenSize, setScreenSize] = useState(DetectScreenSize().width);
 
