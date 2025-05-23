@@ -31,6 +31,8 @@ export const requireAuth = () => {
     const authHeader = req.headers.authorization;
     const cookieHeader = req.headers.cookie;
 
+    console.log("=== requireAuth", { authHeader }, { cookieHeader }, "===");
+
     let token = null;
 
     if (authHeader === "Bearer null" || (!authHeader && !cookieHeader)) {
