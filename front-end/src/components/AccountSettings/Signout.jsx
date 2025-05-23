@@ -7,7 +7,7 @@ import axios from "axios";
 
 import { Loading } from "../../CustomFunctions/Loading/Loading";
 
-import { RemoveCookies } from "../../CustomFunctions/HandleCookies";
+import { GetCookies, RemoveCookies } from "../../CustomFunctions/HandleCookies";
 
 const API = import.meta.env.VITE_PUBLIC_API_BASE;
 
@@ -28,6 +28,12 @@ export const Signout = ({ showSignoutModal, handleSignoutModalClose }) => {
         }
       )
       .then(() => {
+        const checkIfUser = GetCookies("authUser");
+        const checkIfToken = GetCookies("authToken");
+
+        console.log("checkIfUser", checkIfUser);
+        console.log("checkIfToken", checkIfToken);
+
         RemoveCookies("theme");
         RemoveCookies("expandCookie");
         RemoveCookies("expandedLinks");
