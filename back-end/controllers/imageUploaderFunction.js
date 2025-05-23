@@ -11,6 +11,11 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+console.log(
+  "CLOUDINARY_API_SECREttttttttttttttttttttttttttttttttttttttttT:",
+  process.env.CLOUDINARY_API_SECRET
+);
+
 export const uploadImageToImgur = async (fileBuffer) => {
   try {
     const imageBase64 = fileBuffer.toString("base64");
