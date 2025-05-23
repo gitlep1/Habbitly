@@ -1,6 +1,7 @@
 import post from "axios";
 import { v2 as cloudinary } from "cloudinary";
 import { fileTypeFromBuffer } from "file-type";
+import "dotenv/config";
 
 const ClientID = process.env.IMGUR_CLIENT_ID;
 
