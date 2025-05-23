@@ -4,6 +4,7 @@ import { createServer } from "http";
 
 import usersController from "./controllers/usersController.js";
 import habbitsController from "./controllers/habbitsController.js";
+import habitHistoryController from "./controllers/habitHistoryController.js";
 import emailAuthController from "./controllers/emailAuthController.js";
 import imageUploaderController from "./controllers/imageUploaderController.js";
 import newsController from "./controllers/newsController.js";
@@ -54,6 +55,7 @@ app.use("/users", usersController);
 
 // === Habbit Routes === \\
 app.use("/habbits", habbitsController);
+app.use("/history", habitHistoryController);
 
 // === Image Routes === \\
 app.use("/images", imageUploaderController);

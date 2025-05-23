@@ -62,6 +62,17 @@ CREATE TABLE habbits (
   habit_completed BOOLEAN DEFAULT FALSE
 );
 
+DROP TABLE IF EXISTS habit_history;
+CREATE TABLE habit_history (
+  id UUID DEFAULT uuid_generate_v4() NOT NULL PRIMARY KEY,
+  habit_id UUID NOT NULL REFERENCES habbits(id) ON DELETE CASCADE,
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  habit_name TEXT NOT NULL,
+  action TEXT NOT NULL CHECK (action IN ('Added', 'Updated', 'Deleted')),
+  habit_completed BOOLEAN DEFAULT FALSE,
+  timestamp TIMESTAMP DEFAULT NOW()
+);
+
 DROP TABLE IF EXISTS news;
 CREATE TABLE news (
   id UUID DEFAULT uuid_generate_v4() NOT NULL PRIMARY KEY,
