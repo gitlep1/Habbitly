@@ -9,6 +9,7 @@ import emailAuthController from "./controllers/emailAuthController.js";
 import imageUploaderController from "./controllers/imageUploaderController.js";
 import newsController from "./controllers/newsController.js";
 import registeredCountController from "./controllers/registeredCountController.js";
+import notificationsController from "./controllers/notificationsController.js";
 import oauthRouter from "./Utils/oauthRoutes.js";
 
 import "dotenv/config";
@@ -52,6 +53,7 @@ if (process.env.ALLOW_OAUTH_SETUP === "true") {
 // === Account Routes === \\
 app.use("/email", emailAuthController);
 app.use("/users", usersController);
+app.use("/notifications", notificationsController);
 
 // === Habbit Routes === \\
 app.use("/habbits", habbitsController);

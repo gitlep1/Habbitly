@@ -87,3 +87,36 @@ CREATE TABLE registered_count (
   id UUID DEFAULT uuid_generate_v4() NOT NULL PRIMARY KEY,
   count INTEGER DEFAULT 0
 );
+
+DROP TABLE IF EXISTS notifications;
+CREATE TABLE notifications (
+    id UUID DEFAULT uuid_generate_v4() NOT NULL PRIMARY KEY,
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE UNIQUE,
+    email_notifications BOOLEAN DEFAULT TRUE,
+    push_notifications BOOLEAN DEFAULT TRUE,
+    sms_notifications BOOLEAN DEFAULT FALSE,
+
+    habit_reminders BOOLEAN DEFAULT TRUE,
+    reminder_time TIME WITHOUT TIME ZONE DEFAULT '09:00:00',
+
+    celebrate_milestones BOOLEAN DEFAULT TRUE,
+    gentle_nudges BOOLEAN DEFAULT TRUE,
+    nudge_after_days INTEGER DEFAULT 3 CHECK (nudge_after_days >= 1 AND nudge_after_days <= 7),
+    weekly_summary BOOLEAN DEFAULT TRUE,
+
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE OR REPLACE FUNCTION update_timestamp()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_notifications_timestamp
+BEFORE UPDATE ON notifications
+FOR EACH ROW
+EXECUTE FUNCTION update_timestamp();

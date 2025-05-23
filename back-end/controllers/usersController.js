@@ -16,6 +16,11 @@ import {
 } from "../queries/registeredCountQueries.js";
 
 import {
+  getNotificationSettingsByUserId,
+  createNotificationSettings,
+} from "../queries/notificationsQueries.js";
+
+import {
   checkUserValues,
   checkUserExtraEntries,
 } from "../validation/entryValidation.js";
@@ -24,7 +29,6 @@ import { createToken, requireAuth } from "../validation/requireAuthv2.js";
 users.get("/", requireAuth(), async (req, res) => {
   try {
     const allUsers = await getAllUsers();
-    console.log("=== GET all users", allUsers, "===");
 
     if (allUsers) {
       res.status(200).json({ payload: allUsers });
@@ -44,8 +48,6 @@ users.get("/user", requireAuth(), async (req, res) => {
     const getAUser = await getUserByID(decodedUserData.id);
 
     if (getAUser) {
-      console.log("=== GET user by ID", getAUser, "===");
-
       const userData = {
         id: getAUser.id,
         profileimg: getAUser.profileimg,
@@ -77,15 +79,11 @@ users.post(
       email: req.body.email,
     };
 
-    console.log("=== POST (newUserData)", newUserData, "===");
-
     try {
       const checkCreds = await checkUserCredentials(
         newUserData,
         "email|username"
       );
-
-      console.log("=== POST user signup (checkCreds)", checkCreds, "===");
 
       if (checkCreds) {
         return res.status(409).send("Email/Username already taken!");
@@ -101,6 +99,11 @@ users.post(
       if (!createdToken) {
         return res.status(404).send("token not created");
       }
+
+      await createNotificationSettings(createdUser.id);
+      console.log(
+        `Default notification settings created for new user: ${createdUser.id}`
+      );
 
       // res.cookie("authToken", createdToken, {
       //   httpOnly: true,
@@ -131,6 +134,7 @@ users.post(
       const registeredCount = await getRegisteredCount();
       const newCount = registeredCount?.count + 1;
       await updateRegisteredCount(newCount, registeredCount.id);
+
       res.status(200).json({ payload: userData, token: createdToken });
     } catch (error) {
       console.error("users.POST /signup", { error });
@@ -174,7 +178,15 @@ users.post("/signin", async (req, res) => {
         return res.status(404).send("token not created");
       }
 
-      console.log("=== POST user signin (tokenData)", createdToken, "===");
+      let notificationSettings = await getNotificationSettingsByUserId(
+        userData.id
+      );
+      if (!notificationSettings) {
+        console.log(
+          `No notification settings found for signing in user ${userData.id}. Creating default.`
+        );
+        notificationSettings = await createNotificationSettings(userData.id);
+      }
 
       const expirationDate = new Date();
       expirationDate.setDate(expirationDate.getDate() + 30);
@@ -197,7 +209,6 @@ users.post("/signin", async (req, res) => {
       //   partitioned: true,
       // });
 
-      console.log("=== POST user signin", userData, "===");
       res.status(200).json({ payload: userData, token: createdToken });
     } else {
       res.status(404).send("user not found");
@@ -285,7 +296,6 @@ users.put("/update", requireAuth(), checkUserExtraEntries, async (req, res) => {
     //   maxAge: 30 * 24 * 60 * 60 * 1000,
     // });
 
-    console.log("=== PUT user", updatedUser, "===");
     res.status(200).json({ payload: updatedUser, token: createdToken });
   } catch (error) {
     console.error("users.PUT /update", { error });
@@ -300,8 +310,6 @@ users.delete("/delete", requireAuth(), async (req, res) => {
     const deletedUser = await deleteUser(decodedUserData.id);
 
     if (deletedUser) {
-      console.log("=== DELETE user", deletedUser, "===");
-
       // res.clearCookie("authToken", {
       //   httpOnly: true,
       //   secure: true,
