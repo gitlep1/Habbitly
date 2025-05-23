@@ -7,6 +7,8 @@ import axios from "axios";
 
 import { Loading } from "../../CustomFunctions/Loading/Loading";
 
+import { RemoveCookies } from "../../CustomFunctions/HandleCookies";
+
 const API = import.meta.env.VITE_PUBLIC_API_BASE;
 
 export const Signout = ({ showSignoutModal, handleSignoutModalClose }) => {
@@ -26,6 +28,12 @@ export const Signout = ({ showSignoutModal, handleSignoutModalClose }) => {
         }
       )
       .then(() => {
+        RemoveCookies("theme");
+        RemoveCookies("expandCookie");
+        RemoveCookies("expandedLinks");
+        RemoveCookies("authToken");
+        RemoveCookies("authUser");
+
         handleSignoutModalClose();
         toast.success("You have been signed out", {
           containerId: "toast-notify",
