@@ -11,8 +11,6 @@ const API = import.meta.env.VITE_PUBLIC_API_BASE;
 export const HabitHistory = () => {
   const [history, setHistory] = useState([]);
 
-  const [error, setError] = useState("");
-
   useEffect(() => {
     getUsersHabitHistory();
   }, []);
@@ -26,7 +24,7 @@ export const HabitHistory = () => {
         setHistory(res.data.payload);
       })
       .catch((err) => {
-        setError(err?.response?.data?.error);
+        console.error(err?.response?.data?.error);
       });
   };
 
@@ -47,8 +45,6 @@ export const HabitHistory = () => {
     <div className="habit-history-container min-h-screen">
       <div className="max-w-7xl mx-auto mt-[6em] md:mt-0">
         <h1 className="text-3xl font-bold mb-6 text-center">Habit History</h1>
-        {error && <div>{error}</div>}
-
         {history.length > 0 ? (
           <>
             {/* // === DESKTOP/TABLET TABLE VIEW === \\ */}
