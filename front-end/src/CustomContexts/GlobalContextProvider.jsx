@@ -37,9 +37,17 @@ const GlobalContextProvider = ({ children }) => {
   }, []);
 
   const getUserHabits = async () => {
-    const res = await axios.get(`${API}/habbits/user`, {
-      withCredentials: true,
-    });
+    const res = await axios
+      .get(`${API}/habbits/user`, {
+        withCredentials: true,
+      })
+      .then((res) => {
+        console.log("resssss: ", res);
+        console.log("payloadddddd: ", res.data.payload);
+      })
+      .catch((err) => {
+        console.log("errrrrrrrrrrrr: ", err);
+      });
     setUserHabits(res.data.payload);
   };
 
