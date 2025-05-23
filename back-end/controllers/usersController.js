@@ -100,21 +100,21 @@ users.post(
         return res.status(404).send("token not created");
       }
 
-      res.cookie("authToken", createdToken, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "None",
-        partitioned: true,
-        maxAge: 30 * 24 * 60 * 60 * 1000,
-      });
+      // res.cookie("authToken", createdToken, {
+      //   httpOnly: true,
+      //   secure: true,
+      //   sameSite: "None",
+      //   partitioned: true,
+      //   maxAge: 30 * 24 * 60 * 60 * 1000,
+      // });
 
-      res.cookie("authUser", JSON.stringify(createdUser), {
-        httpOnly: false,
-        secure: true,
-        sameSite: "None",
-        partitioned: true,
-        maxAge: 30 * 24 * 60 * 60 * 1000,
-      });
+      // res.cookie("authUser", JSON.stringify(createdUser), {
+      //   httpOnly: false,
+      //   secure: true,
+      //   sameSite: "None",
+      //   partitioned: true,
+      //   maxAge: 30 * 24 * 60 * 60 * 1000,
+      // });
 
       const userData = {
         id: createdUser.id,
@@ -128,7 +128,7 @@ users.post(
       const registeredCount = await getRegisteredCount();
       const newCount = registeredCount?.count + 1;
       await updateRegisteredCount(newCount, registeredCount.id);
-      res.status(200).json({ payload: userData });
+      res.status(200).json({ payload: userData, token: createdToken });
     } catch (error) {
       console.error("users.POST /signup", { error });
       res.status(500).send("Internal Server Error");
@@ -174,23 +174,23 @@ users.post("/signin", async (req, res) => {
       const expirationDate = new Date();
       expirationDate.setDate(expirationDate.getDate() + 30);
 
-      res.cookie("authToken", createdToken, {
-        expires: expirationDate,
-        path: "/",
-        httpOnly: true,
-        secure: true,
-        sameSite: "None",
-        partitioned: true,
-      });
+      // res.cookie("authToken", createdToken, {
+      //   expires: expirationDate,
+      //   path: "/",
+      //   httpOnly: true,
+      //   secure: true,
+      //   sameSite: "None",
+      //   partitioned: true,
+      // });
 
-      res.cookie("authUser", JSON.stringify(userData), {
-        expires: expirationDate,
-        path: "/",
-        httpOnly: false,
-        secure: true,
-        sameSite: "None",
-        partitioned: true,
-      });
+      // res.cookie("authUser", JSON.stringify(userData), {
+      //   expires: expirationDate,
+      //   path: "/",
+      //   httpOnly: false,
+      //   secure: true,
+      //   sameSite: "None",
+      //   partitioned: true,
+      // });
 
       console.log("=== POST user signin", userData, "===");
       res.status(200).json({ payload: userData, token: createdToken });
@@ -256,24 +256,24 @@ users.put("/update", requireAuth(), checkUserExtraEntries, async (req, res) => {
       return res.status(404).send("token not created");
     }
 
-    res.cookie("authToken", createdToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "None",
-      partitioned: true,
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-    });
+    // res.cookie("authToken", createdToken, {
+    //   httpOnly: true,
+    //   secure: true,
+    //   sameSite: "None",
+    //   partitioned: true,
+    //   maxAge: 30 * 24 * 60 * 60 * 1000,
+    // });
 
-    res.cookie("authUser", updatedUser, {
-      httpOnly: false,
-      secure: true,
-      sameSite: "None",
-      partitioned: true,
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-    });
+    // res.cookie("authUser", updatedUser, {
+    //   httpOnly: false,
+    //   secure: true,
+    //   sameSite: "None",
+    //   partitioned: true,
+    //   maxAge: 30 * 24 * 60 * 60 * 1000,
+    // });
 
     console.log("=== PUT user", updatedUser, "===");
-    res.status(200).json({ payload: updatedUser });
+    res.status(200).json({ payload: updatedUser, token: createdToken });
   } catch (error) {
     console.error("users.PUT /update", { error });
     res.status(500).send("Internal Server Error");

@@ -31,14 +31,14 @@ export const Signout = ({ showSignoutModal, handleSignoutModalClose }) => {
         const checkIfUser = GetCookies("authUser");
         const checkIfToken = GetCookies("authToken");
 
-        console.log("checkIfUser", checkIfUser);
-        console.log("checkIfTokenn", checkIfToken);
+        if (!checkIfUser && !checkIfToken) {
+          RemoveCookies("authToken");
+          RemoveCookies("authUser");
+        }
 
         RemoveCookies("theme");
         RemoveCookies("expandCookie");
         RemoveCookies("expandedLinks");
-        RemoveCookies("authToken");
-        RemoveCookies("authUser");
 
         handleSignoutModalClose();
         toast.success("You have been signed out", {

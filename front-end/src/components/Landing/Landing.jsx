@@ -25,11 +25,13 @@ export const Landing = () => {
   const toggleForm = () => setIsSignin(!isSignin);
 
   useEffect(() => {
-    if (authUserData) {
-      setTimeout(() => {
+    const interval = setInterval(() => {
+      if (authUserData) {
         window.location.reload();
-      }, 4000);
-    }
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
   }, [authUserData]);
 
   const renderAuthModal = () => {

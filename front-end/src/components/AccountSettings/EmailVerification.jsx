@@ -7,6 +7,8 @@ import axios from "axios";
 
 import { Loading } from "../../CustomFunctions/Loading/Loading";
 
+import { GetCookies, SetCookies } from "../../CustomFunctions/HandleCookies";
+
 const API = import.meta.env.VITE_PUBLIC_API_BASE;
 const RESEND_COOLDOWN_SECONDS = 60;
 
@@ -111,6 +113,13 @@ export const EmailVerification = () => {
                 containerId: "toast-notify",
               }
             );
+
+            const expirationDate = new Date();
+            expirationDate.setDate(expirationDate.getDate() + 30);
+
+            SetCookies("authUser", res.data.payload, expirationDate);
+            SetCookies("authToken", res.data.token, expirationDate);
+
             return setTimeout(() => {
               navigate("/");
             }, 4500);
