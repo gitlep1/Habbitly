@@ -16,7 +16,10 @@ import { getUserByID, updateUser } from "../queries/usersQueries.js";
 import { checkProfileImageExtraEntries } from "../validation/entryValidation.js";
 import { requireAuth } from "../validation/requireAuthv2.js";
 
-import { uploadImageToImgur } from "../controllers/imageUploaderFunction.js";
+import {
+  uploadImageToImgur,
+  uploadToCloudinary,
+} from "../controllers/imageUploaderFunction.js";
 
 images.get("/", requireAuth(), async (req, res) => {
   try {
@@ -69,8 +72,7 @@ images.post(
       const checkIfUserExists = await getUserByID(decodedUserData.id);
 
       if (!checkIfUserExists) {
-        res.status(404).send("User not found");
-        return;
+        return res.status(404).send("User not found");
       }
 
       if (!req.file) {
@@ -78,12 +80,28 @@ images.post(
       }
 
       const fileBuffer = req.file.buffer;
-      const { image_url, delete_hash } = await uploadImageToImgur(fileBuffer);
+
+      let uploadResult;
+      try {
+        uploadResult = await uploadImageToImgur(fileBuffer);
+
+        if (!uploadResult || !uploadResult.image_url) {
+          throw new Error("Imgur upload failed or returned empty result");
+        }
+      } catch (imgurError) {
+        console.warn(
+          "Imgur upload failed, falling back to Cloudinary:",
+          imgurError.message
+        );
+
+        uploadResult = await uploadToCloudinary(fileBuffer);
+        uploadResult.delete_hash = null;
+      }
 
       const newProfileImageData = {
         user_id: checkIfUserExists.id,
-        image_url,
-        delete_hash,
+        image_url: uploadResult.image_url,
+        delete_hash: uploadResult.delete_hash,
       };
 
       const createdProfileImage = await createProfileImage(newProfileImageData);
@@ -105,16 +123,16 @@ images.post(
         console.log("=== PUT updated user", updatedUserResult, "===");
 
         if (updatedUserResult) {
-          res.status(200).json({ payload: updatedUserResult });
+          return res.status(200).json({ payload: updatedUserResult });
         } else {
-          res.status(404).send("User profile image not updated");
+          return res.status(404).send("User profile image not updated");
         }
       } else {
-        res.status(404).send("Profile image not created");
+        return res.status(404).send("Profile image not created");
       }
     } catch (error) {
-      console.error("ERROR images.POST /", { error });
-      res.status(500).send("Internal Server Error");
+      console.error("ERROR images.POST /upload", { error });
+      return res.status(500).send("Internal Server Error");
     }
   }
 );

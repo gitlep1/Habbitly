@@ -50,6 +50,7 @@ users.get("/user", requireAuth(), async (req, res) => {
         id: getAUser.id,
         profileimg: getAUser.profileimg,
         username: getAUser.username,
+        email: getAUser.email,
         theme: getAUser.theme,
         last_online: getAUser.last_online,
       };
@@ -244,7 +245,7 @@ users.put("/update", requireAuth(), checkUserExtraEntries, async (req, res) => {
       last_online: last_online || existingUser.last_online,
     };
 
-    const updatedUser = await updateUser(userId, updatedUserData);
+    const updatedUser = await updateUser(existingUser.id, updatedUserData);
 
     if (!updatedUser) {
       return res.status(404).send("user not updated");

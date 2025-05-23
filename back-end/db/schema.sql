@@ -33,7 +33,7 @@ CREATE TABLE profile_images (
   id UUID DEFAULT uuid_generate_v4() NOT NULL PRIMARY KEY,
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   image_url TEXT NOT NULL,
-  delete_hash TEXT NOT NULL,
+  delete_hash TEXT,
   created_at TIMESTAMP DEFAULT NOW()
 );
 

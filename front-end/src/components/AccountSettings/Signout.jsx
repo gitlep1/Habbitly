@@ -75,7 +75,7 @@ export const Signout = ({ showSignoutModal, handleSignoutModalClose }) => {
         </Button>
       </Modal.Footer>
 
-      {isLoading ? <Loading message="Signing in..." /> : null}
+      {isLoading ? <Loading message="Signing out..." /> : null}
     </Modal>
   );
 };

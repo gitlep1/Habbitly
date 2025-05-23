@@ -11,7 +11,7 @@ const GetCookies = (name) => {
 };
 
 const SetCookies = (name, data, expirationDate) => {
-  Cookies.set(name, JSON.stringify(data), {
+  return Cookies.set(name, JSON.stringify(data), {
     expires: expirationDate,
     path: "/",
     httpOnly: false,
@@ -23,6 +23,11 @@ const SetCookies = (name, data, expirationDate) => {
 
 const RemoveCookies = (name) => {
   Cookies.remove(name);
+  return Cookies.remove(name, {
+    path: "/",
+    sameSite: "None",
+    secure: true,
+  });
 };
 
 export { GetCookies, SetCookies, RemoveCookies };

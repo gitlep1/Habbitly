@@ -10,14 +10,15 @@ import { EmailVerification } from "../components/AccountSettings/EmailVerificati
 
 import { Landing } from "../components/Landing/Landing";
 // import { Dashboard } from "../components/Homepage/Mobile/1 - Dashboard/Dashboard";
-// import { Summary } from "../components/Homepage/Mobile/2 - DailySummary/Summary";
-// import { Insights } from "../components/Homepage/Mobile/3 - Insights & Analytics/Insights";
 
 import { Dashboard } from "../components/Homepage/Desktop/1 - Dashboard/Dashboard";
 import { Summary } from "../components/Homepage/Desktop/2 - DailySummary/Summary";
 import { Insights } from "../components/Homepage/Desktop/3 - Insights & Analytics/Insights";
 import { Habits } from "../components/HabitTracker/1 - Habits/habits";
 import { HabitHistory } from "../components/HabitTracker/2 - Habbit History/habit-history";
+import { Profile } from "../components/AccountSettings/1 - Profile/Profile";
+import { Notifications } from "../components/AccountSettings/2 - Notifications/Notifications";
+import { Preferences } from "../components/AccountSettings/3 - Preferences/Preferences";
 
 const Mobile = () => {
   const screenVersion = useContext(screenVersionContext);
@@ -37,6 +38,9 @@ const Mobile = () => {
             <Route path="/insights" element={<Insights />} />
             <Route path="/habit-tracker" element={<Habits />} />
             <Route path="/habit-history" element={<HabitHistory />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/notifications" element={<Notifications />} />
+            <Route path="/preferences" element={<Preferences />} />
           </>
         )}
         <Route path="/email-verification" element={<EmailVerification />} />

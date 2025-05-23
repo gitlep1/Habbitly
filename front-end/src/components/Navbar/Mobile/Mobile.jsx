@@ -27,22 +27,13 @@ export default function Mobile() {
 
   const userData = GetCookies("authUser");
   const expandCookie = GetCookies("expandCookie") || null;
+  const expandedList = GetCookies("expandedLinks") || [];
 
-  const [showDropdown, setShowDropdown] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(expandedList);
 
-  const [showAuthModal, setShowAuthModal] = useState(false);
   const [showSignoutModal, setShowSignoutModal] = useState(false);
-  const [isSignin, setIsSignin] = useState(true);
 
-  const [expanded, setExpanded] = useState(expandCookie ? true : false);
-
-  const handleAuthModalShow = () => {
-    setShowAuthModal(true);
-  };
-
-  const handleAuthModalClose = () => {
-    setShowAuthModal(false);
-  };
+  const [expandTopbar, setExpandTopbar] = useState(expandCookie ? true : false);
 
   const handleSignoutModalShow = () => {
     setShowSignoutModal(true);
@@ -52,50 +43,25 @@ export default function Mobile() {
     setShowSignoutModal(false);
   };
 
-  const toggleForm = () => setIsSignin(!isSignin);
-
-  const renderAuthModal = () => {
-    return (
-      <Modal
-        show={showAuthModal}
-        onHide={handleAuthModalClose}
-        className="navbar-auth-modal"
-      >
-        <Modal.Header closeButton className="navbar-auth-modal-header">
-          <Modal.Title>{isSignin ? "Sign In" : "Sign Up"}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body className="navbar-auth-modal-body">
-          {isSignin ? (
-            <Signin
-              handleSignUpClick={toggleForm}
-              handleAuthModalClose={handleAuthModalClose}
-            />
-          ) : (
-            <Signup
-              handleSignUpClick={toggleForm}
-              handleAuthModalClose={handleAuthModalClose}
-            />
-          )}
-        </Modal.Body>
-      </Modal>
-    );
-  };
-
   const handleButtonToggle = (e) => {
     const name = e.target.dataset.name;
+    let updatedDropdowns;
 
     if (showDropdown.includes(name)) {
-      setShowDropdown(showDropdown.filter((item) => item !== name));
+      updatedDropdowns = showDropdown.filter((item) => item !== name);
     } else {
-      setShowDropdown([...showDropdown, name]);
+      updatedDropdowns = [...showDropdown, name];
     }
+
+    setShowDropdown(updatedDropdowns);
+    SetCookies("expandedLinks", updatedDropdowns, 7);
   };
 
   const expandNavbarAnimation = useSpring({
-    display: expanded ? "flex" : "none",
-    height: expanded ? "100dvh" : "0",
-    opacity: expanded ? 1 : 0,
-    zIndex: expanded ? 1 : -1,
+    display: expandTopbar ? "flex" : "none",
+    height: expandTopbar ? "100dvh" : "0",
+    opacity: expandTopbar ? 1 : 0,
+    zIndex: expandTopbar ? 1 : -1,
     config: {
       duration: 500,
     },
@@ -103,7 +69,7 @@ export default function Mobile() {
 
   useEffect(() => {
     if (location.pathname === "/email-verification") {
-      setExpanded(false);
+      setExpandTopbar(false);
     }
   }, [location]);
 
@@ -111,12 +77,25 @@ export default function Mobile() {
     const expirationDate = new Date();
     expirationDate.setDate(expirationDate.getDate() + 30);
 
-    if (expanded) {
+    if (expandTopbar) {
       SetCookies("expandCookie", false, expirationDate);
     } else {
       SetCookies("expandCookie", true, expirationDate);
     }
-    setExpanded(!expanded);
+    setExpandTopbar(!expandTopbar);
+  };
+
+  const handleThemeStateCookie = () => {
+    const expirationDate = new Date();
+    expirationDate.setDate(expirationDate.getDate() + 30);
+
+    if (themeState === "dark") {
+      SetCookies("theme", "light", expirationDate);
+      setThemeState("light");
+    } else {
+      SetCookies("theme", "dark", expirationDate);
+      setThemeState("dark");
+    }
   };
 
   return (
@@ -145,7 +124,7 @@ export default function Mobile() {
                 : { border: "1px solid black" }
             }
             onClick={() => {
-              setThemeState(themeState === "dark" ? "light" : "dark");
+              handleThemeStateCookie();
             }}
           >
             <div
@@ -178,7 +157,7 @@ export default function Mobile() {
             themeState === "dark" ? "darkmode-expanded" : "lightmode-expanded"
           }`}
         >
-          {expanded ? "Hide Menu" : "Show Menu"}
+          {expandTopbar ? "Hide Menu" : "Show Menu"}
         </span>
       </div>
 
@@ -212,7 +191,7 @@ export default function Mobile() {
         )}
 
         <div className="navbar-auth-buttons">
-          {userData ? (
+          {userData && (
             <Button
               id={`${themeState === "dark" ? "dark-button" : "light-button"}`}
               className="signout-button"
@@ -221,34 +200,8 @@ export default function Mobile() {
             >
               Sign Out
             </Button>
-          ) : (
-            <>
-              <Button
-                id={`${themeState === "dark" ? "dark-button" : "light-button"}`}
-                className="signin-button"
-                variant="success"
-                onClick={() => {
-                  setIsSignin(true);
-                  handleAuthModalShow();
-                }}
-              >
-                Sign In
-              </Button>
-              <Button
-                id={`${themeState === "dark" ? "dark-button" : "light-button"}`}
-                className="signup-button"
-                onClick={() => {
-                  setIsSignin(false);
-                  handleAuthModalShow();
-                }}
-              >
-                Sign Up
-              </Button>
-            </>
           )}
         </div>
-
-        {renderAuthModal()}
 
         <Signout
           showSignoutModal={showSignoutModal}
