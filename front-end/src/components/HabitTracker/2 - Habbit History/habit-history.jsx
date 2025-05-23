@@ -4,6 +4,8 @@ import { Image, Table } from "react-bootstrap";
 import { Tooltip } from "react-tooltip";
 import axios from "axios";
 
+import { GetCookies } from "../../../CustomFunctions/HandleCookies";
+
 import maxwell from "../../../assets/images/habit-tracker-images/Maxwell.png";
 
 const API = import.meta.env.VITE_PUBLIC_API_BASE;
@@ -15,10 +17,15 @@ export const HabitHistory = () => {
     getUsersHabitHistory();
   }, []);
 
+  const tokenData = GetCookies("authToken");
+
   const getUsersHabitHistory = async () => {
     await axios
       .get(`${API}/history/user`, {
         withCredentials: true,
+        headers: {
+          authorization: `Bearer ${tokenData}`,
+        },
       })
       .then((res) => {
         setHistory(res.data.payload);

@@ -4,6 +4,7 @@ import { Modal, Image, Button, Form } from "react-bootstrap";
 import axios from "axios";
 
 import { habitContext } from "../../../CustomContexts/Contexts";
+import { GetCookies } from "../../../CustomFunctions/HandleCookies";
 
 const API = import.meta.env.VITE_PUBLIC_API_BASE;
 
@@ -50,9 +51,14 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
       );
     }
 
+    const tokenData = GetCookies("authToken");
+
     await axios
       .post(`${API}/habbits/create`, habitData, {
         withCredentials: true,
+        headers: {
+          authorization: `Bearer ${tokenData}`,
+        },
       })
       .then(async () => {
         toast.success("Habit added successfully", {

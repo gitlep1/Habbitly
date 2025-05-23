@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { Image } from "react-bootstrap";
 import axios from "axios";
 
+import { GetCookies } from "../../../../CustomFunctions/HandleCookies";
+
 import flamey1x from "../../../../assets/images/Dashboard-images/flamey-1x.gif";
 import flamey2x from "../../../../assets/images/Dashboard-images/flamey-2x.gif";
 import flamey3x from "../../../../assets/images/Dashboard-images/flamey-3x.gif";
@@ -28,16 +30,24 @@ export const ActiveHabit = () => {
     habit_completed,
   } = activeHabitData;
 
+  let progressChecker = habit_progress;
+
+  if (!progressChecker) {
+    progressChecker = 0;
+  }
+
   useEffect(() => {
     getActiveHabit();
   }, []);
 
   const getActiveHabit = async () => {
+    const tokenData = GetCookies("authToken");
+
     await axios
       .get(`${API}/habbits/user`, {
         withCredentials: true,
         headers: {
-          "Content-Type": "application/json",
+          authorization: `Bearer ${tokenData}`,
         },
       })
       .then((res) => {
@@ -83,19 +93,19 @@ export const ActiveHabit = () => {
 
     const increment = getProgressIncrement();
 
-    habit_progress += increment;
+    progressChecker += increment;
 
-    if (habit_progress >= 100) {
-      habit_progress = 100;
+    if (progressChecker >= 100) {
+      progressChecker = 100;
     }
 
     habit_completed = true;
   };
 
   const getFlameyGif = () => {
-    if (habit_progress >= 75) return flamey4x;
-    if (habit_progress >= 50) return flamey3x;
-    if (habit_progress >= 25) return flamey2x;
+    if (progressChecker >= 75) return flamey4x;
+    if (progressChecker >= 50) return flamey3x;
+    if (progressChecker >= 25) return flamey2x;
     return flamey1x;
   };
 
@@ -125,6 +135,12 @@ export const ActiveHabit = () => {
                 habit_completed,
               } = habit;
 
+              let checkProgress = habit_progress;
+
+              if (!habit_progress) {
+                checkProgress = 0;
+              }
+
               return (
                 <div
                   key={habit.id}
@@ -133,7 +149,7 @@ export const ActiveHabit = () => {
                   <div className="active-habit-card-data">
                     <span>Habit: {habit_name}</span>
                     <span>Goal: {habit_task}</span>
-                    <span>Progress: {habit_progress?.toFixed(0)}%</span>
+                    <span>Progress: {checkProgress?.toFixed(0)}%</span>
                   </div>
                   <div className="active-habit-card-checkmark-outer rounded-circle">
                     <div
@@ -156,7 +172,7 @@ export const ActiveHabit = () => {
                       <div
                         className="flamey-progress-bar"
                         style={{
-                          width: `${habit_progress}%`,
+                          width: `${checkProgress}%`,
                           maxWidth: "100%",
                         }}
                       ></div>

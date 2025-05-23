@@ -41,16 +41,15 @@ const GlobalContextProvider = ({ children }) => {
 
     await axios
       .get(`${API}/habbits/user`, {
+        withCredentials: true,
         headers: {
           authorization: `Bearer ${tokenData}`,
         },
       })
       .then((res) => {
-        console.log(res.data.payload);
         setUserHabits(res.data.payload);
       })
       .catch((err) => {
-        console.log(err?.response?.data?.error);
         setError(err?.response?.data?.error);
       });
   };

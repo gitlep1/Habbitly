@@ -45,9 +45,14 @@ export const Profile = () => {
   }, []);
 
   const getUserData = async () => {
+    const tokenData = GetCookies("authToken");
+
     await axios
       .get(`${API}/users/user`, {
         withCredentials: true,
+        headers: {
+          authorization: `Bearer ${tokenData}`,
+        },
       })
       .then((res) => {
         const expirationDate = new Date();
@@ -88,9 +93,14 @@ export const Profile = () => {
     const formDataToUpload = new FormData();
     formDataToUpload.append("image", newProfileImgFile);
 
+    const tokenData = GetCookies("authToken");
+
     await axios
       .post(`${API}/images/upload`, formDataToUpload, {
         withCredentials: true,
+        headers: {
+          authorization: `Bearer ${tokenData}`,
+        },
       })
       .then((res) => {
         const expirationDate = new Date();
@@ -132,9 +142,14 @@ export const Profile = () => {
       about_me: formData.aboutMe,
     };
 
+    const tokenData = GetCookies("authToken");
+
     await axios
       .put(`${API}/users/update`, updatePayload, {
         withCredentials: true,
+        headers: {
+          authorization: `Bearer ${tokenData}`,
+        },
       })
       .then((res) => {
         const expirationDate = new Date();

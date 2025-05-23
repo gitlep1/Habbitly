@@ -4,6 +4,8 @@ import { Form, Button, Row, Col, Card } from "react-bootstrap";
 import { toast } from "react-toastify";
 import axios from "axios";
 
+import { GetCookies } from "../../../CustomFunctions/HandleCookies";
+
 const initialNotificationSettings = {
   email: true,
   push: true,
@@ -35,9 +37,14 @@ export const Notifications = () => {
   const fetchNotificationSettings = async () => {
     setIsLoading(true);
 
+    const tokenData = GetCookies("authToken");
+
     await axios
       .get(`${API}/notifications`, {
         withCredentials: true,
+        headers: {
+          authorization: `Bearer ${tokenData}`,
+        },
       })
       .then((res) => {
         const backendPayload = res.data.payload;
@@ -106,9 +113,14 @@ export const Notifications = () => {
       weekly_summary: settings.weeklySummary,
     };
 
+    const tokenData = GetCookies("authToken");
+
     await axios
       .put(`${API}/notifications`, dataToSend, {
         withCredentials: true,
+        headers: {
+          authorization: `Bearer ${tokenData}`,
+        },
       })
       .then(() => {
         toast.success("Notification settings saved successfully!", {

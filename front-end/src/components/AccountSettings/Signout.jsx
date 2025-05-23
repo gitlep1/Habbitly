@@ -19,12 +19,17 @@ export const Signout = ({ showSignoutModal, handleSignoutModalClose }) => {
   const handleSignout = async () => {
     setIsLoading(true);
 
+    const tokenData = GetCookies("authToken");
+
     await axios
       .post(
         `${API}/users/signout`,
         {},
         {
           withCredentials: true,
+          headers: {
+            authorization: `Bearer ${tokenData}`,
+          },
         }
       )
       .then(() => {
