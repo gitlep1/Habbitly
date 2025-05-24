@@ -16,6 +16,24 @@ export default function CloudsBackground() {
       return;
     }
 
+    function isWebGLAvailable() {
+      try {
+        const canvas = document.createElement("canvas");
+        return !!(
+          window.WebGLRenderingContext &&
+          (canvas.getContext("webgl") ||
+            canvas.getContext("experimental-webgl"))
+        );
+      } catch (err) {
+        return false;
+      }
+    }
+
+    if (!isWebGLAvailable()) {
+      console.warn("WebGL is not supported on this device.");
+      return;
+    }
+
     // === Scene Setup === \\
     const scene = new THREE.Scene();
     scene.background = null;
@@ -28,7 +46,13 @@ export default function CloudsBackground() {
     );
     camera.position.z = 5;
 
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    let renderer;
+    try {
+      renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    } catch (e) {
+      console.error("WebGLRenderer initialization failed:", e);
+      return;
+    }
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setClearColor(0x000000, 0);
     currentRef.appendChild(renderer.domElement);
