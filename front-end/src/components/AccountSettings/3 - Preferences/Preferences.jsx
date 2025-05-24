@@ -1,56 +1,25 @@
 import "./Preferences.scss";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Form, Button, Row, Col, Card } from "react-bootstrap";
 import { toast } from "react-toastify";
 
-import { GetCookies, SetCookies } from "../../../CustomFunctions/HandleCookies";
-
-const defaultPreferences = {
-  animatedBackground: true,
-  uiSounds: true,
-  showWelcomeTour: true,
-  compactMode: false,
-};
+import { preferencesContext } from "../../../CustomContexts/Contexts";
 
 export const Preferences = () => {
-  const [preferences, setPreferences] = useState(defaultPreferences);
+  const { preferences: globalPreferences, updateSitePreferences } =
+    useContext(preferencesContext);
+
+  const [preferences, setPreferences] = useState(globalPreferences);
+
   const [originalPreferences, setOriginalPreferences] =
-    useState(defaultPreferences);
+    useState(globalPreferences);
+
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    loadPreferencesFromCookie();
-  }, []);
-
-  const loadPreferencesFromCookie = () => {
-    const userCookieData = GetCookies("preferences");
-    if (userCookieData && typeof userCookieData === "object") {
-      const loadedPrefs = {
-        ...defaultPreferences,
-        animatedBackground:
-          userCookieData.animatedBackground !== undefined
-            ? userCookieData.animatedBackground
-            : defaultPreferences.animatedBackground,
-        uiSounds:
-          userCookieData.uiSounds !== undefined
-            ? userCookieData.uiSounds
-            : defaultPreferences.uiSounds,
-        showWelcomeTour:
-          userCookieData.showWelcomeTour !== undefined
-            ? userCookieData.showWelcomeTour
-            : defaultPreferences.showWelcomeTour,
-        compactMode:
-          userCookieData.compactMode !== undefined
-            ? userCookieData.compactMode
-            : defaultPreferences.compactMode,
-      };
-      setPreferences(loadedPrefs);
-      setOriginalPreferences(loadedPrefs);
-    } else {
-      setPreferences(defaultPreferences);
-      setOriginalPreferences(defaultPreferences);
-    }
-  };
+    setPreferences(globalPreferences);
+    setOriginalPreferences(globalPreferences);
+  }, [globalPreferences]);
 
   const handlePreferenceChange = (e) => {
     const { name, type, checked, value } = e.target;
@@ -65,30 +34,12 @@ export const Preferences = () => {
     setIsSaving(true);
 
     try {
-      const userCookieData = GetCookies("authUser");
-      if (userCookieData && typeof userCookieData === "object") {
-        const updatedUserCookieData = {
-          ...preferences,
-        };
-
-        const expirationDate = new Date();
-        expirationDate.setDate(expirationDate.getDate() + 30);
-        SetCookies("preferences", updatedUserCookieData, expirationDate);
-
-        setOriginalPreferences(preferences);
-        toast.success("Preferences saved successfully!", {
-          containerId: "notify-success",
-        });
-        setTimeout(() => {
-          window.location.reload();
-        }, 3000);
-      } else {
-        toast.error("User data not found in cookie. Cannot save preferences.", {
-          containerId: "general-toast",
-        });
-      }
+      updateSitePreferences(preferences);
+      toast.success("Preferences saved successfully!", {
+        containerId: "notify-success",
+      });
     } catch (error) {
-      console.error("Error saving preferences to cookie:", error);
+      console.error("Error saving preferences:", error);
       toast.error("Failed to save preferences. Please try again.", {
         containerId: "general-toast",
       });

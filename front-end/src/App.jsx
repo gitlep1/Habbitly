@@ -5,11 +5,11 @@ import {
   screenVersionContext,
   themeContext,
   userContext,
+  preferencesContext,
 } from "./CustomContexts/Contexts";
 import CustomToastContainers from "./CustomFunctions/CustomToasts/CustomToastContainers";
 import DetectScreenSize from "./CustomFunctions/DetectScreenSize";
 import SmallResolution from "./CustomFunctions/SmallResolution/SmallResolution";
-import { GetCookies } from "./CustomFunctions/HandleCookies";
 
 import Desktop from "./Desktop/Desktop";
 import Mobile from "./Mobile/Mobile";
@@ -17,11 +17,9 @@ import Mobile from "./Mobile/Mobile";
 import CloudsBackground from "./components/3D-Background/CloudsBackground";
 
 const App = () => {
-  const checkPreferences = GetCookies("preferences") || null;
-  const allowAnimatedBackground = checkPreferences?.animatedBackground;
-
   const screenVersion = useContext(screenVersionContext);
   const { themeState } = useContext(themeContext);
+  const { preferences } = useContext(preferencesContext);
 
   const [screenSize, setScreenSize] = useState(DetectScreenSize().width);
 
@@ -34,6 +32,8 @@ const App = () => {
       clearInterval(resizeSidebarInterval);
     };
   }, []);
+
+  const allowAnimatedBackground = preferences?.animatedBackground;
 
   return (
     <section
