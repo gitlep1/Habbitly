@@ -15,7 +15,7 @@ export const Navbar = () => {
   const { themeState, setThemeState } = useContext(themeContext);
 
   return (
-    <nav className={`${themeState === "dark" ? "darkmode" : "lightmode"}`}>
+    <nav className="main-navbar">
       <themeContext.Provider value={{ themeState, setThemeState }}>
         {screenVersion === "desktop" ? <Desktop /> : <Mobile />}
       </themeContext.Provider>

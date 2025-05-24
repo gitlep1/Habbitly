@@ -4,11 +4,7 @@ import { Button } from "react-bootstrap";
 import { useSpring, animated } from "react-spring";
 import { FaLongArrowAltUp } from "react-icons/fa";
 
-export const AccountSettingsLinks = ({
-  handleButtonToggle,
-  showDropdown,
-  themeState,
-}) => {
+export const AccountSettingsLinks = ({ handleButtonToggle, showDropdown }) => {
   const navigate = useNavigate();
 
   const slideDropdownAccountSettings = useSpring({
@@ -54,9 +50,7 @@ export const AccountSettingsLinks = ({
         >
           <Button
             id="desktop-navbar-profile-button"
-            className={`desktop-navbar-button ${
-              themeState === "dark" ? "dark-button" : "light-button"
-            }`}
+            className={`desktop-navbar-button`}
             onClick={() => {
               navigate("/profile");
             }}
@@ -66,9 +60,7 @@ export const AccountSettingsLinks = ({
 
           <Button
             id="desktop-navbar-notifications-button"
-            className={`desktop-navbar-button ${
-              themeState === "dark" ? "dark-button" : "light-button"
-            }`}
+            className={`desktop-navbar-button`}
             onClick={() => {
               navigate("/notifications");
             }}
@@ -78,9 +70,7 @@ export const AccountSettingsLinks = ({
 
           <Button
             id="desktop-navbar-preferences-button"
-            className={`desktop-navbar-button ${
-              themeState === "dark" ? "dark-button" : "light-button"
-            }`}
+            className={`desktop-navbar-button`}
             onClick={() => {
               navigate("/preferences");
             }}
@@ -96,5 +86,4 @@ export const AccountSettingsLinks = ({
 AccountSettingsLinks.propTypes = {
   handleButtonToggle: PropTypes.func.isRequired,
   showDropdown: PropTypes.array.isRequired,
-  themeState: PropTypes.string.isRequired,
 };

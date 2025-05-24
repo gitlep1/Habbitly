@@ -1,13 +1,9 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import { Image, Modal } from "react-bootstrap";
 import { Button as MUIButton } from "@mui/material";
 import { Calendar as ReactCalendar } from "react-calendar";
 import { format, startOfWeek, addDays, isSameDay, isWeekend } from "date-fns";
 import axios from "axios";
-
-import { GetCookies, SetCookies } from "../../../CustomFunctions/HandleCookies";
-
-import { themeContext } from "../../../CustomContexts/Contexts";
 
 const mockTasks = [
   {
@@ -52,53 +48,9 @@ const mockTasks = [
     is_active: true,
     habit_completed: false,
   },
-  {
-    habit_name: "Journaling",
-    habit_task: "Write in my journal for 15 minutes",
-    habit_task_completed: false,
-    habit_category: "Mental Health",
-    habit_interval: "daily",
-    habit_progress: 0,
-    times_per_interval: 1,
-    start_date: "2025-04-18",
-    last_completed_date: null,
-    end_date: null,
-    is_active: true,
-    habit_completed: false,
-  },
-  {
-    habit_name: "Learning a new language",
-    habit_task: "Practice vocabulary and grammar for 30 minutes using an app",
-    habit_task_completed: false,
-    habit_category: "Personal Development",
-    habit_interval: "daily",
-    habit_progress: 0,
-    times_per_interval: 1,
-    start_date: "2025-04-27",
-    last_completed_date: null,
-    end_date: null,
-    is_active: true,
-    habit_completed: false,
-  },
-  {
-    habit_name: "Cooking a new recipe",
-    habit_task: "Try cooking a new recipe from a different cuisine for dinner",
-    habit_task_completed: false,
-    habit_category: "Culinary Skills",
-    habit_interval: "weekly",
-    habit_progress: 0,
-    times_per_interval: 1,
-    start_date: "2025-04-27",
-    last_completed_date: null,
-    end_date: null,
-    is_active: true,
-    habit_completed: false,
-  },
 ];
 
 export const Calendar = ({}) => {
-  const { themeState } = useContext(themeContext);
-
   const [selectedDate, setSelectedDate] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [habits, setHabits] = useState([]);

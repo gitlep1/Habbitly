@@ -1,48 +1,3 @@
-:root {
-  --primary: #646cff;
-  --primary-light: #9ca3af;
-  --primary-dark: #5056e9;
-  --text-color: #ffffff;
-  --text-color-light: #cccccc;
-  --card-bg: #282c34;
-  --card-bg-light: #343942;
-  --input-bg: #3a3f47;
-  --input-bg-focus: #3a3f47;
-  --border-color: #4a4f57;
-  --focus-color: #8a8dff;
-  --disabled-bg: #4a4f57;
-}
-
-.darkmode {
-  --primary: #646cff;
-  --primary-light: #9ca3af;
-  --primary-dark: #5056e9;
-  --text-color: #ffffff;
-  --text-color-light: #cccccc;
-  --card-bg: #282c34;
-  --card-bg-light: #343942;
-  --input-bg: #3a3f47;
-  --input-bg-focus: #3a3f47;
-  --border-color: #4a4f57;
-  --focus-color: #8a8dff;
-  --disabled-bg: #4a4f57;
-}
-
-.lightmode {
-  --primary: #4f46e5;
-  --primary-light: #a78bfa;
-  --primary-dark: #3730a3;
-  --text-color: #333333;
-  --text-color-light: #555555;
-  --card-bg: #ffffff;
-  --card-bg-light: #e2e8f0;
-  --input-bg: #f9f9f9;
-  --input-bg-focus: #f9f9f9;
-  --border-color: #ccc;
-  --focus-color: #6366f1;
-  --disabled-bg: #e0e0e0;
-}
-
 .profile-card {
   transition: box-shadow 0.3s ease;
   background-color: var(--card-bg);
@@ -53,6 +8,7 @@
   margin-left: 1rem;
   margin-right: 1rem;
   width: calc(100% - 2rem);
+  z-index: 1;
 
   &:hover {
     box-shadow: 0 0 1.2rem rgba(100, 100, 255, 0.3);

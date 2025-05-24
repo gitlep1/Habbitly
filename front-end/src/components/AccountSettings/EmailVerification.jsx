@@ -25,6 +25,14 @@ export const EmailVerification = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    document.body.classList.add("dark-theme");
+
+    return () => {
+      document.body.classList.remove("dark-theme");
+    };
+  }, []);
+
+  useEffect(() => {
     if (cooldown > 0) {
       cooldownIntervalRef.current = setInterval(() => {
         setCooldown((prevCooldown) => prevCooldown - 1);
@@ -147,52 +155,55 @@ export const EmailVerification = () => {
   };
 
   return (
-    <div className="email-verification">
-      <h1>Verify Your Email</h1>
-      {email ? (
-        <div>
-          <h3>A code has been sent to: {email}</h3>
-          <Form onSubmit={handleSubmit}>
-            <Form.Group controlId="formCode">
-              <Form.Label style={{ color: "lightgreen" }}>
-                Verification Code{" "}
-              </Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Enter verification code"
-                value={codeInput}
-                onChange={(e) => setCodeInput(e.target.value)}
-              />
-            </Form.Group>
-            <span style={{ fontSize: "15px", color: "red" }}>
-              If you do not see the code in your inbox please check your spam
-              folder
-            </span>
-            <br />
-            <br />
-            <div className="d-flex justify-content-between align-items-center">
-              <Button type="submit">Verify Email</Button>
-              <Button
-                variant="secondary"
-                onClick={handleResendCode}
-                disabled={cooldown > 0}
-              >
-                Resend Code {cooldown > 0 && `(${cooldown}s)`}
-              </Button>
-            </div>
-          </Form>
+    <div className="email-verification-container">
+      <div className="email-verification">
+        <h1>Verify Your Email</h1>
+        {email ? (
+          <div>
+            <h3>A code has been sent to: {email}</h3>
+            <Form onSubmit={handleSubmit}>
+              <Form.Group controlId="formCode">
+                <Form.Label>Verification Code</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Enter verification code"
+                  value={codeInput}
+                  onChange={(e) => setCodeInput(e.target.value)}
+                />
+              </Form.Group>
+              <span className="spam-folder-note">
+                If you do not see the code in your inbox please check your spam
+                folder
+              </span>
+              <br />
+              <br />
+              <div className="d-flex justify-content-between align-items-center">
+                <Button type="submit" className="verify-button">
+                  Verify Email
+                </Button>
+                <Button
+                  variant="secondary"
+                  onClick={handleResendCode}
+                  disabled={cooldown > 0}
+                  className="resend-button"
+                >
+                  Resend Code {cooldown > 0 && `(${cooldown}s)`}
+                </Button>
+              </div>
+            </Form>
 
-          {isLoading ? (
-            isResending ? (
-              <Loading message="Re-sending Code..." />
-            ) : (
-              <Loading message="Verifying Code..." />
-            )
-          ) : null}
-        </div>
-      ) : (
-        <p>No email provided</p>
-      )}
+            {isLoading ? (
+              isResending ? (
+                <Loading message="Re-sending Code..." />
+              ) : (
+                <Loading message="Verifying Code..." />
+              )
+            ) : null}
+          </div>
+        ) : (
+          <p>No email provided</p>
+        )}
+      </div>
     </div>
   );
 };

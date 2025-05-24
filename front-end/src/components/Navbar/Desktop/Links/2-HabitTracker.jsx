@@ -7,11 +7,7 @@ import { FaLongArrowAltUp } from "react-icons/fa";
 
 import { AddAHabit } from "../../../HabitTracker/1 - Habits/AddAHabit";
 
-export const HabitTrackerLinks = ({
-  handleButtonToggle,
-  showDropdown,
-  themeState,
-}) => {
+export const HabitTrackerLinks = ({ handleButtonToggle, showDropdown }) => {
   const navigate = useNavigate();
 
   const [showAddModal, setShowAddModal] = useState(false);
@@ -63,9 +59,7 @@ export const HabitTrackerLinks = ({
         >
           <Button
             id="desktop-navbar-habit-button"
-            className={`desktop-navbar-button ${
-              themeState === "dark" ? "dark-button" : "light-button"
-            }`}
+            className={`desktop-navbar-button`}
             onClick={() => {
               navigate("/habit-tracker");
             }}
@@ -75,9 +69,7 @@ export const HabitTrackerLinks = ({
 
           <Button
             id="desktop-navbar-create-button"
-            className={`desktop-navbar-button ${
-              themeState === "dark" ? "dark-button" : "light-button"
-            }`}
+            className={`desktop-navbar-button`}
             onClick={() => handleAddClick()}
           >
             Create New Habit
@@ -85,9 +77,7 @@ export const HabitTrackerLinks = ({
 
           <Button
             id="desktop-navbar-history-button"
-            className={`desktop-navbar-button ${
-              themeState === "dark" ? "dark-button" : "light-button"
-            }`}
+            className={`desktop-navbar-button`}
             onClick={() => {
               navigate("/habit-history");
             }}
@@ -110,5 +100,4 @@ export const HabitTrackerLinks = ({
 HabitTrackerLinks.propTypes = {
   handleButtonToggle: PropTypes.func.isRequired,
   showDropdown: PropTypes.array.isRequired,
-  themeState: PropTypes.string.isRequired,
 };

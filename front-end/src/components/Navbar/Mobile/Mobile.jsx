@@ -9,13 +9,14 @@ import { FaMoon } from "react-icons/fa";
 import { GetCookies, SetCookies } from "../../../CustomFunctions/HandleCookies";
 import { themeContext } from "../../../CustomContexts/Contexts";
 
+import { Signout } from "../../AccountSettings/Signout";
+
 import StellyHappy from "../../../assets/images/StellyHappy.png";
 import StellyAngry from "../../../assets/images/StellyAngry.png";
 
 import { HomepageLinks } from "./Links/1-Homepage";
 import { HabitTrackerLinks } from "./Links/2-HabitTracker";
 import { AccountSettingsLinks } from "./Links/3-AccountSettings";
-import { Signout } from "../../AccountSettings/Signout";
 
 export default function Mobile() {
   const location = useLocation();
@@ -58,7 +59,7 @@ export default function Mobile() {
     display: expandTopbar ? "flex" : "none",
     height: expandTopbar ? "100dvh" : "0",
     opacity: expandTopbar ? 1 : 0,
-    zIndex: expandTopbar ? 1 : -1,
+    zIndex: expandTopbar ? 1001 : 999,
     config: {
       duration: 500,
     },
@@ -96,11 +97,7 @@ export default function Mobile() {
   };
 
   return (
-    <nav
-      className={`mobile-sidebar ${
-        themeState === "dark" ? "dark-navbar " : "light-navbar"
-      }`}
-    >
+    <nav className="mobile-sidebar">
       <div className="mobile-navbar-title-container">
         <div className="mobile-navbar-title">
           <Image src={StellyHappy} className="mobile-navbar-logo" />
@@ -110,54 +107,23 @@ export default function Mobile() {
 
         <div className="nav-theme-switcher-container">
           <div
-            className={`nav-theme-switcher-outer-box ${
-              themeState === "dark"
-                ? "theme-switcher-dark"
-                : "theme-switcher-light"
-            }`}
-            style={
-              themeState === "dark"
-                ? { border: "1px solid whitesmoke" }
-                : { border: "1px solid black" }
-            }
-            onClick={() => {
-              handleThemeStateCookie();
-            }}
+            className="nav-theme-switcher-outer-box"
+            onClick={handleThemeStateCookie}
           >
-            <div
-              className="nav-theme-switcher-inner-box"
-              style={
-                themeState === "dark"
-                  ? { backgroundColor: "whitesmoke" }
-                  : { backgroundColor: "black" }
-              }
-            ></div>
-
+            <div className="nav-theme-switcher-inner-box"></div>
             <FaMoon id="nav-dark-logo" />
             <IoIosSunny id="nav-light-logo" />
           </div>
         </div>
       </div>
-
       <div
-        className={`mobile-expanded-button-container ${
-          themeState === "dark"
-            ? "darkmode-expanded-container"
-            : "lightmode-expanded-container"
-        }`}
-        onClick={() => {
-          expandSidebarCookie();
-        }}
+        className="mobile-expanded-button-container"
+        onClick={expandSidebarCookie}
       >
-        <span
-          className={`mobile-expanded-button ${
-            themeState === "dark" ? "darkmode-expanded" : "lightmode-expanded"
-          }`}
-        >
+        <span className="mobile-expanded-button">
           {expandTopbar ? "Hide Menu" : "Show Menu"}
         </span>
       </div>
-
       <animated.div
         className="mobile-navbar-links"
         style={expandNavbarAnimation}
@@ -190,7 +156,6 @@ export default function Mobile() {
         <div className="navbar-auth-buttons">
           {userData && (
             <Button
-              id={`${themeState === "dark" ? "dark-button" : "light-button"}`}
               className="signout-button"
               variant="danger"
               onClick={handleSignoutModalShow}

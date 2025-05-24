@@ -3,13 +3,12 @@ import { toast } from "react-toastify";
 import { Modal, Image, Button, Form } from "react-bootstrap";
 import axios from "axios";
 
-import { themeContext, habitContext } from "../../../CustomContexts/Contexts";
+import { habitContext } from "../../../CustomContexts/Contexts";
 import { GetCookies } from "../../../CustomFunctions/HandleCookies";
 
 const API = import.meta.env.VITE_PUBLIC_API_BASE;
 
 export const AddAHabit = ({ showAddModal, onHide }) => {
-  const { themeState } = useContext(themeContext);
   const { getUserHabits } = useContext(habitContext);
 
   const [habitData, setHabitData] = useState({
@@ -72,7 +71,7 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
           onHide();
         }, 4100);
       })
-      .catch((err) => {
+      .catch(() => {
         return toast.error("Failed to add habit", {
           containerId: "toast-notify",
         });
@@ -80,11 +79,7 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
   };
 
   return (
-    <Modal
-      show={showAddModal}
-      onHide={onHide}
-      className={themeState === "dark" ? "dark-modal" : "light-modal"}
-    >
+    <Modal show={showAddModal} onHide={onHide}>
       <Modal.Header closeButton>
         <Modal.Title>Add a Habit</Modal.Title>
       </Modal.Header>

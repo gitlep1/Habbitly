@@ -6,14 +6,11 @@
   -webkit-box-shadow: 5px 5px 15px 5px black;
   box-shadow: 5px 5px 15px 1.5px black;
   z-index: 1000;
-}
-
-.dark-navbar {
-  background-color: #191c26;
-}
-
-.light-navbar {
-  background-color: #d7d7d7;
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  transition:
+    background-color 1s,
+    color 1s;
 }
 
 .desktop-navbar-container {
@@ -46,6 +43,11 @@
             width: 50px;
             height: 25px;
             position: relative;
+            border: 1px solid var(--text-color);
+            border-radius: 9999px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: border-color 0.3s ease-in-out;
 
             .nav-theme-switcher-inner-box {
               width: 23px;
@@ -53,6 +55,8 @@
               position: absolute;
               z-index: 1;
               transition: transform 0.3s ease-in-out;
+              border-radius: 50%;
+              background-color: var(--text-color);
             }
 
             #nav-light-logo,
@@ -60,31 +64,47 @@
               position: absolute;
               font-size: 20px;
               top: 2px;
+
               transition: opacity 0.3s ease-in-out;
+              color: var(--text-color);
+              pointer-events: none;
             }
 
             #nav-dark-logo {
               left: 2px;
-              color: whitesmoke;
-              opacity: 1;
             }
 
             #nav-light-logo {
               right: 2px;
-              color: black;
-              opacity: 1;
             }
           }
+        }
+      }
 
-          .nav-theme-switcher-custom {
-            font-size: 10px;
-            color: #0a58ca;
-            text-decoration: underline;
+      .theme-switcher-dark {
+        .nav-theme-switcher-outer-box {
+          .nav-theme-switcher-inner-box {
+            transform: translateX(0);
+          }
+          #nav-dark-logo {
+            opacity: 1;
+          }
+          #nav-light-logo {
+            opacity: 0.4;
+          }
+        }
+      }
 
-            &:hover {
-              cursor: pointer;
-              color: #3370ca;
-            }
+      .theme-switcher-light {
+        .nav-theme-switcher-outer-box {
+          .nav-theme-switcher-inner-box {
+            transform: translateX(25px);
+          }
+          #nav-dark-logo {
+            opacity: 0.4;
+          }
+          #nav-light-logo {
+            opacity: 1;
           }
         }
       }
@@ -97,6 +117,7 @@
       overflow: auto;
 
       h3 {
+        color: var(--text-color);
         &:hover {
           cursor: pointer;
           color: gold;
@@ -130,6 +151,7 @@
       hr {
         width: 85%;
         margin: 0 auto;
+        border-color: var(--border-color);
       }
 
       .desktop-navbar-button-container {
@@ -144,6 +166,7 @@
           width: 80%;
           border: none;
           transition: all 0.3s ease-in-out;
+          color: var(--text-color);
 
           &:hover {
             transform: scale(1.05);
@@ -152,7 +175,6 @@
 
         #desktop-navbar-dashboard-button {
           background-color: #4a90e2;
-
           &:hover {
             background-color: #357abd;
           }
@@ -160,7 +182,6 @@
 
         #desktop-navbar-summary-button {
           background-color: #f5a623;
-
           &:hover {
             background-color: #d4871c;
           }
@@ -168,7 +189,6 @@
 
         #desktop-navbar-insight-button {
           background-color: #7ed321;
-
           &:hover {
             background-color: #5ea910;
           }
@@ -176,7 +196,6 @@
 
         #desktop-navbar-habit-button {
           background-color: #7b61ff;
-
           &:hover {
             background-color: #5a41e0;
           }
@@ -184,7 +203,6 @@
 
         #desktop-navbar-create-button {
           background-color: #ff6b81;
-
           &:hover {
             background-color: #e0556c;
           }
@@ -192,7 +210,6 @@
 
         #desktop-navbar-history-button {
           background-color: #00c2cb;
-
           &:hover {
             background-color: #009ea5;
           }
@@ -200,7 +217,6 @@
 
         #desktop-navbar-profile-button {
           background-color: #e5673e;
-
           &:hover {
             background-color: #d1552b;
           }
@@ -208,7 +224,6 @@
 
         #desktop-navbar-notifications-button {
           background-color: #ffcc3ed1;
-
           &:hover {
             background-color: #b08c2b;
           }
@@ -216,33 +231,10 @@
 
         #desktop-navbar-preferences-button {
           background-color: #9d9d9d;
-
           &:hover {
             background-color: #7a7a7a;
           }
         }
-
-        .dark-button {
-          color: white;
-          border: 1px solid white;
-        }
-
-        .light-button {
-          color: black;
-          border: 1px solid black;
-        }
-      }
-    }
-
-    .theme-switcher-dark {
-      .nav-theme-switcher-inner-box {
-        transform: translateX(25px);
-      }
-    }
-
-    .theme-switcher-light {
-      .nav-theme-switcher-inner-box {
-        transform: translateX(0);
       }
     }
 
@@ -250,6 +242,10 @@
       display: flex;
       align-items: center;
       justify-content: center;
+
+      h1 {
+        color: var(--text-color);
+      }
 
       .navbar-profile-image {
         width: 50px;
@@ -263,58 +259,44 @@
       grid-template-columns: repeat(2, 1fr);
       margin: auto 0 1em 0;
 
-      .signin-button {
+      .signin-button,
+      .signup-button,
+      .signout-button {
         transition: all 0.3s ease-in-out;
         width: 90%;
         margin: 0 auto;
+        background-color: var(--primary);
+        color: var(--text-color);
+        border: 1px solid var(--border-color);
 
         &:hover {
           cursor: pointer;
           transform: scale(1.05);
           box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+          background-color: var(--primary-dark);
+        }
+
+        &:active {
+          transform: scale(0.98);
+          box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+        }
+      }
+
+      .signin-button {
+        &:hover {
           background-color: #12663f;
         }
-
-        &:active {
-          transform: scale(0.98);
-          box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-        }
       }
-
       .signup-button {
-        transition: all 0.3s ease-in-out;
-        width: 90%;
-        margin: 0 auto;
-
         &:hover {
-          cursor: pointer;
-          transform: scale(1.05);
-          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
           background-color: #0a56c9;
         }
-
-        &:active {
-          transform: scale(0.98);
-          box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-        }
       }
-
       .signout-button {
         grid-column: 1 / -1;
-        transition: all 0.3s ease-in-out;
-        width: 80%;
-        margin: 0 2em;
 
         &:hover {
-          cursor: pointer;
-          transform: scale(1.05);
-          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
           background-color: #c90a0a;
-        }
-
-        &:active {
-          transform: scale(0.98);
-          box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
         }
       }
     }
@@ -326,9 +308,13 @@
     align-items: center;
     border-radius: 0 10px 10px 0;
     transition: background-color 0.2s ease-in-out;
+    background-color: var(--card-bg-light);
+    border: 1px solid var(--border-color);
+    color: var(--text-color-light);
 
     &:hover {
       cursor: pointer;
+      background-color: var(--border-color);
     }
 
     .arrows {
@@ -339,18 +325,17 @@
 
     .arrow {
       position: absolute;
+      color: inherit;
     }
 
     .arrow-1 {
       font-size: 10px;
       left: 3px;
     }
-
     .arrow-2 {
       font-size: 15px;
       left: 13px;
     }
-
     .arrow-3 {
       font-size: 20px;
       left: 23px;
@@ -359,41 +344,20 @@
     .arrow-set-1 {
       top: 3em;
     }
-
     .arrow-set-2 {
       top: 13em;
     }
-
     .arrow-set-3 {
       top: 23em;
     }
-
     .arrow-set-4 {
       top: 33em;
     }
-
     .arrow-set-5 {
       top: 43em;
     }
-
     .arrow-set-6 {
       top: 53em;
-    }
-  }
-
-  .dark-expand-button {
-    background-color: #2c3142;
-
-    &:hover {
-      background-color: #3a3f54;
-    }
-  }
-
-  .light-expand-button {
-    background-color: #e0e0e5;
-
-    &:hover {
-      background-color: #cfd3dc;
     }
   }
 }

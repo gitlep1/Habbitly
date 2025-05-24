@@ -138,7 +138,7 @@ export const Insights = () => {
           </div>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="insights-content grid gap-6 md:grid-cols-2">
           <div className="p-6 rounded-2xl shadow-lg">
             <h2 className="text-xl font-semibold mb-4">Habit Progress</h2>
             <div className="h-48 w-full">

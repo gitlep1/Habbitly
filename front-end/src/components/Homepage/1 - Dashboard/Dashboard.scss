@@ -128,6 +128,7 @@ $large-desktop: 1200px;
       grid-column: 1 / -1;
       background-color: #4d88bb;
       border-radius: 3em;
+      z-index: 1;
 
       @media screen and (min-width: $medium-desktop) {
         grid-column: 1;
@@ -249,6 +250,7 @@ $large-desktop: 1200px;
       grid-column: 1 / -1;
       background-color: #c55a5a;
       border-radius: 3em;
+      z-index: 1;
 
       @media screen and (min-width: $medium-desktop) {
         grid-row: 2;
@@ -303,6 +305,7 @@ $large-desktop: 1200px;
       height: 30em;
       background-color: #5e548e;
       border-radius: 3em;
+      z-index: 1;
 
       @media screen and (min-width: $medium-desktop) {
         grid-row: 3;

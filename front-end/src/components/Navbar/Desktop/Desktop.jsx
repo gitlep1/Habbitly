@@ -98,9 +98,7 @@ export default function Desktop() {
 
   return (
     <animated.nav
-      className={`desktop-navbar desktop-navbar-container ${
-        themeState === "dark" ? "dark-navbar" : "light-navbar"
-      }`}
+      className={`desktop-navbar desktop-navbar-container`}
       style={sidebarAnimation}
     >
       <div className="desktop-navbar-links-container">
@@ -111,28 +109,17 @@ export default function Desktop() {
 
             <div className="nav-theme-switcher-container">
               <div
-                className={`nav-theme-switcher-outer-box ${
-                  themeState === "dark"
-                    ? "theme-switcher-dark"
-                    : "theme-switcher-light"
-                }`}
-                style={
-                  themeState === "dark"
-                    ? { border: "1px solid whitesmoke" }
-                    : { border: "1px solid black" }
-                }
+                className={`nav-theme-switcher-outer-box
+                  ${
+                    themeState === "dark"
+                      ? "theme-switcher-dark"
+                      : "theme-switcher-light"
+                  }`}
                 onClick={() => {
                   handleThemeStateCookie();
                 }}
               >
-                <div
-                  className="nav-theme-switcher-inner-box"
-                  style={
-                    themeState === "dark"
-                      ? { backgroundColor: "whitesmoke" }
-                      : { backgroundColor: "black" }
-                  }
-                ></div>
+                <div className="nav-theme-switcher-inner-box"></div>
 
                 <FaMoon id="nav-dark-logo" />
                 <IoIosSunny id="nav-light-logo" />
@@ -151,19 +138,16 @@ export default function Desktop() {
           <HomepageLinks
             handleButtonToggle={handleButtonToggle}
             showDropdown={showDropdown}
-            themeState={themeState}
           />
 
           <HabitTrackerLinks
             handleButtonToggle={handleButtonToggle}
             showDropdown={showDropdown}
-            themeState={themeState}
           />
 
           <AccountSettingsLinks
             handleButtonToggle={handleButtonToggle}
             showDropdown={showDropdown}
-            themeState={themeState}
           />
         </div>
 
@@ -177,7 +161,6 @@ export default function Desktop() {
         <div className="navbar-auth-buttons">
           {userData && (
             <Button
-              id={`${themeState === "dark" ? "dark-button" : "light-button"}`}
               className="signout-button"
               variant="danger"
               onClick={handleSignoutModalShow}
@@ -194,9 +177,7 @@ export default function Desktop() {
       </div>
 
       <div
-        className={`navbar-expand-button ${
-          themeState === "dark" ? "dark-expand-button" : "light-expand-button"
-        }`}
+        className={`navbar-expand-button`}
         onClick={() => {
           expandSidebarCookie();
         }}

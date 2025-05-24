@@ -57,7 +57,7 @@ export default function CloudsBackground() {
           side: THREE.DoubleSide,
         });
 
-        for (let i = 0; i < 15; i++) {
+        for (let i = 0; i < 20; i++) {
           const cloud = new THREE.Mesh(cloudGeo, cloudMaterial);
 
           cloud.position.set(

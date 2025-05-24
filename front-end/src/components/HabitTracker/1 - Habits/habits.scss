@@ -1,4 +1,6 @@
 .habit-tracker-container {
+  z-index: 1;
+
   .top-section {
     .rainbow-cloud-container {
       .corey {
@@ -16,16 +18,29 @@
     overflow: auto;
 
     .add-habit-card {
-      border: 2px dashed #ccc;
-      transition: background-color 0.2s ease-in-out;
+      border: 2px dashed var(--border-color);
+      background-color: var(--page-bg);
+      color: var(--text-color-light);
+      border-radius: 8px;
+      padding: 2em;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+
+      transition:
+        background-color 0.2s ease-in-out,
+        border-color 0.2s ease-in-out,
+        color 0.2s ease-in-out;
 
       &:hover {
-        background-color: rgb(0, 142, 163);
+        background-color: var(--card-bg-light);
+        border-color: var(--primary-light);
+        color: var(--text-color);
       }
 
       span {
         font-size: 4rem;
-        color: #aaa;
       }
     }
 

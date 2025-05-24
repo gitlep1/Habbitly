@@ -33,6 +33,21 @@ const App = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setScreenSize(DetectScreenSize().width);
+    };
+
+    document.body.className =
+      themeState === "dark" ? "dark-theme" : "light-theme";
+
+    const resizeSidebarInterval = setInterval(checkScreenSize, 500);
+
+    return () => {
+      clearInterval(resizeSidebarInterval);
+    };
+  }, [themeState]);
+
   const allowAnimatedBackground = preferences?.animatedBackground;
 
   return (

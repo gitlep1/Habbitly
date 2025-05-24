@@ -4,11 +4,7 @@ import { Button } from "react-bootstrap";
 import { useSpring, animated } from "react-spring";
 import { FaLongArrowAltUp } from "react-icons/fa";
 
-export const HomepageLinks = ({
-  handleButtonToggle,
-  showDropdown,
-  themeState,
-}) => {
+export const HomepageLinks = ({ handleButtonToggle, showDropdown }) => {
   const navigate = useNavigate();
 
   const slideDropdownHomepage = useSpring({
@@ -54,9 +50,7 @@ export const HomepageLinks = ({
         >
           <Button
             id="desktop-navbar-dashboard-button"
-            className={`desktop-navbar-button ${
-              themeState === "dark" ? "dark-button" : "light-button"
-            }`}
+            className={`desktop-navbar-button`}
             onClick={() => {
               navigate("/");
             }}
@@ -66,9 +60,7 @@ export const HomepageLinks = ({
 
           <Button
             id="desktop-navbar-summary-button"
-            className={`desktop-navbar-button ${
-              themeState === "dark" ? "dark-button" : "light-button"
-            }`}
+            className={`desktop-navbar-button`}
             onClick={() => {
               navigate("/summary");
             }}
@@ -78,9 +70,7 @@ export const HomepageLinks = ({
 
           <Button
             id="desktop-navbar-insight-button"
-            className={`desktop-navbar-button ${
-              themeState === "dark" ? "dark-button" : "light-button"
-            }`}
+            className={`desktop-navbar-button`}
             onClick={() => {
               navigate("/insights");
             }}
@@ -96,5 +86,4 @@ export const HomepageLinks = ({
 HomepageLinks.propTypes = {
   handleButtonToggle: PropTypes.func.isRequired,
   showDropdown: PropTypes.array.isRequired,
-  themeState: PropTypes.string.isRequired,
 };

@@ -1,33 +1,60 @@
-.light-modal {
-  --primary: #a78bfa;
-  --primary-light: #4f46e5;
-  --primary-dark: #8b5cf6;
-  --text-color: #333333;
-  --text-color-light: #555555;
-  --card-bg: #ffffff;
-  --card-bg-light: #e2e8f0;
-  --input-bg: #f9f9f9;
-  --input-bg-focus: #f9f9f9;
-  --border-color: #ccc;
-  --focus-color: #6366f1;
-  --disabled-bg: #e0e0e0;
-  --page-bg: #f5f5f5;
-}
+:root,
+body {
+  &.light-theme {
+    --primary: #a78bfa;
+    --primary-light: #4f46e5;
+    --primary-dark: #8b5cf6;
+    --text-color: #333333;
+    --text-color-light: #555555;
+    --card-bg: #ffffff;
+    --card-bg-light: #e2e8f0;
+    --input-bg: #f9f9f9;
+    --input-bg-focus: #f9f9f9;
+    --border-color: #ccc;
+    --focus-color: #6366f1;
+    --disabled-bg: #e0e0e0;
+    --page-bg: #f5f5f5;
 
-.dark-modal {
-  --primary: #646cff;
-  --primary-light: #9ca3af;
-  --primary-dark: #5056e9;
-  --text-color: #ffffff;
-  --text-color-light: #cccccc;
-  --card-bg: #282c34;
-  --card-bg-light: #343942;
-  --input-bg: #3a3f47;
-  --input-bg-focus: #3a3f47;
-  --border-color: #4a4f57;
-  --focus-color: #8a8dff;
-  --disabled-bg: #4a4f57;
-  --page-bg: #1a1a1a;
+    --success: #01ff8d;
+    --success-dark: #00b260;
+    --secondary: #9ca3af;
+    --secondary-dark: #6b7280;
+    --placeholder-color: #a1a1aa;
+    --danger-color: #ef4444;
+    --header-color: #1f2937;
+    --input-text-color: var(--text-color);
+    --input-text-color-focus: var(--text-color);
+    --background-color: var(--page-bg);
+    --primary-rgb: 79, 70, 229;
+  }
+
+  &.dark-theme {
+    --primary: #646cff;
+    --primary-light: #9ca3af;
+    --primary-dark: #5056e9;
+    --text-color: #ffffff;
+    --text-color-light: #cccccc;
+    --card-bg: #282c34;
+    --card-bg-light: #343942;
+    --input-bg: #3a3f47;
+    --input-bg-focus: #3a3f47;
+    --border-color: #4a4f57;
+    --focus-color: #8a8dff;
+    --disabled-bg: #4a4f57;
+    --page-bg: #1a1a1a;
+
+    --success: #01ff8d;
+    --success-dark: #00b260;
+    --secondary: #4b5563;
+    --secondary-dark: #374151;
+    --placeholder-color: #9ca3af;
+    --danger-color: #dc2626;
+    --header-color: var(--text-color);
+    --input-text-color: var(--text-color);
+    --input-text-color-focus: var(--text-color);
+    --background-color: var(--page-bg);
+    --primary-rgb: 100, 108, 255;
+  }
 }
 
 .App {
@@ -35,17 +62,8 @@
   height: 100dvh;
   width: 100dvw;
   overflow: auto;
-}
-
-.darkmode {
-  color: white;
-  background-color: #191c26;
-  transition: 1s;
-}
-
-.lightmode {
-  color: black;
-  background-color: whitesmoke;
+  background-color: var(--page-bg);
+  color: var(--text-color);
   transition: 1s;
 }
 
@@ -124,6 +142,12 @@
 
   .form-check-input {
     background-color: var(--primary);
+    border-color: var(--border-color);
+
+    &:checked {
+      background-color: var(--primary-dark);
+      border-color: var(--primary-dark);
+    }
   }
 
   /* Buttons */
