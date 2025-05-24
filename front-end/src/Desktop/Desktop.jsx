@@ -9,9 +9,9 @@ import { Navbar } from "../components/Navbar/Navbar";
 import { EmailVerification } from "../components/AccountSettings/EmailVerification";
 
 import { Landing } from "../components/Landing/Landing";
-import { Dashboard } from "../components/Homepage/Desktop/1 - Dashboard/Dashboard";
-import { Summary } from "../components/Homepage/Desktop/2 - DailySummary/Summary";
-import { Insights } from "../components/Homepage/Desktop/3 - Insights & Analytics/Insights";
+import { Dashboard } from "../components/Homepage/1 - Dashboard/Dashboard";
+import { Summary } from "../components/Homepage/2 - DailySummary/Summary";
+import { Insights } from "../components/Homepage/3 - Insights & Analytics/Insights";
 import { Habits } from "../components/HabitTracker/1 - Habits/habits";
 import { HabitHistory } from "../components/HabitTracker/2 - Habbit History/habit-history";
 import { Profile } from "../components/AccountSettings/1 - Profile/Profile";

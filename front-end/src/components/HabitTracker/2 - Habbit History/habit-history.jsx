@@ -15,7 +15,7 @@ export const HabitHistory = () => {
 
   useEffect(() => {
     getUsersHabitHistory();
-  }, []);
+  }, []); // eslint-disable-line
 
   const tokenData = GetCookies("authToken");
 
@@ -112,8 +112,8 @@ export const HabitHistory = () => {
 
               {history.map((entry, index) => (
                 <div key={`tooltip-fragment-${index}`}>
-                  <Tooltip id={`history-tooltip-${index}`} delayShow={3000} />
-                  <Tooltip id={`habit-tooltip-${index}`} delayShow={3000} />
+                  <Tooltip id={`history-tooltip-${index}`} delayShow={1500} />
+                  <Tooltip id={`habit-tooltip-${index}`} delayShow={1500} />
                 </div>
               ))}
             </div>

@@ -12,9 +12,9 @@ import {
   Legend,
 } from "chart.js";
 
-import { themeContext } from "../../../../CustomContexts/Contexts";
+import { themeContext } from "../../../CustomContexts/Contexts";
 
-import anthony from "../../../../assets/images/insights-images/Anthony.png";
+import anthony from "../../../assets/images/insights-images/Anthony.png";
 
 ChartJS.register(
   CategoryScale,

@@ -4,7 +4,7 @@ import { Image } from "react-bootstrap";
 import { Button } from "@mui/material";
 import axios from "axios";
 
-import Sunny from "../../../../assets/images/summary-images/Sunny.png";
+import Sunny from "../../../assets/images/summary-images/Sunny.png";
 
 const API = import.meta.env.VITE_PUBLIC_API_BASE;
 

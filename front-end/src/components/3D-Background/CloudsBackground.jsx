@@ -48,7 +48,7 @@ export default function CloudsBackground() {
     loader.load(
       Cloud3Texture,
       (texture) => {
-        const cloudGeo = new THREE.PlaneGeometry(10, 10); // Ex: 10 units wide by 10 units high
+        const cloudGeo = new THREE.PlaneGeometry(10, 10); // size of the clouds Ex: 10 units wide by 10 units high
 
         const cloudMaterial = new THREE.MeshLambertMaterial({
           map: texture,
@@ -57,7 +57,7 @@ export default function CloudsBackground() {
           side: THREE.DoubleSide,
         });
 
-        for (let i = 0; i < 30; i++) {
+        for (let i = 0; i < 15; i++) {
           const cloud = new THREE.Mesh(cloudGeo, cloudMaterial);
 
           cloud.position.set(

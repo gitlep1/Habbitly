@@ -85,17 +85,17 @@ habbits.post("/create", requireAuth(), async (req, res) => {
   const newHabbitData = {
     user_id: decodedUserData.id,
     habit_name: req.body.habit_name,
-    habit_task: req.body.habit_task || null,
-    habit_task_completed: req.body.habit_task_completed || null,
+    habit_task: req.body.habit_task,
+    habit_task_completed: req.body.habit_task_completed || false,
     habit_category: req.body.habit_category || null,
     habit_interval: req.body.habit_interval,
-    habit_progress: req.body.habit_progress || null,
     times_per_interval: req.body.times_per_interval,
+    habit_progress: req.body.habit_progress,
     start_date: req.body.start_date,
     last_completed_date: req.body.last_completed_date || null,
     end_date: req.body.end_date || null,
-    is_active: req.body.is_active || null,
-    habit_completed: req.body.habit_completed || null,
+    is_active: req.body.is_active || true,
+    habit_completed: req.body.habit_completed || false,
   };
 
   try {
@@ -136,16 +136,16 @@ habbits.put("/:id", requireAuth(), async (req, res) => {
   const updatedHabbitData = {
     habit_name: req.body.habit_name,
     habit_task: req.body.habit_task,
-    habit_task_completed: req.body.habit_task_completed,
-    habit_category: req.body.habit_category,
+    habit_task_completed: req.body.habit_task_completed || false,
+    habit_category: req.body.habit_category || null,
     habit_interval: req.body.habit_interval,
-    habit_progress: req.body.habit_progress,
     times_per_interval: req.body.times_per_interval,
+    habit_progress: req.body.habit_progress,
     start_date: req.body.start_date,
-    last_completed_date: req.body.last_completed_date,
-    end_date: req.body.end_date,
-    is_active: req.body.is_active,
-    habit_completed: req.body.habit_completed,
+    last_completed_date: req.body.last_completed_date || null,
+    end_date: req.body.end_date || null,
+    is_active: req.body.is_active || true,
+    habit_completed: req.body.habit_completed || false,
   };
 
   try {

@@ -1,8 +1,5 @@
 import { useState, useEffect } from "react";
-import { Image } from "react-bootstrap";
 import axios from "axios";
-
-import harrold from "../../../../assets/images/Dashboard-images/Harrold.png";
 
 const API = import.meta.env.VITE_PUBLIC_API_BASE;
 
@@ -85,17 +82,15 @@ export const SiteNews = ({}) => {
       return <p>No site news available.</p>;
     } else {
       siteNews?.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-      return siteNews?.map((news) => {
-        return (
-          <div key={news.id} className="site-news-post-container">
-            <h4 className="site-news-post-title">{news.title}</h4>
-            <p className="site-news-post-content">{news.content}</p>
-            <p className="site-news-post-date">
-              {convertDateToHuman(new Date(news.created_at))}
-            </p>
-          </div>
-        );
-      });
+      return siteNews?.map((news) => (
+        <div key={news.id} className="site-news-post-container">
+          <h4 className="site-news-post-title">{news.title}</h4>
+          <p className="site-news-post-content">{news.content}</p>
+          <p className="site-news-post-date">
+            {convertDateToHuman(new Date(news.created_at))}
+          </p>
+        </div>
+      ));
     }
   };
 

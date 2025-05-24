@@ -5,12 +5,9 @@ import { Calendar as ReactCalendar } from "react-calendar";
 import { format, startOfWeek, addDays, isSameDay, isWeekend } from "date-fns";
 import axios from "axios";
 
-import {
-  GetCookies,
-  SetCookies,
-} from "../../../../CustomFunctions/HandleCookies";
+import { GetCookies, SetCookies } from "../../../CustomFunctions/HandleCookies";
 
-import { themeContext } from "../../../../CustomContexts/Contexts";
+import { themeContext } from "../../../CustomContexts/Contexts";
 
 const mockTasks = [
   {
@@ -134,11 +131,6 @@ export const Calendar = ({}) => {
     <div className="calendar-container">
       <div className="calendar-card">
         <div className="calendar-card-header">
-          {/* <Image
-            src={maxwell}
-            alt="maxwell-calendar-card"
-            id="calendar-cloud"
-          /> */}
           <h1>Calendar</h1>
         </div>
 

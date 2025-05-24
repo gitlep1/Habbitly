@@ -3,12 +3,13 @@ import { toast } from "react-toastify";
 import { Modal, Image, Button, Form } from "react-bootstrap";
 import axios from "axios";
 
-import { habitContext } from "../../../CustomContexts/Contexts";
+import { themeContext, habitContext } from "../../../CustomContexts/Contexts";
 import { GetCookies } from "../../../CustomFunctions/HandleCookies";
 
 const API = import.meta.env.VITE_PUBLIC_API_BASE;
 
 export const AddAHabit = ({ showAddModal, onHide }) => {
+  const { themeState } = useContext(themeContext);
   const { getUserHabits } = useContext(habitContext);
 
   const [habitData, setHabitData] = useState({
@@ -72,7 +73,6 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
         }, 4100);
       })
       .catch((err) => {
-        console.log(err.response);
         return toast.error("Failed to add habit", {
           containerId: "toast-notify",
         });
@@ -80,7 +80,11 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
   };
 
   return (
-    <Modal show={showAddModal} onHide={onHide}>
+    <Modal
+      show={showAddModal}
+      onHide={onHide}
+      className={themeState === "dark" ? "dark-modal" : "light-modal"}
+    >
       <Modal.Header closeButton>
         <Modal.Title>Add a Habit</Modal.Title>
       </Modal.Header>
@@ -97,7 +101,7 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
             />
           </Form.Group>
           <Form.Group controlId="habitTask">
-            <Form.Label>Habit Task</Form.Label>
+            <Form.Label className="habit-form-label">Habit Task</Form.Label>
             <Form.Control
               type="text"
               placeholder="Enter habit task (Do 50 pushups), (Read 1 book), (Cook Food)"

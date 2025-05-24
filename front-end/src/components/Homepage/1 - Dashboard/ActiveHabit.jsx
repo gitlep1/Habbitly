@@ -2,17 +2,19 @@ import { useState, useEffect } from "react";
 import { Image } from "react-bootstrap";
 import axios from "axios";
 
-import { GetCookies } from "../../../../CustomFunctions/HandleCookies";
+import { GetCookies } from "../../../CustomFunctions/HandleCookies";
 
-import flamey1x from "../../../../assets/images/Dashboard-images/flamey-1x.gif";
-import flamey2x from "../../../../assets/images/Dashboard-images/flamey-2x.gif";
-import flamey3x from "../../../../assets/images/Dashboard-images/flamey-3x.gif";
-import flamey4x from "../../../../assets/images/Dashboard-images/flamey-4x.gif";
+import flamey1x from "../../../assets/images/Dashboard-images/flamey-1x.gif";
+import flamey2x from "../../../assets/images/Dashboard-images/flamey-2x.gif";
+import flamey3x from "../../../assets/images/Dashboard-images/flamey-3x.gif";
+import flamey4x from "../../../assets/images/Dashboard-images/flamey-4x.gif";
 
 const API = import.meta.env.VITE_PUBLIC_API_BASE;
 
 export const ActiveHabit = () => {
   const [activeHabitData, setActiveHabitData] = useState([]);
+
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   let {
@@ -109,6 +111,52 @@ export const ActiveHabit = () => {
     return flamey1x;
   };
 
+  const renderActiveHabit = () => {
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error: {error.message}</p>;
+    if (!activeHabitData) return <p>No active habit</p>;
+
+    return activeHabitData.map((habit) => {
+      const {
+        habit_name,
+        habit_task,
+        habit_task_completed,
+        habit_category,
+        habit_interval,
+        habit_progress,
+        times_per_interval,
+        start_date,
+        last_completed_date,
+        end_date,
+        is_active,
+        habit_completed,
+      } = habit;
+
+      let checkProgress = habit_progress;
+
+      if (!checkProgress) {
+        checkProgress = 0;
+      }
+
+      return (
+        <div key={habit.id} className="active-habit-card-data-container">
+          <div className="active-habit-card-data">
+            <span>Habit: {habit_name}</span>
+            <span>Goal: {habit_task}</span>
+            <span>Progress: {checkProgress}%</span>
+          </div>
+          <div className="active-habit-card-checkmark-outer rounded-circle">
+            <div className="active-habit-card-checkmark-inner">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+          </div>
+        </div>
+      );
+    });
+  };
+
   return (
     <div className="active-habit-container">
       <div className="active-habit-card">
@@ -118,7 +166,7 @@ export const ActiveHabit = () => {
           </h3>
         </div>
         {activeHabitData.length >= 1 ? (
-          <div className="active-habits-data-container h-75">
+          <div className="active-habits-data-container">
             {activeHabitData.map((habit) => {
               const {
                 habit_name,
@@ -137,7 +185,7 @@ export const ActiveHabit = () => {
 
               let checkProgress = habit_progress;
 
-              if (!habit_progress) {
+              if (!checkProgress) {
                 checkProgress = 0;
               }
 

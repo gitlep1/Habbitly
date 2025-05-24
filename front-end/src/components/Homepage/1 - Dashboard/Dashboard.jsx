@@ -2,10 +2,10 @@ import "./Dashboard.scss";
 import { useEffect, useRef } from "react";
 import { Image } from "react-bootstrap";
 import { FaCloudversify } from "react-icons/fa";
-import { GetCookies } from "../../../../CustomFunctions/HandleCookies";
+import { GetCookies } from "../../../CustomFunctions/HandleCookies";
 
-import richard from "../../../../assets/images/Dashboard-images/richard-logo-2.png";
-import richardEye from "../../../../assets/images/Dashboard-images/richard-eye-2.png";
+import richard from "../../../assets/images/Dashboard-images/richard-logo-2.png";
+import richardEye from "../../../assets/images/Dashboard-images/richard-eye-2.png";
 
 import { ActiveHabit } from "./ActiveHabit";
 import { Calendar } from "./Calendar";
@@ -18,10 +18,19 @@ export const Dashboard = () => {
   const userData = GetCookies("authUser") || null;
 
   useEffect(() => {
+    const handleTouchMove = (e) => {
+      if (e.touches.length > 0) {
+        const touch = e.touches[0];
+        handlePointerMove({ clientX: touch.clientX, clientY: touch.clientY });
+      }
+    };
+
     window.addEventListener("pointermove", handlePointerMove);
+    window.addEventListener("touchmove", handleTouchMove);
 
     return () => {
       window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("touchmove", handleTouchMove);
     };
   });
 
@@ -78,20 +87,20 @@ export const Dashboard = () => {
   };
 
   return (
-    <section className="desktop-dashboard-container">
-      <div className="dashboard-header">
-        <div className="dashboard-title">
+    <section className="desktop-dashboard-container p-4 md:p-8 min-h-screen min-w-screen">
+      <div className="dashboard-header max-w-5xl mx-auto mt-[6em] md:mt-0 flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3">
+        <div className="dashboard-title md:col-2 lg:col-3 lg:row-1">
           <h1>
             Dashboard
             <FaCloudversify />
           </h1>
-          <div className="fancy-line"></div>
+          <div className="fancy-line mx-auto"></div>
           <div className="daily-date">
             <span id="today">Today&apos;s Date:</span>
             <span id="date">{dateInUserTimezone(new Date())}</span>
           </div>
         </div>
-        <div className="dashboard-welcome">
+        <div className="dashboard-welcome md:col-1 md:row-1">
           <h1>HABBITLY</h1>
           <p>
             {greetingInUserTimezone(new Date())},{" "}
@@ -101,7 +110,10 @@ export const Dashboard = () => {
             !
           </p>
         </div>
-        <div ref={richardContainerRef} className="richard-container">
+        <div
+          ref={richardContainerRef}
+          className="richard-container lg:col-2 lg:row-1"
+        >
           <Image
             ref={anchorRef}
             id="anchor"
@@ -124,9 +136,11 @@ export const Dashboard = () => {
         </div>
       </div>
 
-      <ActiveHabit />
-      <Calendar />
-      <SiteNews />
+      <div className="dashboard-content">
+        <ActiveHabit />
+        <Calendar />
+        <SiteNews />
+      </div>
     </section>
   );
 };
