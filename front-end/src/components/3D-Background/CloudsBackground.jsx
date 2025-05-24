@@ -5,7 +5,7 @@ import { themeContext } from "../../CustomContexts/Contexts";
 
 import { SetCookies } from "../../CustomFunctions/HandleCookies";
 
-import Cloud3Texture from "../../assets/images/BadCloud.png";
+import Cloudo from "../../assets/images/BadCloud.png";
 
 export default function CloudsBackground() {
   const mountRef = useRef(null);
@@ -78,7 +78,7 @@ export default function CloudsBackground() {
     const loader = new THREE.TextureLoader();
 
     loader.load(
-      Cloud3Texture,
+      Cloudo,
       (texture) => {
         const cloudGeo = new THREE.PlaneGeometry(10, 10); // size of the clouds Ex: 10 units wide by 10 units high
 
