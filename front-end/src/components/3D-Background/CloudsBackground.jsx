@@ -3,6 +3,8 @@ import * as THREE from "three";
 
 import { themeContext } from "../../CustomContexts/Contexts";
 
+import { SetCookies } from "../../CustomFunctions/HandleCookies";
+
 import Cloud3Texture from "../../assets/images/BadCloud.png";
 
 export default function CloudsBackground() {
@@ -28,6 +30,12 @@ export default function CloudsBackground() {
         return false;
       }
     }
+
+    const expirationDate = new Date();
+    expirationDate.setDate(expirationDate.getDate() + 30);
+
+    const isSupported = isWebGLAvailable();
+    SetCookies("isWebGlSupported", isSupported, expirationDate);
 
     if (!isWebGLAvailable()) {
       console.warn("WebGL is not supported on this device.");

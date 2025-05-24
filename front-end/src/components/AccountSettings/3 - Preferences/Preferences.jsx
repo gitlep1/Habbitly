@@ -5,11 +5,21 @@ import { toast } from "react-toastify";
 
 import { preferencesContext } from "../../../CustomContexts/Contexts";
 
+import { GetCookies, SetCookies } from "../../../CustomFunctions/HandleCookies";
+
 export const Preferences = () => {
+  const isWebGlSupported = GetCookies("isWebGlSupported");
+
   const { preferences: globalPreferences, updateSitePreferences } =
     useContext(preferencesContext);
 
-  const [preferences, setPreferences] = useState(globalPreferences);
+  const [preferences, setPreferences] = useState(() => {
+    const initialPrefs = { ...globalPreferences };
+    if (!isWebGlSupported) {
+      initialPrefs.animatedBackground = false;
+    }
+    return initialPrefs;
+  });
 
   const [originalPreferences, setOriginalPreferences] =
     useState(globalPreferences);
@@ -17,12 +27,23 @@ export const Preferences = () => {
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    setPreferences(globalPreferences);
+    setPreferences((prevPrefs) => {
+      const updatedPrefs = { ...globalPreferences };
+      if (!isWebGlSupported) {
+        updatedPrefs.animatedBackground = false;
+      }
+      return updatedPrefs;
+    });
     setOriginalPreferences(globalPreferences);
-  }, [globalPreferences]);
+  }, [globalPreferences, isWebGlSupported]);
 
   const handlePreferenceChange = (e) => {
     const { name, type, checked, value } = e.target;
+
+    if (name === "animatedBackground" && !isWebGlSupported) {
+      return;
+    }
+
     setPreferences((prevPrefs) => ({
       ...prevPrefs,
       [name]: type === "checkbox" ? checked : value,
@@ -34,7 +55,17 @@ export const Preferences = () => {
     setIsSaving(true);
 
     try {
-      updateSitePreferences(preferences);
+      const prefsToSave = { ...preferences };
+      if (!isWebGlSupported) {
+        prefsToSave.animatedBackground = false;
+        SetCookies(
+          "isWebGlSupported",
+          "false",
+          new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
+        );
+      }
+
+      updateSitePreferences(prefsToSave);
       toast.success("Preferences saved successfully!", {
         containerId: "notify-success",
       });
@@ -73,14 +104,22 @@ export const Preferences = () => {
             >
               <Form.Label column sm="8">
                 3D Animated Background
+                {!isWebGlSupported && (
+                  <small className="d-block text-danger mt-1">
+                    WebGL is not supported on your device.
+                  </small>
+                )}
               </Form.Label>
               <Col sm="4" className="text-end">
                 <Form.Check
                   type="switch"
                   id="animated-background-switch"
                   name="animatedBackground"
-                  checked={preferences.animatedBackground}
+                  checked={
+                    isWebGlSupported ? preferences.animatedBackground : false
+                  }
                   onChange={handlePreferenceChange}
+                  disabled={!isWebGlSupported}
                 />
               </Col>
             </Form.Group>
