@@ -17,8 +17,8 @@ import Mobile from "./Mobile/Mobile";
 import CloudsBackground from "./components/3D-Background/CloudsBackground";
 
 const App = () => {
-  const checkPreferences = GetCookies("preferences");
-  const allowAnimatedBackground = checkPreferences.animatedBackground;
+  const checkPreferences = GetCookies("preferences") || null;
+  const allowAnimatedBackground = checkPreferences?.animatedBackground;
 
   const screenVersion = useContext(screenVersionContext);
   const { themeState } = useContext(themeContext);
