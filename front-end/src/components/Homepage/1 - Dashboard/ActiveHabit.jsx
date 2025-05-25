@@ -122,9 +122,7 @@ export const ActiveHabit = () => {
     if (loading) return <Loading message={"Loading Active Habits ..."} />;
     if (error) return <p>Error: {error}</p>;
     if (activeHabitData.length < 1) {
-      return (
-        <span className="flex justify-self-center">No active habits set</span>
-      );
+      return <span>No active habits set</span>;
     }
     return activeHabitData.map((habit) => {
       const {

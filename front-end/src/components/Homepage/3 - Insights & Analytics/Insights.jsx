@@ -122,7 +122,7 @@ export const Insights = () => {
 
   return (
     <section className="insights-container p-4 md:p-8 min-h-screen">
-      <div className="max-w-5xl mx-auto mt-[7em]">
+      <div className="max-w-5xl mx-auto mt-[7em] md:mt-0">
         <div className="flex flex-col sm:flex-row items-center justify-center space-x-4 mb-6">
           <Image
             src={anthony}

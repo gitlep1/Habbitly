@@ -167,6 +167,8 @@ $large-desktop: 1200px;
         }
 
         .active-habits-data-container {
+          display: flex;
+          justify-content: center;
           max-height: 25em;
           overflow: auto;
 
