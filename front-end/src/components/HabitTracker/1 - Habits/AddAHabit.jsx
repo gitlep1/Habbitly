@@ -13,19 +13,37 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
 
   const [habitData, setHabitData] = useState({
     habit_name: "",
-    habit_task: "",
+    habit_task_description: "",
     habit_category: "",
-    habit_interval: "",
-    habit_progress: 0,
-    times_per_interval: 0,
+    habit_frequency: "",
+    repetitions_per_frequency: 1,
     start_date: "",
     end_date: "",
     is_active: false,
-    habit_completed: false,
+    has_reached_end_date: false,
   });
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
+
+    if (name === "repetitions_per_frequency") {
+      if (value === "") {
+        setHabitData((prevData) => ({
+          ...prevData,
+          [name]: value,
+        }));
+        return;
+      }
+
+      const numValue = parseInt(value, 10);
+      if (Number.isInteger(numValue) && numValue >= 1) {
+        setHabitData((prevData) => ({
+          ...prevData,
+          [name]: numValue,
+        }));
+      }
+      return;
+    }
 
     setHabitData((prevData) => ({
       ...prevData,
@@ -38,18 +56,23 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
 
     if (
       !habitData.habit_name ||
-      !habitData.habit_task ||
-      !habitData.habit_interval ||
-      !habitData.times_per_interval ||
+      !habitData.habit_task_description ||
+      !habitData.habit_frequency ||
+      !habitData.repetitions_per_frequency ||
       !habitData.start_date
     ) {
       return toast.error(
-        "Please fill out all required fields. Name, Task, Interval, Times Per Interval, Start Date",
+        "Please fill out all required fields. Name, description, frequency, Repetitions Per Frequency, Start Date",
         {
           containerId: "toast-notify",
         }
       );
     }
+
+    setHabitData((prevData) => ({
+      ...prevData,
+      habit_frequency: prevData.habit_frequency.toLowerCase(),
+    }));
 
     const tokenData = GetCookies("authToken");
 
@@ -86,7 +109,7 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
       <Modal.Body>
         <Form onSubmit={handleSubmit}>
           <Form.Group controlId="habitName">
-            <Form.Label>Habit Name</Form.Label>
+            <Form.Label>Name</Form.Label>
             <Form.Control
               type="text"
               placeholder="Enter habit name"
@@ -96,17 +119,17 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
             />
           </Form.Group>
           <Form.Group controlId="habitTask">
-            <Form.Label className="habit-form-label">Habit Task</Form.Label>
+            <Form.Label className="habit-form-label">Description</Form.Label>
             <Form.Control
               type="text"
-              placeholder="Enter habit task (Do 50 pushups), (Read 1 book), (Cook Food)"
-              name="habit_task"
-              value={habitData.habit_task}
+              placeholder="Enter description (Ex: Do 50 pushups)"
+              name="habit_task_description"
+              value={habitData.habit_task_description}
               onChange={handleInputChange}
             />
           </Form.Group>
           <Form.Group controlId="habitCategory">
-            <Form.Label>Habit Category</Form.Label>
+            <Form.Label>Category</Form.Label>
             <Form.Select
               name="habit_category"
               value={habitData.habit_category}
@@ -128,37 +151,52 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
             </Form.Select>
           </Form.Group>
           <Form.Group controlId="habitInterval">
-            <Form.Label>Habit Interval</Form.Label>
+            <Form.Label>Frequency</Form.Label>
             <Form.Select
-              name="habit_interval"
-              value={habitData.habit_interval}
+              name="habit_frequency"
+              value={habitData.habit_frequency}
               onChange={handleInputChange}
             >
-              <option value="">Select interval</option>
+              <option value="">Select Frequency</option>
               <option value="Daily">Daily</option>
               <option value="Weekly">Weekly</option>
               <option value="Monthly">Monthly</option>
               <option value="Yearly">Yearly</option>
             </Form.Select>
           </Form.Group>
-          <Form.Group controlId="habitProgress">
-            <Form.Label>Habit Progress</Form.Label>
+          <Form.Group controlId="repetitionsPerFrequency">
+            <Form.Label>Repetitions Per Frequency</Form.Label>
             <Form.Control
               type="number"
-              placeholder="Enter habit progress"
-              name="habit_progress"
-              value={habitData.habit_progress}
+              name="repetitions_per_frequency"
+              value={habitData.repetitions_per_frequency}
               onChange={handleInputChange}
-            />
-          </Form.Group>
-          <Form.Group controlId="timesPerInterval">
-            <Form.Label>Times per Interval</Form.Label>
-            <Form.Control
-              type="number"
-              placeholder="Enter times per interval"
-              name="times_per_interval"
-              value={habitData.times_per_interval}
-              onChange={handleInputChange}
+              onKeyDown={(e) => {
+                if (
+                  !/[0-9]/.test(e.key) &&
+                  e.key !== "Backspace" &&
+                  e.key !== "Delete" &&
+                  e.key !== "ArrowLeft" &&
+                  e.key !== "ArrowRight" &&
+                  e.key !== "ArrowUp" &&
+                  e.key !== "ArrowDown"
+                ) {
+                  e.preventDefault();
+                }
+              }}
+              onPaste={(e) => {
+                const paste = (e.clipboardData || window.Clipboard).getData(
+                  "text"
+                );
+                if (!/^\d+$/.test(paste)) {
+                  e.preventDefault();
+                }
+              }}
+              min="1"
+              step="1"
+              pattern="[0-9]*"
+              inputMode="numeric"
+              placeholder="ex: 1, 2, 3"
             />
           </Form.Group>
           <Form.Group controlId="startDate">
@@ -183,7 +221,7 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
             <Form.Group controlId="isActive">
               <Form.Check
                 type="checkbox"
-                label="Is Active"
+                label="Mark as Active?"
                 name="is_active"
                 checked={habitData.is_active}
                 onChange={handleInputChange}
@@ -192,9 +230,9 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
             <Form.Group controlId="habitCompleted">
               <Form.Check
                 type="checkbox"
-                label="Habit Completed"
-                name="habit_completed"
-                checked={habitData.habit_completed}
+                label="Mark as Completed?"
+                name="has_reached_end_date"
+                checked={habitData.has_reached_end_date}
                 onChange={handleInputChange}
               />
             </Form.Group>

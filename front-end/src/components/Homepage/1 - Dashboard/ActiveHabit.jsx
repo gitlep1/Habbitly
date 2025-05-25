@@ -3,6 +3,7 @@ import { Image } from "react-bootstrap";
 import axios from "axios";
 
 import { GetCookies } from "../../../CustomFunctions/HandleCookies";
+import { Loading } from "../../../CustomFunctions/Loading/Loading";
 
 import flamey1x from "../../../assets/images/Dashboard-images/flamey-1x.gif";
 import flamey2x from "../../../assets/images/Dashboard-images/flamey-2x.gif";
@@ -19,31 +20,33 @@ export const ActiveHabit = () => {
 
   let {
     habit_name,
-    habit_task,
+    habit_task_description,
     habit_task_completed,
     habit_category,
-    habit_interval,
-    habit_progress,
-    times_per_interval,
+    habit_frequency,
+    repetitions_per_frequency,
+    progress_percentage,
     start_date,
-    last_completed_date,
+    last_completed_on,
     end_date,
     is_active,
-    habit_completed,
+    has_reached_end_date,
   } = activeHabitData;
 
-  let progressChecker = habit_progress;
+  let progressChecker = progress_percentage;
 
   if (!progressChecker) {
     progressChecker = 0;
   }
 
   useEffect(() => {
-    getActiveHabit();
+    getActiveHabits();
   }, []);
 
-  const getActiveHabit = async () => {
+  const getActiveHabits = async () => {
     const tokenData = GetCookies("authToken");
+
+    setLoading(true);
 
     await axios
       .get(`${API}/habbits/user`, {
@@ -60,6 +63,9 @@ export const ActiveHabit = () => {
       })
       .catch((err) => {
         setError(err);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 
@@ -70,11 +76,11 @@ export const ActiveHabit = () => {
     const totalDurationInDays = (end - start) / (1000 * 3600 * 24);
 
     let intervalLengthInDays = 1;
-    if (habit_interval === "weekly") {
+    if (habit_frequency === "weekly") {
       intervalLengthInDays = 7;
-    } else if (habit_interval === "monthly") {
+    } else if (habit_frequency === "monthly") {
       intervalLengthInDays = 30;
-    } else if (habit_interval === "yearly") {
+    } else if (habit_frequency === "yearly") {
       intervalLengthInDays = 365;
     }
 
@@ -90,8 +96,9 @@ export const ActiveHabit = () => {
     return Number((365 / totalIntervals).toFixed(2));
   };
 
-  const handleCompletion = () => {
-    if (habit_completed) return;
+  const handleCompletion = (habitId) => {
+    console.log({ habitId });
+    if (has_reached_end_date) return;
 
     const increment = getProgressIncrement();
 
@@ -101,7 +108,7 @@ export const ActiveHabit = () => {
       progressChecker = 100;
     }
 
-    habit_completed = true;
+    has_reached_end_date = true;
   };
 
   const getFlameyGif = () => {
@@ -111,28 +118,31 @@ export const ActiveHabit = () => {
     return flamey1x;
   };
 
-  const renderActiveHabit = () => {
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error: {error.message}</p>;
-    if (!activeHabitData) return <p>No active habit</p>;
-
+  const renderActiveHabits = () => {
+    if (loading) return <Loading message={"Loading Active Habits ..."} />;
+    if (error) return <p>Error: {error}</p>;
+    if (activeHabitData.length < 1) {
+      return (
+        <span className="flex justify-self-center">No active habits set</span>
+      );
+    }
     return activeHabitData.map((habit) => {
       const {
         habit_name,
-        habit_task,
+        habit_task_description,
         habit_task_completed,
         habit_category,
-        habit_interval,
-        habit_progress,
-        times_per_interval,
+        habit_frequency,
+        repetitions_per_frequency,
+        progress_percentage,
         start_date,
-        last_completed_date,
+        last_completed_on,
         end_date,
         is_active,
-        habit_completed,
+        has_reached_end_date,
       } = habit;
 
-      let checkProgress = habit_progress;
+      let checkProgress = progress_percentage;
 
       if (!checkProgress) {
         checkProgress = 0;
@@ -142,16 +152,34 @@ export const ActiveHabit = () => {
         <div key={habit.id} className="active-habit-card-data-container">
           <div className="active-habit-card-data">
             <span>Habit: {habit_name}</span>
-            <span>Goal: {habit_task}</span>
-            <span>Progress: {checkProgress}%</span>
+            <span>Goal: {habit_task_description}</span>
+            <span>Progress: {checkProgress?.toFixed(0)}%</span>
           </div>
           <div className="active-habit-card-checkmark-outer rounded-circle">
-            <div className="active-habit-card-checkmark-inner">
+            <div
+              className="active-habit-card-checkmark-inner"
+              onClick={() => {
+                handleCompletion(habit);
+              }}
+            >
               <svg viewBox="0 0 24 24" fill="none">
                 <path d="M5 13l4 4L19 7" />
               </svg>
             </div>
           </div>
+
+          <span className="flamey-container">
+            <Image src={getFlameyGif()} alt="Flamey x1 speed" id="flamey" />
+            <span className="flamey-progress-bar-container">
+              <div
+                className="flamey-progress-bar"
+                style={{
+                  width: `${checkProgress}%`,
+                  maxWidth: "100%",
+                }}
+              ></div>
+            </span>
+          </span>
         </div>
       );
     });
@@ -165,74 +193,9 @@ export const ActiveHabit = () => {
             {activeHabitData.length > 1 ? "Active Habits" : "Active Habit"}
           </h3>
         </div>
-        {activeHabitData.length >= 1 ? (
-          <div className="active-habits-data-container">
-            {activeHabitData.map((habit) => {
-              const {
-                habit_name,
-                habit_task,
-                habit_task_completed,
-                habit_category,
-                habit_interval,
-                habit_progress,
-                times_per_interval,
-                start_date,
-                last_completed_date,
-                end_date,
-                is_active,
-                habit_completed,
-              } = habit;
-
-              let checkProgress = habit_progress;
-
-              if (!checkProgress) {
-                checkProgress = 0;
-              }
-
-              return (
-                <div
-                  key={habit.id}
-                  className="active-habit-card-data-container"
-                >
-                  <div className="active-habit-card-data">
-                    <span>Habit: {habit_name}</span>
-                    <span>Goal: {habit_task}</span>
-                    <span>Progress: {checkProgress?.toFixed(0)}%</span>
-                  </div>
-                  <div className="active-habit-card-checkmark-outer rounded-circle">
-                    <div
-                      className="active-habit-card-checkmark-inner"
-                      onClick={handleCompletion}
-                    >
-                      <svg viewBox="0 0 24 24" fill="none">
-                        <path d="M5 13l4 4L19 7" />
-                      </svg>
-                    </div>
-                  </div>
-
-                  <span className="flamey-container">
-                    <Image
-                      src={getFlameyGif()}
-                      alt="Flamey x1 speed"
-                      id="flamey"
-                    />
-                    <span className="flamey-progress-bar-container">
-                      <div
-                        className="flamey-progress-bar"
-                        style={{
-                          width: `${checkProgress}%`,
-                          maxWidth: "100%",
-                        }}
-                      ></div>
-                    </span>
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        ) : (
-          <span className="flex justify-self-center">No active habits set</span>
-        )}
+        <div className="active-habits-data-container">
+          {renderActiveHabits()}
+        </div>
       </div>
     </div>
   );

@@ -3,17 +3,17 @@ import { db } from "../db/dbConfig.js";
 const habitFields = [
   "user_id",
   "habit_name",
-  "habit_task",
+  "habit_task_description",
   "habit_task_completed",
   "habit_category",
-  "habit_interval",
-  "habit_progress",
-  "times_per_interval",
+  "habit_frequency",
+  "progress_percentage",
+  "repetitions_per_frequency",
   "start_date",
-  "last_completed_date",
+  "last_completed_on",
   "end_date",
   "is_active",
-  "habit_completed",
+  "has_reached_end_date",
 ];
 
 export const getAllHabbits = async () => {

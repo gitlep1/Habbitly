@@ -101,7 +101,7 @@ export const HabitHistory = () => {
                       <td className={`fw-bold ${getActionColor(entry.action)}`}>
                         {entry.action}
                       </td>
-                      <td>{entry.habit_completed ? "Yes" : "No"}</td>
+                      <td>{entry.has_reached_end_date ? "Yes" : "No"}</td>
                       <td style={{ minWidth: "150px" }}>
                         {new Date(entry.timestamp).toLocaleString()}
                       </td>
@@ -145,7 +145,7 @@ export const HabitHistory = () => {
                   </div>
                   <div>
                     <strong>Habit Completed:</strong>{" "}
-                    {entry.habit_completed ? "Yes" : "No"}
+                    {entry.has_reached_end_date ? "Yes" : "No"}
                   </div>
                   <div>
                     <strong>Entry Logged At:</strong>{" "}

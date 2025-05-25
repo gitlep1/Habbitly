@@ -85,17 +85,17 @@ habbits.post("/create", requireAuth(), async (req, res) => {
   const newHabbitData = {
     user_id: decodedUserData.id,
     habit_name: req.body.habit_name,
-    habit_task: req.body.habit_task,
+    habit_task_description: req.body.habit_task_description,
     habit_task_completed: req.body.habit_task_completed || false,
     habit_category: req.body.habit_category || null,
-    habit_interval: req.body.habit_interval,
-    times_per_interval: req.body.times_per_interval,
-    habit_progress: req.body.habit_progress,
+    habit_frequency: req.body.habit_frequency,
+    repetitions_per_frequency: req.body.repetitions_per_frequency,
+    progress_percentage: 0,
     start_date: req.body.start_date,
-    last_completed_date: req.body.last_completed_date || null,
+    last_completed_on: req.body.last_completed_on || null,
     end_date: req.body.end_date || null,
     is_active: req.body.is_active || true,
-    habit_completed: req.body.habit_completed || false,
+    has_reached_end_date: req.body.has_reached_end_date || false,
   };
 
   try {
@@ -112,7 +112,7 @@ habbits.post("/create", requireAuth(), async (req, res) => {
         user_id: decodedUserData.id,
         habit_name: createdHabbit.habit_name,
         action: "Added",
-        habit_completed: createdHabbit.habit_completed,
+        has_reached_end_date: createdHabbit.has_reached_end_date,
       });
     } catch (historyError) {
       console.error("Failed to create habit history:", historyError);
@@ -135,17 +135,17 @@ habbits.put("/:id", requireAuth(), async (req, res) => {
 
   const updatedHabbitData = {
     habit_name: req.body.habit_name,
-    habit_task: req.body.habit_task,
+    habit_task_description: req.body.habit_task_description,
     habit_task_completed: req.body.habit_task_completed || false,
     habit_category: req.body.habit_category || null,
-    habit_interval: req.body.habit_interval,
-    times_per_interval: req.body.times_per_interval,
-    habit_progress: req.body.habit_progress,
+    habit_frequency: req.body.habit_frequency,
+    repetitions_per_frequency: req.body.repetitions_per_frequency,
+    progress_percentage: req.body.progress_percentage,
     start_date: req.body.start_date,
-    last_completed_date: req.body.last_completed_date || null,
+    last_completed_on: req.body.last_completed_on || null,
     end_date: req.body.end_date || null,
     is_active: req.body.is_active || true,
-    habit_completed: req.body.habit_completed || false,
+    has_reached_end_date: req.body.has_reached_end_date || false,
   };
 
   try {
@@ -181,7 +181,7 @@ habbits.put("/:id", requireAuth(), async (req, res) => {
         user_id: decodedUserData.id,
         habit_name: updatedHabbit.habit_name,
         action: "Updated",
-        habit_completed: updatedHabbit.habit_completed,
+        has_reached_end_date: updatedHabbit.has_reached_end_date,
       });
     } catch (historyError) {
       console.error("Failed to update habit history:", historyError);
@@ -229,7 +229,7 @@ habbits.delete("/:id", requireAuth(), async (req, res) => {
         user_id: deletedHabbit.user_id,
         habit_name: deletedHabbit.habit_name,
         action: "Deleted",
-        habit_completed: deletedHabbit.habit_completed,
+        has_reached_end_date: deletedHabbit.has_reached_end_date,
       });
     } catch (historyError) {
       console.error("Habit deleted but history update failed:", historyError);

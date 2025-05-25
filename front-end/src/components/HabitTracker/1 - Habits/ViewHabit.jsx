@@ -36,26 +36,38 @@ export const ViewHabit = ({ habitData, show, onClose }) => {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <p>Task: {habitData.habit_task}</p>
+        <p>Task: {habitData.habit_task_description}</p>
         <p>Category: {habitData.habit_category}</p>
-        <p>Interval: {habitData.habit_interval}</p>
+        <p>Interval: {habitData.habit_frequency}</p>
         <p>
           Progress:{" "}
-          {habitData.habit_progress
-            ? `${habitData.habit_progress}%`
+          {habitData.progress_percentage
+            ? `${habitData.progress_percentage}%`
             : "No progress yet"}
         </p>
-        <p>Times per interval: {habitData.times_per_interval}</p>
+        <p>Times per interval: {habitData.repetitions_per_frequency}</p>
         <p>Start date: {formatDate(habitData.start_date)}</p>
         <p>
-          Last completed date:
-          {habitData.last_completed_date
-            ? habitData.last_completed_date
-            : " Not yet completed"}
+          Last completed on:{" "}
+          {habitData.last_completed_on
+            ? formatDate(habitData.last_completed_on)
+            : "No completions yet"}
         </p>
-        <p>End date: {habitData.end_date ? habitData.end_date : "Infinite"}</p>
-        <p>Is active: {habitData.is_active ? "Yes" : "No"}</p>
-        <p>Habit completed: {habitData.habit_completed ? "Yes" : "No"}</p>
+        <p>
+          End date:{" "}
+          {habitData.end_date ? formatDate(habitData.end_date) : "Infinite"}
+        </p>
+        <p>Habit active: {habitData.is_active ? "Active" : "Paused"}</p>
+        <p>
+          Habit completed:{" "}
+          {habitData.has_reached_end_date ? (
+            <span style={{ color: "var(--success-color)", fontWeight: "bold" }}>
+              Completed! 🎉
+            </span>
+          ) : (
+            "Not yet"
+          )}
+        </p>
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={onClose}>

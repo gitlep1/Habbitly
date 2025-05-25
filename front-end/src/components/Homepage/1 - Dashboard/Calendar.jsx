@@ -8,45 +8,45 @@ import axios from "axios";
 const mockTasks = [
   {
     habit_name: "Meditation",
-    habit_task: "Meditate for 10 minutes",
+    habit_task_description: "Meditate for 10 minutes",
     habit_task_completed: false,
     habit_category: "Mental Health",
-    habit_interval: "daily",
-    habit_progress: 0,
-    times_per_interval: 1,
+    habit_frequency: "daily",
+    progress_percentage: 0,
+    repetitions_per_frequency: 1,
     start_date: "2025-04-20",
-    last_completed_date: null,
+    last_completed_on: null,
     end_date: null,
     is_active: true,
-    habit_completed: false,
+    has_reached_end_date: false,
   },
   {
     habit_name: "Exercise",
-    habit_task: "Go for a 30-minute run",
+    habit_task_description: "Go for a 30-minute run",
     habit_task_completed: false,
     habit_category: "Physical Health",
-    habit_interval: "daily",
-    habit_progress: 0,
-    times_per_interval: 1,
+    habit_frequency: "daily",
+    progress_percentage: 0,
+    repetitions_per_frequency: 1,
     start_date: "2025-04-20",
-    last_completed_date: null,
+    last_completed_on: null,
     end_date: null,
     is_active: true,
-    habit_completed: false,
+    has_reached_end_date: false,
   },
   {
     habit_name: "Reading",
-    habit_task: "Read 20 pages of a book",
+    habit_task_description: "Read 20 pages of a book",
     habit_task_completed: false,
     habit_category: "Personal Development",
-    habit_interval: "daily",
-    habit_progress: 0,
-    times_per_interval: 1,
+    habit_frequency: "daily",
+    progress_percentage: 0,
+    repetitions_per_frequency: 1,
     start_date: "2025-04-18",
-    last_completed_date: null,
+    last_completed_on: null,
     end_date: null,
     is_active: true,
-    habit_completed: false,
+    has_reached_end_date: false,
   },
 ];
 
@@ -70,7 +70,7 @@ export const Calendar = ({}) => {
       return habits.map((habit, index) => {
         return (
           <div key={index} className="calendar-card-modal-tasks">
-            <p>{habit.habit_task}</p>
+            <p>{habit.habit_task_description}</p>
           </div>
         );
       });

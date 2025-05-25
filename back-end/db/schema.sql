@@ -5,7 +5,7 @@ CREATE DATABASE habbitly_db;
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-CREATE TYPE habit_interval AS ENUM ('hourly', 'daily', 'weekly', 'monthly', 'yearly');
+CREATE TYPE habit_frequency AS ENUM ('hourly', 'daily', 'weekly', 'monthly', 'yearly');
 
 DROP TABLE IF EXISTS email_verification;
 CREATE TABLE email_verification (
@@ -50,17 +50,17 @@ CREATE TABLE habbits (
   id UUID DEFAULT uuid_generate_v4() NOT NULL PRIMARY KEY,
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   habit_name TEXT NOT NULL,
-  habit_task TEXT NOT NULL,
-  habit_task_completed BOOLEAN DEFAULT FALSE,
+  habit_task_description TEXT NOT NULL,
+  habit_task_completed BOOLEAN NOT NULL DEFAULT FALSE,
   habit_category TEXT,
-  habit_interval TEXT NOT NULL DEFAULT (action IN ('daily', 'weekly', 'monthly', 'yearly')),
-  times_per_interval INTEGER NOT NULL DEFAULT 1,
-  habit_progress INTEGER DEFAULT 0,
+  habit_frequency TEXT NOT NULL DEFAULT 'Daily' CHECK (habit_frequency IN ('Daily', 'Weekly', 'Monthly', 'Yearly')),
+  repetitions_per_frequency INTEGER NOT NULL DEFAULT 1,
+  progress_percentage INTEGER DEFAULT 0,
   start_date DATE NOT NULL DEFAULT NOW(),
-  last_completed_date DATE,
+  last_completed_on DATE,
   end_date DATE,
   is_active BOOLEAN DEFAULT TRUE,
-  habit_completed BOOLEAN DEFAULT FALSE
+  has_reached_end_date BOOLEAN DEFAULT FALSE
 );
 
 DROP TABLE IF EXISTS habit_history;
@@ -70,7 +70,7 @@ CREATE TABLE habit_history (
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   habit_name TEXT NOT NULL,
   action TEXT NOT NULL CHECK (action IN ('Added', 'Updated', 'Deleted')),
-  habit_completed BOOLEAN DEFAULT FALSE,
+  has_reached_end_date BOOLEAN DEFAULT FALSE,
   timestamp TIMESTAMP DEFAULT NOW()
 );
 
@@ -116,7 +116,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER update_notifications_timestamp
+CREATE OR REPLACE TRIGGER update_notifications_timestamp
 BEFORE UPDATE ON notifications
 FOR EACH ROW
 EXECUTE FUNCTION update_timestamp();

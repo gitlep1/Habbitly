@@ -62,17 +62,17 @@ export const Habits = () => {
               id,
               user_id,
               habit_name,
-              habit_task,
+              habit_task_description,
               habit_task_completed,
               habit_category,
-              habit_interval,
-              habit_progress,
-              times_per_interval,
+              habit_frequency,
+              progress_percentage,
+              repetitions_per_frequency,
               start_date,
-              last_completed_date,
+              last_completed_on,
               end_date,
               is_active,
-              habit_completed,
+              has_reached_end_date,
             } = habit;
 
             return (
@@ -87,7 +87,7 @@ export const Habits = () => {
                 <h3 className="text-lg font-semibold mb-2">{habit_name}</h3>
 
                 <div className="flex flex-col gap-1 text-sm text-gray-600 mb-4">
-                  <p>{habit_task}</p>
+                  <p>{habit_task_description}</p>
                   <p
                     className={
                       habit_task_completed ? "text-green-500" : "text-red-500"

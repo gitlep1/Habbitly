@@ -31,7 +31,7 @@ export const addOrUpdateHabitHistoryEntry = async ({
   user_id,
   habit_name,
   action,
-  habit_completed,
+  has_reached_end_date,
 }) => {
   const checkQuery = `
     SELECT * FROM habit_history
@@ -43,7 +43,7 @@ export const addOrUpdateHabitHistoryEntry = async ({
   if (existing) {
     const updateQuery = `
       UPDATE habit_history
-      SET user_id = $2, habit_name = $3, action = $4, habit_completed = $5, timestamp = NOW()
+      SET user_id = $2, habit_name = $3, action = $4, has_reached_end_date = $5, timestamp = NOW()
       WHERE habit_id = $1
       RETURNING *
     `;
@@ -52,12 +52,12 @@ export const addOrUpdateHabitHistoryEntry = async ({
       user_id,
       habit_name,
       action,
-      habit_completed,
+      has_reached_end_date,
     ];
     return await db.one(updateQuery, updateValues);
   } else {
     const insertQuery = `
-      INSERT INTO habit_history (habit_id, user_id, habit_name, action, habit_completed, timestamp)
+      INSERT INTO habit_history (habit_id, user_id, habit_name, action, has_reached_end_date, timestamp)
       VALUES ($1, $2, $3, $4, $5, NOW())
       RETURNING *
     `;
@@ -66,7 +66,7 @@ export const addOrUpdateHabitHistoryEntry = async ({
       user_id,
       habit_name,
       action,
-      habit_completed,
+      has_reached_end_date,
     ];
     return await db.one(insertQuery, insertValues);
   }
@@ -78,15 +78,22 @@ export const updateHabitHistoryEntry = async ({
   user_id,
   habit_name,
   action,
-  habit_completed,
+  has_reached_end_date,
 }) => {
   const query = `
     UPDATE habit_history
-    SET habit_id = $2, user_id = $3, habit_name = $4, action = $5, habit_completed = $6, timestamp = NOW()
+    SET habit_id = $2, user_id = $3, habit_name = $4, action = $5, has_reached_end_date = $6, timestamp = NOW()
     WHERE id = $1
     RETURNING *
   `;
-  const values = [id, habit_id, user_id, habit_name, action, habit_completed];
+  const values = [
+    id,
+    habit_id,
+    user_id,
+    habit_name,
+    action,
+    has_reached_end_date,
+  ];
   return await db.one(query, values);
 };
 
