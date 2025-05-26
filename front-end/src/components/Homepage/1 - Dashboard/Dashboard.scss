@@ -145,7 +145,6 @@ $large-desktop: 1200px;
       }
 
       .active-habit-card {
-        // border: 3px solid red;
         border-radius: 3em;
         padding: 0.5em;
 
@@ -185,14 +184,15 @@ $large-desktop: 1200px;
 
           .active-habit-card-data-container {
             display: grid;
-            grid-template-columns: 1fr 200px;
-            gap: 1em;
+            grid-template-columns: 1fr auto;
+            padding-top: 1em;
+            padding-bottom: 1em;
 
             .active-habit-card-data {
               display: flex;
               flex-direction: column;
               gap: 0.1em;
-              padding: 0.5em 0 0 2em;
+              padding: 0.5em 0 0 1em;
               font-size: 20px;
             }
 
@@ -200,10 +200,12 @@ $large-desktop: 1200px;
               display: flex;
               align-items: center;
               justify-content: center;
-              width: 55%;
-              margin: 0 auto;
+              width: 110px;
+              height: 110px;
+              margin: 0 2em;
               background-color: #aed2e7;
               box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+              border-radius: 50%;
 
               .active-habit-card-checkmark-inner {
                 width: 90%;

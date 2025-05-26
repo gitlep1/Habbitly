@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Image, Modal } from "react-bootstrap";
 import axios from "axios";
 
 import { GetCookies } from "../../../CustomFunctions/HandleCookies";
 import { Loading } from "../../../CustomFunctions/Loading/Loading";
+import { habitContext } from "../../../CustomContexts/Contexts";
 
 import flamey1x from "../../../assets/images/Dashboard-images/flamey-1x.gif";
 import flamey2x from "../../../assets/images/Dashboard-images/flamey-2x.gif";
@@ -13,10 +14,11 @@ import flamey4x from "../../../assets/images/Dashboard-images/flamey-4x.gif";
 const API = import.meta.env.VITE_PUBLIC_API_BASE;
 
 export const ActiveHabit = () => {
-  const [activeHabits, setActiveHabits] = useState([]);
+  const { userHabits, getUserHabits } = useContext(habitContext);
+  const activeHabits = userHabits.filter((habit) => habit.is_active === true);
 
   const [quickLoading, setQuickLoading] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [initialLoad, setInitialLoad] = useState(true);
   const [error, setError] = useState("");
 
   const [showModal, setShowModal] = useState(false);
@@ -33,35 +35,16 @@ export const ActiveHabit = () => {
   };
 
   useEffect(() => {
-    getActiveHabits();
-  }, []);
-
-  const getActiveHabits = async () => {
-    const tokenData = GetCookies("authToken");
-
-    setError("");
-    setLoading(true);
-
-    await axios
-      .get(`${API}/habbits/user`, {
-        withCredentials: true,
-        headers: {
-          authorization: `Bearer ${tokenData}`,
-        },
-      })
-      .then((res) => {
-        const activeHabit = res.data.payload.filter(
-          (habit) => habit.is_active === true
-        );
-        setActiveHabits(activeHabit);
-      })
-      .catch((err) => {
-        setError(err);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
+    const fetchInitialHabits = async () => {
+      await getUserHabits();
+      setInitialLoad(false);
+    };
+    if (userHabits.length === 0 && initialLoad) {
+      fetchInitialHabits();
+    } else if (userHabits.length > 0) {
+      setInitialLoad(false);
+    }
+  }, [getUserHabits, userHabits, initialLoad]);
 
   const handleQuickComplete = async (habitId) => {
     const authToken = GetCookies("authToken");
@@ -82,12 +65,8 @@ export const ActiveHabit = () => {
           Authorization: `Bearer ${authToken}`,
         },
       })
-      .then((res) => {
-        setActiveHabits((prevHabits) =>
-          prevHabits.map((habit) =>
-            habit.id === res.data.payload.id ? res.data.payload : habit
-          )
-        );
+      .then(async (res) => {
+        await getUserHabits();
       })
       .catch((err) => {
         setError(err?.response?.data?.error);
@@ -97,15 +76,22 @@ export const ActiveHabit = () => {
       });
   };
 
-  const getFlameyGif = (checkProgress) => {
-    if (checkProgress >= 75) return flamey4x;
-    if (checkProgress >= 50) return flamey3x;
-    if (checkProgress >= 25) return flamey2x;
-    return flamey1x;
+  const getFlameyGif = (checkProgress, hasEndDate) => {
+    if (hasEndDate) {
+      if (checkProgress >= 75) return flamey4x;
+      if (checkProgress >= 50) return flamey3x;
+      if (checkProgress >= 25) return flamey2x;
+      return flamey1x;
+    } else {
+      if (checkProgress >= 50) return flamey4x;
+      if (checkProgress >= 25) return flamey3x;
+      if (checkProgress >= 10) return flamey2x;
+      return flamey1x;
+    }
   };
 
   const renderActiveHabits = () => {
-    if (loading) return <Loading message={"Loading Active Habits ..."} />;
+    if (initialLoad) return <Loading message={"Loading Active Habits ..."} />;
     if (error) return <p>Error: {error}</p>;
     if (activeHabits.length < 1) {
       return (
@@ -117,20 +103,16 @@ export const ActiveHabit = () => {
         habit_name,
         habit_task_description,
         habit_task_completed,
-        habit_category,
-        habit_frequency,
-        repetitions_per_frequency,
         progress_percentage,
-        start_date,
-        last_completed_on,
         end_date,
-        is_active,
-        has_reached_end_date,
+        current_streak,
+        longest_streak,
       } = habit;
 
-      let checkProgress = progress_percentage;
+      const hasEndDate = !!end_date;
 
-      if (!checkProgress) {
+      let checkProgress = progress_percentage;
+      if (typeof checkProgress !== "number") {
         checkProgress = 0;
       }
 
@@ -139,24 +121,36 @@ export const ActiveHabit = () => {
           <div className="active-habit-card-data">
             <span>Habit: {habit_name}</span>
             <span>Goal: {habit_task_description}</span>
-            <span>Progress: {checkProgress?.toFixed(0)}%</span>
+            {hasEndDate && <span>Progress: {checkProgress?.toFixed(0)}%</span>}
           </div>
+
           <div className="active-habit-card-checkmark-outer rounded-circle">
             {habit_task_completed ? (
               <div
                 className="active-habit-card-checkmark-inner habit-completed"
                 onClick={() => handleOpenModal(habit)}
               >
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
-                </svg>
+                {quickLoading ? (
+                  <Loading message={""} />
+                ) : (
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                  </svg>
+                )}
               </div>
             ) : (
               <div
                 className="active-habit-card-checkmark-inner"
                 onClick={() => handleQuickComplete(habit.id)}
               >
-                <svg viewBox="0 0 24 24" fill="none">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
                   <path d="M5 13l4 4L19 7" />
                 </svg>
               </div>
@@ -165,19 +159,36 @@ export const ActiveHabit = () => {
 
           <span className="flamey-container">
             <Image
-              src={getFlameyGif(checkProgress)}
+              src={
+                hasEndDate
+                  ? getFlameyGif(checkProgress, true)
+                  : getFlameyGif(checkProgress, false)
+              }
               alt="Flamey speed"
               id="flamey"
             />
-            <span className="flamey-progress-bar-container">
-              <div
-                className="flamey-progress-bar"
-                style={{
-                  width: `${checkProgress}%`,
-                  maxWidth: "100%",
-                }}
-              ></div>
-            </span>
+            {hasEndDate ? (
+              <span className="flamey-progress-bar-container">
+                <div
+                  className="flamey-progress-bar"
+                  style={{
+                    width: `${checkProgress}%`,
+                    maxWidth: "100%",
+                  }}
+                ></div>
+              </span>
+            ) : (
+              <div className="flex items-center text-sm font-semibold ml-2 gap-1">
+                <span className="text-gray-100">
+                  CS:{" "}
+                  <span className="text-orange-300">{current_streak || 0}</span>
+                </span>
+                <span className="text-gray-100">
+                  LS:{" "}
+                  <span className="text-blue-300">{longest_streak || 0}</span>
+                </span>
+              </div>
+            )}
           </span>
         </div>
       );
@@ -227,6 +238,9 @@ export const ActiveHabit = () => {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
+          <p>
+            <strong>ID:</strong> {selectedHabit?.id}
+          </p>
           <p>
             <strong>Task:</strong> {selectedHabit?.habit_task_description}
           </p>

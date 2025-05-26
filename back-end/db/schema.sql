@@ -53,12 +53,19 @@ CREATE TABLE habbits (
   habit_task_description TEXT NOT NULL,
   habit_task_completed BOOLEAN NOT NULL DEFAULT FALSE,
   habit_category TEXT,
+
   habit_frequency TEXT NOT NULL DEFAULT 'Daily' CHECK (habit_frequency IN ('Daily', 'Weekly', 'Monthly', 'Yearly')),
   repetitions_per_frequency INTEGER NOT NULL DEFAULT 1,
+
   progress_percentage INTEGER DEFAULT 0,
-  start_date DATE NOT NULL DEFAULT NOW(),
+  current_streak INTEGER NOT NULL DEFAULT 0,
+  longest_streak INTEGER NOT NULL DEFAULT 0,
+  missed_periods_count INTEGER NOT NULL DEFAULT 0,
+
+  start_date TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   last_completed_on TIMESTAMPTZ,
-  end_date DATE,
+  end_date TIMESTAMPTZ,
+  
   is_active BOOLEAN DEFAULT TRUE,
   has_reached_end_date BOOLEAN DEFAULT FALSE
 );

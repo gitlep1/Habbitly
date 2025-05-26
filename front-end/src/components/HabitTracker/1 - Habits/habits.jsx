@@ -60,7 +60,6 @@ export const Habits = () => {
           {userHabits.map((habit) => {
             const {
               id,
-              user_id,
               habit_name,
               habit_task_description,
               habit_task_completed,
