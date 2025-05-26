@@ -12,9 +12,8 @@ export const getHabitHistoryByHabitId = async (habitId) => {
   const query = `
     SELECT * FROM habit_history
     WHERE habit_id = $1
-    ORDER BY timestamp DESC
   `;
-  return await db.manyOrNone(query, [habitId]);
+  return await db.oneOrNone(query, [habitId]);
 };
 
 export const getHabitHistoryByUserId = async (userId) => {

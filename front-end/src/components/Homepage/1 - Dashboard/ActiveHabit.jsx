@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Image } from "react-bootstrap";
+import { Image, Modal } from "react-bootstrap";
 import axios from "axios";
 
 import { GetCookies } from "../../../CustomFunctions/HandleCookies";
@@ -13,31 +13,24 @@ import flamey4x from "../../../assets/images/Dashboard-images/flamey-4x.gif";
 const API = import.meta.env.VITE_PUBLIC_API_BASE;
 
 export const ActiveHabit = () => {
-  const [activeHabitData, setActiveHabitData] = useState([]);
+  const [activeHabits, setActiveHabits] = useState([]);
 
+  const [quickLoading, setQuickLoading] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
 
-  let {
-    habit_name,
-    habit_task_description,
-    habit_task_completed,
-    habit_category,
-    habit_frequency,
-    repetitions_per_frequency,
-    progress_percentage,
-    start_date,
-    last_completed_on,
-    end_date,
-    is_active,
-    has_reached_end_date,
-  } = activeHabitData;
+  const [showModal, setShowModal] = useState(false);
+  const [selectedHabit, setSelectedHabit] = useState(null);
 
-  let progressChecker = progress_percentage;
+  const handleOpenModal = (habit) => {
+    setSelectedHabit(habit);
+    setShowModal(true);
+  };
 
-  if (!progressChecker) {
-    progressChecker = 0;
-  }
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setSelectedHabit(null);
+  };
 
   useEffect(() => {
     getActiveHabits();
@@ -46,6 +39,7 @@ export const ActiveHabit = () => {
   const getActiveHabits = async () => {
     const tokenData = GetCookies("authToken");
 
+    setError("");
     setLoading(true);
 
     await axios
@@ -59,7 +53,7 @@ export const ActiveHabit = () => {
         const activeHabit = res.data.payload.filter(
           (habit) => habit.is_active === true
         );
-        setActiveHabitData(activeHabit);
+        setActiveHabits(activeHabit);
       })
       .catch((err) => {
         setError(err);
@@ -69,62 +63,56 @@ export const ActiveHabit = () => {
       });
   };
 
-  const getIntervalLengthInDays = () => {
-    const start = new Date(start_date).getTime();
-    const end = new Date(end_date).getTime();
+  const handleQuickComplete = async (habitId) => {
+    const authToken = GetCookies("authToken");
 
-    const totalDurationInDays = (end - start) / (1000 * 3600 * 24);
+    const activeHabitData = activeHabits.find((habit) => habit.id === habitId);
 
-    let intervalLengthInDays = 1;
-    if (habit_frequency === "weekly") {
-      intervalLengthInDays = 7;
-    } else if (habit_frequency === "monthly") {
-      intervalLengthInDays = 30;
-    } else if (habit_frequency === "yearly") {
-      intervalLengthInDays = 365;
-    }
+    const updatedHabitData = {
+      ...activeHabitData,
+      habit_task_completed: true,
+    };
 
-    const totalIntervals = Math.floor(
-      totalDurationInDays / intervalLengthInDays
-    );
+    setError("");
+    setQuickLoading(true);
 
-    return totalIntervals;
+    await axios
+      .put(`${API}/habbits/${habitId}`, updatedHabitData, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      })
+      .then((res) => {
+        setActiveHabits((prevHabits) =>
+          prevHabits.map((habit) =>
+            habit.id === res.data.payload.id ? res.data.payload : habit
+          )
+        );
+      })
+      .catch((err) => {
+        setError(err?.response?.data?.error);
+      })
+      .finally(() => {
+        setQuickLoading(false);
+      });
   };
 
-  const getProgressIncrement = () => {
-    const totalIntervals = getIntervalLengthInDays();
-    return Number((365 / totalIntervals).toFixed(2));
-  };
-
-  const handleCompletion = (habitId) => {
-    console.log({ habitId });
-    if (has_reached_end_date) return;
-
-    const increment = getProgressIncrement();
-
-    progressChecker += increment;
-
-    if (progressChecker >= 100) {
-      progressChecker = 100;
-    }
-
-    has_reached_end_date = true;
-  };
-
-  const getFlameyGif = () => {
-    if (progressChecker >= 75) return flamey4x;
-    if (progressChecker >= 50) return flamey3x;
-    if (progressChecker >= 25) return flamey2x;
+  const getFlameyGif = (checkProgress) => {
+    if (checkProgress >= 75) return flamey4x;
+    if (checkProgress >= 50) return flamey3x;
+    if (checkProgress >= 25) return flamey2x;
     return flamey1x;
   };
 
   const renderActiveHabits = () => {
     if (loading) return <Loading message={"Loading Active Habits ..."} />;
     if (error) return <p>Error: {error}</p>;
-    if (activeHabitData.length < 1) {
-      return <span>No active habits set</span>;
+    if (activeHabits.length < 1) {
+      return (
+        <span className="flex align-self-center">No active habits set</span>
+      );
     }
-    return activeHabitData.map((habit) => {
+    return activeHabits.map((habit) => {
       const {
         habit_name,
         habit_task_description,
@@ -154,20 +142,33 @@ export const ActiveHabit = () => {
             <span>Progress: {checkProgress?.toFixed(0)}%</span>
           </div>
           <div className="active-habit-card-checkmark-outer rounded-circle">
-            <div
-              className="active-habit-card-checkmark-inner"
-              onClick={() => {
-                handleCompletion(habit);
-              }}
-            >
-              <svg viewBox="0 0 24 24" fill="none">
-                <path d="M5 13l4 4L19 7" />
-              </svg>
-            </div>
+            {habit_task_completed ? (
+              <div
+                className="active-habit-card-checkmark-inner habit-completed"
+                onClick={() => handleOpenModal(habit)}
+              >
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                </svg>
+              </div>
+            ) : (
+              <div
+                className="active-habit-card-checkmark-inner"
+                onClick={() => handleQuickComplete(habit.id)}
+              >
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+            )}
           </div>
 
           <span className="flamey-container">
-            <Image src={getFlameyGif()} alt="Flamey x1 speed" id="flamey" />
+            <Image
+              src={getFlameyGif(checkProgress)}
+              alt="Flamey speed"
+              id="flamey"
+            />
             <span className="flamey-progress-bar-container">
               <div
                 className="flamey-progress-bar"
@@ -183,18 +184,58 @@ export const ActiveHabit = () => {
     });
   };
 
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "N/A";
+
+    const date = new Date(dateStr);
+    const day = date.getDate();
+    const month = date.toLocaleString("default", { month: "short" });
+    const year = date.getFullYear();
+
+    const getDaySuffix = (d) => {
+      if (d > 3 && d < 21) return "th";
+      switch (d % 10) {
+        case 1:
+          return "st";
+        case 2:
+          return "nd";
+        case 3:
+          return "rd";
+        default:
+          return "th";
+      }
+    };
+
+    return `${month} ${day}${getDaySuffix(day)}, ${year}`;
+  };
+
   return (
     <div className="active-habit-container">
       <div className="active-habit-card">
         <div className="active-habit-card-header">
-          <h3>
-            {activeHabitData.length > 1 ? "Active Habits" : "Active Habit"}
-          </h3>
+          <h3>{activeHabits.length > 1 ? "Active Habits" : "Active Habit"}</h3>
         </div>
         <div className="active-habits-data-container">
           {renderActiveHabits()}
         </div>
       </div>
+
+      <Modal show={showModal} onHide={handleCloseModal} centered>
+        <Modal.Header closeButton>
+          <Modal.Title className="active-habit-modal-title">
+            {selectedHabit?.habit_name}
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>
+            <strong>Task:</strong> {selectedHabit?.habit_task_description}
+          </p>
+          <p>
+            <strong>Last Completed on:</strong>{" "}
+            {formatDate(selectedHabit?.last_completed_on)}
+          </p>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 };

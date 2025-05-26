@@ -11,7 +11,7 @@ import {
 } from "../queries/habbitsQueries.js";
 
 import {
-  getHabitHistoryById,
+  getHabitHistoryByHabitId,
   addOrUpdateHabitHistoryEntry,
   updateHabitHistoryEntry,
 } from "../queries/habitHistoryQueries.js";
@@ -142,7 +142,7 @@ habbits.put("/:id", requireAuth(), async (req, res) => {
     repetitions_per_frequency: req.body.repetitions_per_frequency,
     progress_percentage: req.body.progress_percentage,
     start_date: req.body.start_date,
-    last_completed_on: req.body.last_completed_on || null,
+    last_completed_on: req.body.last_completed_on || new Date().toISOString(),
     end_date: req.body.end_date || null,
     is_active: req.body.is_active || true,
     has_reached_end_date: req.body.has_reached_end_date || false,
@@ -170,7 +170,7 @@ habbits.put("/:id", requireAuth(), async (req, res) => {
     }
 
     try {
-      const historyEntry = await getHabitHistoryById(req.body.history_id);
+      const historyEntry = await getHabitHistoryByHabitId(getHabbit.id);
 
       if (!historyEntry) {
         return res.status(404).json({ error: "Habit history entry not found" });

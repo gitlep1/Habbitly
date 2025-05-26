@@ -66,8 +66,8 @@ export const Habits = () => {
               habit_task_completed,
               habit_category,
               habit_frequency,
-              progress_percentage,
               repetitions_per_frequency,
+              progress_percentage,
               start_date,
               last_completed_on,
               end_date,
@@ -93,7 +93,9 @@ export const Habits = () => {
                       habit_task_completed ? "text-green-500" : "text-red-500"
                     }
                   >
-                    {habit_task_completed ? "Complete" : "Incomplete"}
+                    {habit_task_completed
+                      ? `${habit_frequency} task completed`
+                      : `${habit_frequency} task not completed yet`}
                   </p>
                 </div>
 

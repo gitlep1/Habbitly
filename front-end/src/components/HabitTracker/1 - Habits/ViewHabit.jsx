@@ -6,6 +6,7 @@ const API = import.meta.env.VITE_PUBLIC_API_BASE;
 export const ViewHabit = ({ habitData, show, onClose }) => {
   const formatDate = (dateStr) => {
     if (!dateStr) return "N/A";
+
     const date = new Date(dateStr);
     const day = date.getDate();
     const month = date.toLocaleString("default", { month: "short" });

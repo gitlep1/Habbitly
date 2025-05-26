@@ -18,45 +18,139 @@ export const Dashboard = () => {
   const userData = GetCookies("authUser") || null;
 
   useEffect(() => {
+    const handleEyeRotation = (e) => {
+      updateEyeRotation(e.clientX, e.clientY, anchorRef);
+    };
+
     const handleTouchMove = (e) => {
+      // e.touches is a list of all current touch points on the screen.
       if (e.touches.length > 0) {
         const touch = e.touches[0];
-        handlePointerMove({ clientX: touch.clientX, clientY: touch.clientY });
+
+        // grab x and y position of the touch
+        updateEyeRotation(touch.clientX, touch.clientY, anchorRef);
       }
     };
 
-    window.addEventListener("pointermove", handlePointerMove);
+    window.addEventListener("pointermove", handleEyeRotation);
     window.addEventListener("touchmove", handleTouchMove);
 
     return () => {
-      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointermove", handleEyeRotation);
       window.removeEventListener("touchmove", handleTouchMove);
     };
-  });
+  }, [anchorRef]); // eslint-disable-line
 
-  const handlePointerMove = (e) => {
-    const mouseX = e.clientX;
-    const mouseY = e.clientY;
-
-    const anchor = anchorRef.current;
-    const rect = anchor.getBoundingClientRect();
-    const anchorX = rect.left + rect.width / 2;
-    const anchorY = rect.top + rect.height / 2;
-
-    const angleDeg = angle(mouseX, mouseY, anchorX, anchorY);
-
+  const getEyeElementsAndPositions = () => {
     const eyes = document.querySelectorAll(".eye");
-    eyes.forEach((eye) => {
-      eye.style.transform = `rotate(${-90 + angleDeg}deg)`;
-    });
+
+    const leftEye = eyes[0];
+    const rightEye = eyes[1];
+
+    // getBoundingClientRect() returns the position and size of an element relative to the viewport
+    // including its: top, left, width, and height
+    const leftEyeRect = leftEye.getBoundingClientRect();
+    const rightEyeRect = rightEye.getBoundingClientRect();
+
+    return {
+      leftEye: leftEye,
+      rightEye: rightEye,
+
+      // Calculate the center of each eye by adding half the width and height
+      leftEyeCenterX: leftEyeRect.left + leftEyeRect.width / 2,
+      leftEyeCenterY: leftEyeRect.top + leftEyeRect.height / 2,
+      rightEyeCenterX: rightEyeRect.left + rightEyeRect.width / 2,
+      rightEyeCenterY: rightEyeRect.top + rightEyeRect.height / 2,
+    };
   };
 
-  const angle = (cx, cy, ex, ey) => {
-    const dy = ey - cy;
-    const dx = ex - cx;
-    const rad = Math.atan2(dy, dx);
-    const deg = (rad * 180) / Math.PI;
-    return deg;
+  const updateEyeRotation = (mouseX, mouseY, anchorRef) => {
+    if (!anchorRef.current) return;
+
+    const eyeData = getEyeElementsAndPositions();
+    if (!eyeData) return;
+
+    const {
+      leftEye,
+      rightEye,
+      leftEyeCenterX,
+      leftEyeCenterY,
+      rightEyeCenterX,
+      rightEyeCenterY,
+    } = eyeData;
+
+    // anchor element position
+    const anchorRect = anchorRef.current.getBoundingClientRect();
+    const anchorX = anchorRect.left + anchorRect.width / 2;
+    const anchorY = anchorRect.top + anchorRect.height / 2;
+
+    // Thresholds for the cross-eyed zone
+    const centerThresholdX = 40;
+    const centerThresholdY = 40;
+
+    const distXFromAnchor = mouseX - anchorX;
+    const distYFromAnchor = mouseY - anchorY;
+
+    // Calculate a virtual 'cross-eyed' target point (center of the two eyes)
+    const virtualCrossX = (leftEyeCenterX + rightEyeCenterX) / 2;
+    const virtualCrossY = (leftEyeCenterY + rightEyeCenterY) / 2;
+
+    // Angle for each eye to look inward toward the center (cross-eyed)
+    const crossEyedLeftTargetAngle = calculateAngle(
+      leftEyeCenterX,
+      leftEyeCenterY,
+      virtualCrossX,
+      virtualCrossY
+    );
+
+    const crossEyedRightTargetAngle = calculateAngle(
+      rightEyeCenterX,
+      rightEyeCenterY,
+      virtualCrossX,
+      virtualCrossY
+    );
+
+    // Calculate the angle for each eye to follow the actual pointer
+    const leftFollowAngle = calculateAngle(
+      leftEyeCenterX,
+      leftEyeCenterY,
+      mouseX,
+      mouseY
+    );
+    const rightFollowAngle = calculateAngle(
+      rightEyeCenterX,
+      rightEyeCenterY,
+      mouseX,
+      mouseY
+    );
+
+    // Distance from mouse to center of "cross-eyed zone"
+    const distanceToCenter = Math.hypot(distXFromAnchor, distYFromAnchor);
+    const maxDistance = Math.hypot(centerThresholdX, centerThresholdY);
+
+    // Interpolation factor: 0 = fully cross-eyed, 1 = fully following the pointer
+    const t = Math.min(distanceToCenter / maxDistance, 1);
+
+    // smoothly transition between the cross-eyed and pointer-following angles
+    const leftEyeAngle =
+      crossEyedLeftTargetAngle * (1 - t) + leftFollowAngle * t;
+    const rightEyeAngle =
+      crossEyedRightTargetAngle * (1 - t) + rightFollowAngle * t;
+
+    leftEye.style.transform = `rotate(${leftEyeAngle}deg)`;
+    rightEye.style.transform = `rotate(${rightEyeAngle}deg)`;
+  };
+
+  const calculateAngle = (eyeX, eyeY, pointerX, pointerY) => {
+    const deltaY = pointerY - eyeY;
+    const deltaX = pointerX - eyeX;
+
+    // Use atan2 to compute the angle from the eye to the pointer
+    // atan2(y, x) returns the angle between the x-axis and the point (x, y)
+    // In this case we reverse Y to flip the direction (SVG/HTML coordinates go down)
+    const radians = Math.atan2(deltaX, -deltaY);
+    const degrees = (radians * 180) / Math.PI;
+    return degrees;
   };
 
   const greetingInUserTimezone = (date) => {

@@ -57,7 +57,7 @@ CREATE TABLE habbits (
   repetitions_per_frequency INTEGER NOT NULL DEFAULT 1,
   progress_percentage INTEGER DEFAULT 0,
   start_date DATE NOT NULL DEFAULT NOW(),
-  last_completed_on DATE,
+  last_completed_on TIMESTAMPTZ,
   end_date DATE,
   is_active BOOLEAN DEFAULT TRUE,
   has_reached_end_date BOOLEAN DEFAULT FALSE
