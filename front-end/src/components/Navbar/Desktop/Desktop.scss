@@ -308,13 +308,13 @@
     align-items: center;
     border-radius: 0 10px 10px 0;
     transition: background-color 0.2s ease-in-out;
-    background-color: var(--card-bg-light);
+    background-color: var(--navbar-expand-button);
     border: 1px solid var(--border-color);
     color: var(--text-color-light);
 
     &:hover {
       cursor: pointer;
-      background-color: var(--border-color);
+      background-color: var(--navbar-hover-color);
     }
 
     .arrows {
@@ -325,7 +325,7 @@
 
     .arrow {
       position: absolute;
-      color: inherit;
+      color: var(--page-bg);
     }
 
     .arrow-1 {

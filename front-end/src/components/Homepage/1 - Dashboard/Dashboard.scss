@@ -9,6 +9,9 @@ $large-desktop: 1200px;
 }
 
 .desktop-dashboard-container {
+  position: relative;
+  z-index: 1;
+
   .dashboard-header {
     text-align: center;
     align-items: center;
@@ -232,7 +235,7 @@ $large-desktop: 1200px;
               }
 
               .habit-completed {
-                background-color: #12f35d;
+                // background: none;
                 color: #f5c542;
                 transition:
                   background 0.3s,
@@ -242,14 +245,6 @@ $large-desktop: 1200px;
                 svg {
                   stroke: none;
                   fill: currentColor;
-                }
-
-                &:hover {
-                  cursor: pointer;
-                  background-color: #f5c542;
-                  color: #12f35d;
-                  backdrop-filter: blur(3px);
-                  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
                 }
               }
             }

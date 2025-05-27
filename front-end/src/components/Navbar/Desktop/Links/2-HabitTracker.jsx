@@ -67,13 +67,13 @@ export const HabitTrackerLinks = ({ handleButtonToggle, showDropdown }) => {
             Habits
           </Button>
 
-          <Button
+          {/* <Button
             id="desktop-navbar-create-button"
             className={`desktop-navbar-button`}
             onClick={() => handleAddClick()}
           >
             Create New Habit
-          </Button>
+          </Button> */}
 
           <Button
             id="desktop-navbar-history-button"

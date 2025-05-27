@@ -138,16 +138,19 @@ export default function Desktop() {
           <HomepageLinks
             handleButtonToggle={handleButtonToggle}
             showDropdown={showDropdown}
+            setExpandSidebar={setExpandSidebar}
           />
 
           <HabitTrackerLinks
             handleButtonToggle={handleButtonToggle}
             showDropdown={showDropdown}
+            setExpandSidebar={setExpandSidebar}
           />
 
           <AccountSettingsLinks
             handleButtonToggle={handleButtonToggle}
             showDropdown={showDropdown}
+            setExpandSidebar={setExpandSidebar}
           />
         </div>
 
@@ -183,86 +186,6 @@ export default function Desktop() {
         }}
       >
         <div className="arrows arrow-set-1">
-          {expandSidebar ? (
-            <>
-              <MdArrowBackIos className="arrow arrow-1" />
-              <MdArrowBackIos className="arrow arrow-2" />
-              <MdArrowBackIos className="arrow arrow-3" />
-            </>
-          ) : (
-            <>
-              <MdArrowForwardIos className="arrow arrow-1" />
-              <MdArrowForwardIos className="arrow arrow-2" />
-              <MdArrowForwardIos className="arrow arrow-3" />
-            </>
-          )}
-        </div>
-
-        <div className="arrows arrow-set-2">
-          {expandSidebar ? (
-            <>
-              <MdArrowBackIos className="arrow arrow-1" />
-              <MdArrowBackIos className="arrow arrow-2" />
-              <MdArrowBackIos className="arrow arrow-3" />
-            </>
-          ) : (
-            <>
-              <MdArrowForwardIos className="arrow arrow-1" />
-              <MdArrowForwardIos className="arrow arrow-2" />
-              <MdArrowForwardIos className="arrow arrow-3" />
-            </>
-          )}
-        </div>
-
-        <div className="arrows arrow-set-3">
-          {expandSidebar ? (
-            <>
-              <MdArrowBackIos className="arrow arrow-1" />
-              <MdArrowBackIos className="arrow arrow-2" />
-              <MdArrowBackIos className="arrow arrow-3" />
-            </>
-          ) : (
-            <>
-              <MdArrowForwardIos className="arrow arrow-1" />
-              <MdArrowForwardIos className="arrow arrow-2" />
-              <MdArrowForwardIos className="arrow arrow-3" />
-            </>
-          )}
-        </div>
-
-        <div className="arrows arrow-set-4">
-          {expandSidebar ? (
-            <>
-              <MdArrowBackIos className="arrow arrow-1" />
-              <MdArrowBackIos className="arrow arrow-2" />
-              <MdArrowBackIos className="arrow arrow-3" />
-            </>
-          ) : (
-            <>
-              <MdArrowForwardIos className="arrow arrow-1" />
-              <MdArrowForwardIos className="arrow arrow-2" />
-              <MdArrowForwardIos className="arrow arrow-3" />
-            </>
-          )}
-        </div>
-
-        <div className="arrows arrow-set-5">
-          {expandSidebar ? (
-            <>
-              <MdArrowBackIos className="arrow arrow-1" />
-              <MdArrowBackIos className="arrow arrow-2" />
-              <MdArrowBackIos className="arrow arrow-3" />
-            </>
-          ) : (
-            <>
-              <MdArrowForwardIos className="arrow arrow-1" />
-              <MdArrowForwardIos className="arrow arrow-2" />
-              <MdArrowForwardIos className="arrow arrow-3" />
-            </>
-          )}
-        </div>
-
-        <div className="arrows arrow-set-6">
           {expandSidebar ? (
             <>
               <MdArrowBackIos className="arrow arrow-1" />
