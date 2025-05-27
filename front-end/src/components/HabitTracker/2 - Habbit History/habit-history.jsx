@@ -11,13 +11,13 @@ import maxwell from "../../../assets/images/habit-tracker-images/Maxwell.png";
 const API = import.meta.env.VITE_PUBLIC_API_BASE;
 
 export const HabitHistory = () => {
+  const tokenData = GetCookies("authToken");
+  const themeState = GetCookies("theme");
   const [history, setHistory] = useState([]);
 
   useEffect(() => {
     getUsersHabitHistory();
   }, []); // eslint-disable-line
-
-  const tokenData = GetCookies("authToken");
 
   const getUsersHabitHistory = async () => {
     await axios
@@ -49,14 +49,28 @@ export const HabitHistory = () => {
   };
 
   return (
-    <div className="habit-history-container min-h-screen">
-      <div className="max-w-7xl mx-auto mt-[6em] md:mt-0">
-        <h1 className="text-3xl font-bold mb-6 text-center">Habit History</h1>
+    <div className="habit-history-container min-h-screen min-w-screen">
+      <div className="max-w-7xl mx-auto mt-[8em] md:mt-0">
+        <div className="flex items-center justify-center text-3xl font-bold mb-6">
+          <h1>Habit History</h1>
+          <Image
+            src={maxwell}
+            alt="Maxwell"
+            className="maxwell-image w-[100px]"
+          />
+        </div>
+
         {history.length > 0 ? (
           <>
             {/* // === DESKTOP/TABLET TABLE VIEW === \\ */}
             <div className="d-none d-md-block">
-              <Table striped bordered hover variant="dark" responsive="sm">
+              <Table
+                striped
+                bordered
+                hover
+                variant={themeState === "dark" ? "dark" : "light"}
+                responsive="sm"
+              >
                 <thead>
                   <tr>
                     <th>#</th>
@@ -81,7 +95,7 @@ export const HabitHistory = () => {
                           data-tooltip-content={entry.id}
                           style={{ cursor: "default" }}
                         >
-                          {entry.id.slice(0, 3)}...
+                          {entry.id.slice(0, 6)}...
                         </span>
                       </td>
                       <td
@@ -123,7 +137,11 @@ export const HabitHistory = () => {
               {history.map((entry, index) => (
                 <div
                   key={entry.id}
-                  className="bg-dark text-white p-3 rounded mb-3 shadow-sm border border-secondary"
+                  className={`${
+                    themeState === "dark"
+                      ? "bg-dark text-white"
+                      : "bg-light text-black"
+                  } p-3 rounded mb-3 shadow-sm border border-secondary`}
                 >
                   <div className="mb-2">
                     <strong>#{index + 1}</strong>

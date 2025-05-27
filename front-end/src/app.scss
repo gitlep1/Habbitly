@@ -29,6 +29,10 @@ body {
 
     --glossy: rgba(0, 0, 0, 0.05);
     --glossy-border: rgba(0, 0, 0, 0.1);
+
+    --calendar: #f77272;
+    --activeHabit: #58a0de;
+    --siteNews: #776ab4;
   }
 
   &.dark-theme {
@@ -60,6 +64,10 @@ body {
 
     --glossy: rgba(255, 255, 255, 0.1);
     --glossy-border: rgba(255, 255, 255, 0.2);
+
+    --calendar: #c55a5a;
+    --activeHabit: #4d88bb;
+    --siteNews: #5e548e;
   }
 }
 

@@ -16,6 +16,10 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
     habit_task_description: "",
     habit_category: "",
     habit_frequency: "",
+    days_of_week_to_complete: [],
+    day_of_month_to_complete: null,
+    yearly_month_of_year_to_complete: null,
+    yearly_day_of_year_to_complete: null,
     repetitions_per_frequency: 1,
     start_date: "",
     end_date: "",
@@ -45,10 +49,83 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
       return;
     }
 
+    if (name === "yearly_month_of_year_to_complete") {
+      if (value === "") {
+        setHabitData((prevData) => ({
+          ...prevData,
+          [name]: "",
+        }));
+        return;
+      }
+
+      const numValue = parseInt(value, 10);
+      if (!Number.isNaN(numValue)) {
+        const clamped = Math.max(1, Math.min(numValue, 12));
+        setHabitData((prevData) => ({
+          ...prevData,
+          [name]: clamped,
+        }));
+      }
+      return;
+    }
+
+    if (
+      name === "yearly_day_of_year_to_complete" ||
+      name === "day_of_month_to_complete"
+    ) {
+      if (value === "") {
+        setHabitData((prevData) => ({
+          ...prevData,
+          [name]: "",
+        }));
+        return;
+      }
+
+      const numValue = parseInt(value, 10);
+      if (!Number.isNaN(numValue)) {
+        const clamped = Math.max(1, Math.min(numValue, 31));
+        setHabitData((prevData) => ({
+          ...prevData,
+          [name]: clamped,
+        }));
+      }
+      return;
+    }
+
+    if (name === "habit_frequency") {
+      setHabitData((prevData) => ({
+        ...prevData,
+        [name]: value,
+        days_of_week_to_complete: [],
+        day_of_month_to_complete: null,
+        yearly_month_of_year_to_complete: null,
+        yearly_day_of_year_to_complete: null,
+      }));
+      return;
+    }
+
     setHabitData((prevData) => ({
       ...prevData,
       [name]: type === "checkbox" ? checked : value,
     }));
+  };
+
+  const handleDayOfWeekChange = (e) => {
+    const day = e.target.value;
+    setHabitData((prevData) => {
+      const currentDays = prevData.days_of_week_to_complete;
+      if (e.target.checked) {
+        return {
+          ...prevData,
+          days_of_week_to_complete: [...currentDays, day],
+        };
+      } else {
+        return {
+          ...prevData,
+          days_of_week_to_complete: currentDays.filter((d) => d !== day),
+        };
+      }
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -67,6 +144,33 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
           containerId: "toast-notify",
         }
       );
+    }
+
+    if (
+      habitData.habit_frequency === "Weekly" &&
+      habitData.days_of_week_to_complete.length === 0
+    ) {
+      return toast.error("Please select at least one day for weekly habit.", {
+        containerId: "toast-notify",
+      });
+    }
+    if (
+      habitData.habit_frequency === "Monthly" &&
+      !habitData.day_of_month_to_complete
+    ) {
+      return toast.error(
+        "Please select a day of the month for monthly habit.",
+        { containerId: "toast-notify" }
+      );
+    }
+    if (
+      habitData.habit_frequency === "Yearly" &&
+      (!habitData.yearly_month_of_year_to_complete ||
+        !habitData.yearly_day_of_year_to_complete)
+    ) {
+      return toast.error("Please select a month and day for yearly habit.", {
+        containerId: "toast-notify",
+      });
     }
 
     setHabitData((prevData) => ({
@@ -104,12 +208,14 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
   return (
     <Modal show={showAddModal} onHide={onHide}>
       <Modal.Header closeButton>
-        <Modal.Title>Add a Habit</Modal.Title>
+        <Modal.Title className="add-habit-modal-title">
+          Add a Habit <span className="required-legend">* = required</span>
+        </Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={handleSubmit}>
           <Form.Group controlId="habitName">
-            <Form.Label>Name</Form.Label>
+            <Form.Label>Name *</Form.Label>
             <Form.Control
               type="text"
               placeholder="Enter habit name"
@@ -119,7 +225,7 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
             />
           </Form.Group>
           <Form.Group controlId="habitTask">
-            <Form.Label className="habit-form-label">Description</Form.Label>
+            <Form.Label className="habit-form-label">Description *</Form.Label>
             <Form.Control
               type="text"
               placeholder="Enter description (Ex: Do 50 pushups)"
@@ -151,7 +257,7 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
             </Form.Select>
           </Form.Group>
           <Form.Group controlId="habitInterval">
-            <Form.Label>Frequency</Form.Label>
+            <Form.Label>Frequency *</Form.Label>
             <Form.Select
               name="habit_frequency"
               value={habitData.habit_frequency}
@@ -164,8 +270,159 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
               <option value="Yearly">Yearly</option>
             </Form.Select>
           </Form.Group>
+
+          {/* Conditional rendering for Weekly habits */}
+          {habitData.habit_frequency === "Weekly" && (
+            <Form.Group controlId="daysOfWeek">
+              <Form.Label>Days of Week *</Form.Label>
+              <div className="d-flex flex-wrap gap-2">
+                {["0", "1", "2", "3", "4", "5", "6"].map((dayIndex) => (
+                  <Form.Check
+                    key={dayIndex}
+                    type="checkbox"
+                    id={`day-${dayIndex}`}
+                    label={
+                      [
+                        "Sunday",
+                        "Monday",
+                        "Tuesday",
+                        "Wednesday",
+                        "Thursday",
+                        "Friday",
+                        "Saturday",
+                      ][parseInt(dayIndex, 10)]
+                    }
+                    value={dayIndex}
+                    checked={habitData.days_of_week_to_complete.includes(
+                      dayIndex
+                    )}
+                    onChange={handleDayOfWeekChange}
+                  />
+                ))}
+              </div>
+            </Form.Group>
+          )}
+
+          {/* Conditional rendering for Monthly habits */}
+          {habitData.habit_frequency === "Monthly" && (
+            <Form.Group controlId="dayOfMonth">
+              <Form.Label>Day of Month *</Form.Label>
+              <Form.Control
+                type="number"
+                name="day_of_month_to_complete"
+                value={habitData.day_of_month_to_complete || ""}
+                onChange={handleInputChange}
+                onKeyDown={(e) => {
+                  if (
+                    !/[0-9]/.test(e.key) &&
+                    e.key !== "Backspace" &&
+                    e.key !== "Delete" &&
+                    e.key !== "ArrowLeft" &&
+                    e.key !== "ArrowRight" &&
+                    e.key !== "ArrowUp" &&
+                    e.key !== "ArrowDown"
+                  ) {
+                    e.preventDefault();
+                  }
+                }}
+                onPaste={(e) => {
+                  const paste = (e.clipboardData || window.Clipboard).getData(
+                    "text"
+                  );
+                  if (!/^\d+$/.test(paste)) {
+                    e.preventDefault();
+                  }
+                }}
+                min="1"
+                max="31"
+                step="1"
+                pattern="[0-9]*"
+                inputMode="numeric"
+                placeholder="ex: 15 (for the 15th of the month)"
+              />
+            </Form.Group>
+          )}
+
+          {/* Conditional rendering for Yearly habits */}
+          {habitData.habit_frequency === "Yearly" && (
+            <>
+              <Form.Group controlId="yearlyMonth">
+                <Form.Label>Month of Year (1–12) *</Form.Label>
+                <Form.Control
+                  type="number"
+                  name="yearly_month_of_year_to_complete"
+                  value={habitData.yearly_month_of_year_to_complete || ""}
+                  onChange={handleInputChange}
+                  onKeyDown={(e) => {
+                    if (
+                      !/[0-9]/.test(e.key) &&
+                      e.key !== "Backspace" &&
+                      e.key !== "Delete" &&
+                      e.key !== "ArrowLeft" &&
+                      e.key !== "ArrowRight" &&
+                      e.key !== "ArrowUp" &&
+                      e.key !== "ArrowDown"
+                    ) {
+                      e.preventDefault();
+                    }
+                  }}
+                  onPaste={(e) => {
+                    const paste = (e.clipboardData || window.Clipboard).getData(
+                      "text"
+                    );
+                    if (!/^\d+$/.test(paste)) {
+                      e.preventDefault();
+                    }
+                  }}
+                  min="1"
+                  max="12"
+                  step="1"
+                  pattern="[0-9]*"
+                  inputMode="numeric"
+                  placeholder="ex: 1 (Jan) or 12 (Dec)"
+                />
+              </Form.Group>
+              <Form.Group controlId="yearlyDay">
+                <Form.Label>Day of Month (1–31) *</Form.Label>
+                <Form.Control
+                  type="number"
+                  name="yearly_day_of_year_to_complete"
+                  value={habitData.yearly_day_of_year_to_complete || ""}
+                  onChange={handleInputChange}
+                  onKeyDown={(e) => {
+                    if (
+                      !/[0-9]/.test(e.key) &&
+                      e.key !== "Backspace" &&
+                      e.key !== "Delete" &&
+                      e.key !== "ArrowLeft" &&
+                      e.key !== "ArrowRight" &&
+                      e.key !== "ArrowUp" &&
+                      e.key !== "ArrowDown"
+                    ) {
+                      e.preventDefault();
+                    }
+                  }}
+                  onPaste={(e) => {
+                    const paste = (e.clipboardData || window.Clipboard).getData(
+                      "text"
+                    );
+                    if (!/^\d+$/.test(paste)) {
+                      e.preventDefault();
+                    }
+                  }}
+                  min="1"
+                  max="31"
+                  step="1"
+                  pattern="[0-9]*"
+                  inputMode="numeric"
+                  placeholder="ex: 1, 2, 3"
+                />
+              </Form.Group>
+            </>
+          )}
+
           <Form.Group controlId="repetitionsPerFrequency">
-            <Form.Label>Repetitions Per Frequency</Form.Label>
+            <Form.Label>Repetitions Per Frequency *</Form.Label>
             <Form.Control
               type="number"
               name="repetitions_per_frequency"
@@ -200,7 +457,7 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
             />
           </Form.Group>
           <Form.Group controlId="startDate">
-            <Form.Label>Start Date</Form.Label>
+            <Form.Label>Start Date *</Form.Label>
             <Form.Control
               type="date"
               name="start_date"

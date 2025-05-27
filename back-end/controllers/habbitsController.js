@@ -11,6 +11,7 @@ dayjs.extend(isSameOrAfter);
 import {
   getAllHabbits,
   getUserHabbits,
+  getCalendarHabitsForDate,
   getHabbitByID,
   createHabbit,
   updateHabbit,
@@ -60,6 +61,37 @@ habbits.get("/user", requireAuth(), async (req, res) => {
   }
 });
 
+habbits.get(
+  "/user/:userId/date/:targetDate",
+  requireAuth(),
+  async (req, res) => {
+    const { userId, targetDate } = req.params;
+    const decodedUserData = req.user.decodedUser;
+
+    if (userId !== decodedUserData.id) {
+      return res
+        .status(403)
+        .json({ error: "UNAUTHORIZED: User does not own this habbit" });
+    }
+
+    try {
+      const calendarHabits = await getCalendarHabitsForDate(
+        decodedUserData.id,
+        targetDate
+      );
+
+      if (calendarHabits && calendarHabits.length > 0) {
+        res.status(200).json({ payload: calendarHabits });
+      } else {
+        res.status(200).json({ payload: [] });
+      }
+    } catch (error) {
+      console.error("habbits.GET /user/:userId/date/:targetDate", { error });
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  }
+);
+
 habbits.get("/:id", requireAuth(), async (req, res) => {
   const { id } = req.params;
   const decodedUserData = req.user.decodedUser;
@@ -105,6 +137,12 @@ habbits.post("/create", requireAuth(), async (req, res) => {
     end_date: req.body.end_date || null,
     is_active: req.body.is_active || true,
     has_reached_end_date: req.body.has_reached_end_date || false,
+    days_of_week_to_complete: req.body.days_of_week_to_complete ?? [],
+    day_of_month_to_complete: req.body.day_of_month_to_complete ?? null,
+    yearly_month_of_year_to_complete:
+      req.body.yearly_month_of_year_to_complete ?? null,
+    yearly_day_of_year_to_complete:
+      req.body.yearly_day_of_year_to_complete ?? null,
   };
 
   try {
@@ -153,6 +191,12 @@ habbits.put("/:id", requireAuth(), async (req, res) => {
     end_date: req.body.end_date || null,
     is_active: req.body.is_active || true,
     has_reached_end_date: req.body.has_reached_end_date || false,
+    days_of_week_to_complete: req.body.days_of_week_to_complete || null,
+    day_of_month_to_complete: req.body.day_of_month_to_complete || null,
+    yearly_month_of_year_to_complete:
+      req.body.yearly_month_of_year_to_complete || null,
+    yearly_day_of_year_to_complete:
+      req.body.yearly_day_of_year_to_complete || null,
   };
 
   let previousHabit;

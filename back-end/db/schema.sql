@@ -65,9 +65,14 @@ CREATE TABLE habbits (
   start_date TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   last_completed_on TIMESTAMPTZ,
   end_date TIMESTAMPTZ,
-  
+
   is_active BOOLEAN DEFAULT TRUE,
-  has_reached_end_date BOOLEAN DEFAULT FALSE
+  has_reached_end_date BOOLEAN DEFAULT FALSE,
+
+  days_of_week_to_complete TEXT[] DEFAULT '{}',
+  day_of_month_to_complete INTEGER DEFAULT NULL,
+  yearly_month_of_year_to_complete INTEGER DEFAULT NULL,
+  yearly_day_of_year_to_complete INTEGER DEFAULT NULL
 );
 
 DROP TABLE IF EXISTS habit_history;

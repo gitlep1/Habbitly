@@ -62,7 +62,7 @@ const GlobalContextProvider = ({ children }) => {
     setPreferences(newPrefs);
   }, []);
 
-  const getUserHabits = async () => {
+  const getUserHabits = useCallback(async () => {
     const tokenData = GetCookies("authToken");
 
     await axios
@@ -78,7 +78,7 @@ const GlobalContextProvider = ({ children }) => {
       .catch((err) => {
         setError(err?.response?.data?.error);
       });
-  };
+  }, []);
 
   return (
     <screenVersionContext.Provider value={screenVersion}>

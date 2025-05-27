@@ -39,14 +39,14 @@ export const ViewHabit = ({ habitData, show, onClose }) => {
       <Modal.Body>
         <p>Task: {habitData.habit_task_description}</p>
         <p>Category: {habitData.habit_category}</p>
-        <p>Interval: {habitData.habit_frequency}</p>
+        <p>Frequency: {habitData.habit_frequency}</p>
         <p>
           Progress:{" "}
           {habitData.progress_percentage
             ? `${habitData.progress_percentage}%`
             : "No progress yet"}
         </p>
-        <p>Times per interval: {habitData.repetitions_per_frequency}</p>
+        <p>Times per frequency: {habitData.repetitions_per_frequency}</p>
         <p>Start date: {formatDate(habitData.start_date)}</p>
         <p>
           Last completed on:{" "}

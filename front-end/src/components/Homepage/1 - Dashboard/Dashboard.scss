@@ -136,8 +136,8 @@ $large-desktop: 1200px;
     .active-habit-container {
       grid-row: 2;
       grid-column: 1 / -1;
-      background-color: #4d88bb;
-      border-radius: 3em;
+      background-color: var(--activeHabit);
+      border-radius: 3em 3em 0 0;
       z-index: 1;
 
       @media screen and (min-width: $medium-desktop) {
@@ -145,7 +145,6 @@ $large-desktop: 1200px;
       }
 
       .active-habit-card {
-        border-radius: 3em;
         padding: 0.5em;
 
         @media screen and (min-width: $small-desktop) {
@@ -286,8 +285,8 @@ $large-desktop: 1200px;
     .calendar-container {
       grid-row: 3;
       grid-column: 1 / -1;
-      background-color: #c55a5a;
-      border-radius: 3em;
+      background-color: var(--calendar);
+      border-radius: 3em 3em 0 0;
       z-index: 1;
 
       @media screen and (min-width: $medium-desktop) {
@@ -297,6 +296,7 @@ $large-desktop: 1200px;
 
       .calendar-card {
         height: 100%;
+        padding-bottom: 5em;
 
         .calendar-card-header {
           text-align: center;
@@ -317,9 +317,25 @@ $large-desktop: 1200px;
           border: none;
 
           .react-calendar__tile {
+            position: relative;
             color: black;
             display: grid;
             grid-template-rows: 1;
+          }
+
+          .calendar-tile-icon {
+            position: absolute;
+            right: 2px;
+            width: 30px;
+            height: 30px;
+          }
+
+          .checkmark-icon {
+            color: #007bff;
+          }
+
+          .star-icon {
+            color: #ffc107;
           }
 
           .react-calendar__tile--now {
@@ -341,8 +357,8 @@ $large-desktop: 1200px;
       display: flex;
       justify-content: space-evenly;
       height: 30em;
-      background-color: #5e548e;
-      border-radius: 3em;
+      background-color: var(--siteNews);
+      border-radius: 0 0 3em 3em;
       z-index: 1;
 
       @media screen and (min-width: $medium-desktop) {

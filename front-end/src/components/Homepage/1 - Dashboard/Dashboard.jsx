@@ -53,8 +53,8 @@ export const Dashboard = () => {
     const rightEyeRect = rightEye.getBoundingClientRect();
 
     return {
-      leftEye: leftEye,
-      rightEye: rightEye,
+      leftEye,
+      rightEye,
 
       // Calculate the center of each eye by adding half the width and height
       leftEyeCenterX: leftEyeRect.left + leftEyeRect.width / 2,
@@ -85,8 +85,8 @@ export const Dashboard = () => {
     const anchorY = anchorRect.top + anchorRect.height / 2;
 
     // Thresholds for the cross-eyed zone
-    const centerThresholdX = 40;
-    const centerThresholdY = 40;
+    const centerThresholdX = 30;
+    const centerThresholdY = 30;
 
     const distXFromAnchor = mouseX - anchorX;
     const distYFromAnchor = mouseY - anchorY;
@@ -125,6 +125,7 @@ export const Dashboard = () => {
     );
 
     // Distance from mouse to center of "cross-eyed zone"
+    // hypot = sq root
     const distanceToCenter = Math.hypot(distXFromAnchor, distYFromAnchor);
     const maxDistance = Math.hypot(centerThresholdX, centerThresholdY);
 

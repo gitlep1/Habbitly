@@ -1,8 +1,12 @@
+$small-desktop: 768px;
+$medium-desktop: 1024px;
+$large-desktop: 1200px;
+
 .habit-history-container {
-  padding: 1em 0.3em 0 2.3em;
+  position: relative;
   z-index: 1;
 
-  .custom-history-table {
-    width: 100%;
+  @media screen and (min-width: $small-desktop) {
+    padding: 1em 0.3em 0 2.3em;
   }
 }
