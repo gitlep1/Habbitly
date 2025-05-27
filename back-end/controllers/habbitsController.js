@@ -20,7 +20,6 @@ import {
 import {
   getHabitHistoryByHabitId,
   addOrUpdateHabitHistoryEntry,
-  updateHabitHistoryEntry,
 } from "../queries/habitHistoryQueries.js";
 
 import { getUserByID } from "../queries/usersQueries.js";
@@ -255,8 +254,7 @@ habbits.put("/:id", requireAuth(), async (req, res) => {
     ? dayjs(previousHabit.last_completed_on)
     : null;
 
-  // match my habit_frequency to what dayjs expects (EX: user puts "Daily" dayjs expects "day")
-
+  // Match my habit_frequency to what dayjs expects (EX: user puts "Daily" dayjs expects "day")
   const dayjsUnitMap = {
     Daily: "day",
     Weekly: "week",

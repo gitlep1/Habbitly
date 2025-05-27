@@ -82,6 +82,13 @@
   width: 100%;
 }
 
+.view-habit-footer-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  width: 100%;
+  gap: 1em;
+}
+
 .add-habit-modal-title {
   display: flex;
   align-items: center;

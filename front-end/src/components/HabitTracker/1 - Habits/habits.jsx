@@ -19,7 +19,14 @@ export const Habits = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    getUserHabits();
+    const fetchUserHabits = async () => {
+      try {
+        await getUserHabits();
+      } catch (err) {
+        setError("Failed to fetch user habits", err?.response?.data?.error);
+      }
+    };
+    fetchUserHabits();
   }, []); // eslint-disable-line
 
   const handleAddClick = () => {
@@ -57,6 +64,8 @@ export const Habits = () => {
             <span className="text-6xl text-gray-400">+</span>
           </div>
 
+          {error && <p className="text-center text-danger">ERROR: {error}</p>}
+
           {userHabits.map((habit) => {
             const {
               id,
@@ -72,6 +81,10 @@ export const Habits = () => {
               end_date,
               is_active,
               has_reached_end_date,
+              days_of_week_to_complete,
+              day_of_month_to_complete,
+              yearly_month_of_year_to_complete,
+              yearly_day_of_year_to_complete,
             } = habit;
 
             return (

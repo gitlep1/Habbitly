@@ -71,31 +71,6 @@ export const addOrUpdateHabitHistoryEntry = async ({
   }
 };
 
-export const updateHabitHistoryEntry = async ({
-  id,
-  habit_id,
-  user_id,
-  habit_name,
-  action,
-  has_reached_end_date,
-}) => {
-  const query = `
-    UPDATE habit_history
-    SET habit_id = $2, user_id = $3, habit_name = $4, action = $5, has_reached_end_date = $6, timestamp = NOW()
-    WHERE id = $1
-    RETURNING *
-  `;
-  const values = [
-    id,
-    habit_id,
-    user_id,
-    habit_name,
-    action,
-    has_reached_end_date,
-  ];
-  return await db.one(query, values);
-};
-
 export const deleteHabitHistoryByHabitId = async (habitId) => {
   const query = `
     DELETE FROM habit_history

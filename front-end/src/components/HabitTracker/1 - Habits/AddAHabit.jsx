@@ -1,7 +1,8 @@
 import { useState, useContext } from "react";
 import { toast } from "react-toastify";
-import { Modal, Image, Button, Form } from "react-bootstrap";
+import { Modal, Button, Form } from "react-bootstrap";
 import axios from "axios";
+import { PropTypes } from "prop-types";
 
 import { habitContext } from "../../../CustomContexts/Contexts";
 import { GetCookies } from "../../../CustomFunctions/HandleCookies";
@@ -16,15 +17,15 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
     habit_task_description: "",
     habit_category: "",
     habit_frequency: "",
-    days_of_week_to_complete: [],
-    day_of_month_to_complete: null,
-    yearly_month_of_year_to_complete: null,
-    yearly_day_of_year_to_complete: null,
     repetitions_per_frequency: 1,
     start_date: "",
     end_date: "",
     is_active: false,
     has_reached_end_date: false,
+    days_of_week_to_complete: [],
+    day_of_month_to_complete: null,
+    yearly_month_of_year_to_complete: null,
+    yearly_day_of_year_to_complete: null,
   });
 
   const handleInputChange = (e) => {
@@ -507,4 +508,9 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
       <Modal.Footer></Modal.Footer>
     </Modal>
   );
+};
+
+AddAHabit.propTypes = {
+  onHide: PropTypes.func.isRequired,
+  showAddModal: PropTypes.bool.isRequired,
 };
