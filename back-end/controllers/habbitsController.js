@@ -11,7 +11,6 @@ dayjs.extend(isSameOrAfter);
 import {
   getAllHabbits,
   getUserHabbits,
-  getCalendarHabitsForDate,
   getHabbitByID,
   createHabbit,
   updateHabbit,
@@ -60,37 +59,6 @@ habbits.get("/user", requireAuth(), async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
-habbits.get(
-  "/user/:userId/date/:targetDate",
-  requireAuth(),
-  async (req, res) => {
-    const { userId, targetDate } = req.params;
-    const decodedUserData = req.user.decodedUser;
-
-    if (userId !== decodedUserData.id) {
-      return res
-        .status(403)
-        .json({ error: "UNAUTHORIZED: User does not own this habbit" });
-    }
-
-    try {
-      const calendarHabits = await getCalendarHabitsForDate(
-        decodedUserData.id,
-        targetDate
-      );
-
-      if (calendarHabits && calendarHabits.length > 0) {
-        res.status(200).json({ payload: calendarHabits });
-      } else {
-        res.status(200).json({ payload: [] });
-      }
-    } catch (error) {
-      console.error("habbits.GET /user/:userId/date/:targetDate", { error });
-      res.status(500).json({ error: "Internal Server Error" });
-    }
-  }
-);
 
 habbits.get("/:id", requireAuth(), async (req, res) => {
   const { id } = req.params;

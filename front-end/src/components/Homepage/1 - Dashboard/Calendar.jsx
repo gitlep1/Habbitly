@@ -1,28 +1,21 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useContext } from "react";
 import { Modal } from "react-bootstrap";
 import { Button as MUIButton } from "@mui/material";
 import { Calendar as ReactCalendar } from "react-calendar";
-import {
-  format,
-  isSameDay,
-  parseISO,
-  startOfMonth,
-  endOfMonth,
-  eachDayOfInterval,
-} from "date-fns";
-import axios from "axios";
+import { format, isSameDay, parseISO } from "date-fns";
 
-import { GetCookies } from "../../../CustomFunctions/HandleCookies";
+import { processHabitsForCalendarLogic } from "./calendar-functions/processHabitsForCalendar";
 
-const API = import.meta.env.VITE_PUBLIC_API_BASE;
+import { habitContext } from "../../../CustomContexts/Contexts";
 
 export const Calendar = () => {
-  const authUserString = GetCookies("authUser");
-  const userId = authUserString?.id;
+  const { userHabits, getUserHabits } = useContext(habitContext);
 
   const [activeMonth, setActiveMonth] = useState(new Date());
-  const [fetchedHabits, setFetchedHabits] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [processedHabitDataByDate, setProcessedHabitDataByDate] = useState(
+    new Map()
+  );
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const [selectedDate, setSelectedDate] = useState(null);
@@ -54,114 +47,83 @@ export const Calendar = () => {
     </svg>
   );
 
-  const fetchHabitsForMonth = useCallback(
-    async (dateInMonth) => {
+  useEffect(() => {
+    const fetchAllHabits = async () => {
       setLoading(true);
       setError(null);
-
       try {
-        const start = startOfMonth(dateInMonth);
-        const end = endOfMonth(dateInMonth);
-
-        const daysInMonth = eachDayOfInterval({ start, end });
-
-        const habitsByRelevantDate = new Map();
-
-        for (const day of daysInMonth) {
-          const formattedDate = format(day, "yyyy-MM-dd");
-          try {
-            const tokenData = GetCookies("authToken");
-            const response = await axios.get(
-              `${API}/habbits/user/${userId}/date/${formattedDate}`,
-              {
-                withCredentials: true,
-                headers: {
-                  authorization: `Bearer ${tokenData}`,
-                },
-              }
-            );
-
-            if (response.data.payload) {
-              response.data.payload.forEach((habit) => {
-                const key = `${habit.id}-${formattedDate}`;
-                if (!habitsByRelevantDate.has(key)) {
-                  habitsByRelevantDate.set(key, {
-                    ...habit,
-                    _relevantDate: day,
-                  });
-                }
-              });
-            }
-          } catch (dayError) {
-            console.warn(
-              `Could not fetch habits for ${formattedDate}:`,
-              dayError
-            );
-          }
-        }
-        const finalFetchedHabits = Array.from(habitsByRelevantDate.values());
-        setFetchedHabits(finalFetchedHabits);
+        await getUserHabits();
       } catch (err) {
-        console.error("Error fetching habits for month:", err);
-        setError("Failed to load habits for the month.");
+        console.error("Error fetching all habits:", err);
+        setError("Failed to load all habits.");
       } finally {
         setLoading(false);
       }
-    },
-    [userId]
-  );
+    };
+    fetchAllHabits();
+  }, [getUserHabits]);
+
+  const processHabitsForCalendar = useCallback(() => {
+    processHabitsForCalendarLogic(
+      userHabits,
+      activeMonth,
+      setProcessedHabitDataByDate
+    );
+  }, [userHabits, activeMonth, setProcessedHabitDataByDate]);
 
   useEffect(() => {
-    fetchHabitsForMonth(activeMonth);
-  }, [activeMonth, fetchHabitsForMonth]);
+    processHabitsForCalendar();
+  }, [userHabits, activeMonth, processHabitsForCalendar]);
 
-  const isHabitRelevantForDate = useCallback((habit, date) => {
-    const relevant = isSameDay(date, habit._relevantDate);
-    return relevant;
-  }, []);
+  const getTileContent = useCallback(
+    ({ date, view }) => {
+      if (view === "month") {
+        const formattedDate = format(date, "yyyy-MM-dd");
+        const relevantHabits =
+          processedHabitDataByDate.get(formattedDate) || [];
 
-  const getTileContent = ({ date, view }) => {
-    if (view === "month") {
-      const relevantHabits = fetchedHabits.filter((habit) =>
-        isHabitRelevantForDate(habit, date)
-      );
+        if (relevantHabits.length === 0) {
+          return null;
+        }
 
-      if (relevantHabits.length === 0) {
-        return null;
+        const allCompletedOnDate = relevantHabits.every(
+          (habit) =>
+            habit.last_completed_on &&
+            isSameDay(date, parseISO(habit.last_completed_on))
+        );
+
+        if (allCompletedOnDate) {
+          return <StarSVG />;
+        } else if (relevantHabits.length > 0) {
+          return <CheckmarkSVG />;
+        }
       }
+      return null;
+    },
+    [processedHabitDataByDate]
+  );
 
-      const allCompletedOnDate = relevantHabits.every(
-        (habit) =>
-          habit.last_completed_on &&
-          isSameDay(date, parseISO(habit.last_completed_on))
-      );
+  const handleDayClicked = useCallback(
+    (date) => {
+      setSelectedDate(date);
+      const formattedDate = date ? format(date, "yyyy-MM-dd") : null;
+      const filteredHabits = formattedDate
+        ? processedHabitDataByDate.get(formattedDate) || []
+        : [];
 
-      if (allCompletedOnDate) {
-        return <StarSVG />;
-      } else {
-        return <CheckmarkSVG />;
-      }
-    }
-    return null;
-  };
+      setHabitsForSelectedDateInModal(filteredHabits);
+      setShowModal(true);
+    },
+    [processedHabitDataByDate]
+  );
 
-  const handleDayClicked = (date) => {
-    setSelectedDate(date);
-    const filteredHabits = fetchedHabits.filter((habit) =>
-      isSameDay(date, habit._relevantDate)
-    );
-
-    setHabitsForSelectedDateInModal(filteredHabits);
-    setShowModal(true);
-  };
-
-  const handleCloseModal = () => {
+  const handleCloseModal = useCallback(() => {
     setShowModal(false);
     setSelectedDate(null);
     setHabitsForSelectedDateInModal([]);
-  };
+  }, []);
 
-  const renderHabitTasksInModal = () => {
+  const renderHabitTasksInModal = useCallback(() => {
     if (habitsForSelectedDateInModal.length > 0) {
       return (
         <ul className="modal-habit-list list-unstyled">
@@ -170,6 +132,7 @@ export const Calendar = () => {
               <h5 className="text-center mb-1">{habit.habit_name}</h5>
               <p className="text-center">{habit.habit_task_description}</p>
               {habit.last_completed_on &&
+                selectedDate &&
                 isSameDay(selectedDate, parseISO(habit.last_completed_on)) && (
                   <p className="text-success text-center">Completed!</p>
                 )}
@@ -180,7 +143,7 @@ export const Calendar = () => {
     } else {
       return <p className="text-center">No active habits for this day.</p>;
     }
-  };
+  }, [habitsForSelectedDateInModal, selectedDate]);
 
   return (
     <div className="calendar-container">
@@ -198,6 +161,13 @@ export const Calendar = () => {
           }}
           value={selectedDate}
         />
+
+        {loading && (
+          <p className="text-center">
+            Loading tasks for {format(activeMonth, "MMMM yyyy")}
+          </p>
+        )}
+        {error && <p className="text-center text-danger">{error}</p>}
       </div>
 
       <Modal show={showModal} onHide={handleCloseModal} centered>
