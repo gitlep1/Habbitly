@@ -7,7 +7,11 @@ import { FaLongArrowAltUp } from "react-icons/fa";
 
 import { AddAHabit } from "../../../HabitTracker/1 - Habits/AddAHabit";
 
-export const HabitTrackerLinks = ({ handleButtonToggle, showDropdown }) => {
+export const HabitTrackerLinks = ({
+  handleButtonToggle,
+  showDropdown,
+  setExpandSidebar,
+}) => {
   const navigate = useNavigate();
 
   const [showAddModal, setShowAddModal] = useState(false);
@@ -27,9 +31,9 @@ export const HabitTrackerLinks = ({ handleButtonToggle, showDropdown }) => {
     config: { tension: 200, friction: 15 },
   });
 
-  const handleAddClick = () => {
-    setShowAddModal(true);
-  };
+  // const handleAddClick = () => {
+  //   setShowAddModal(true);
+  // };
 
   return (
     <div className="desktop-navbar-link-container">
@@ -62,6 +66,7 @@ export const HabitTrackerLinks = ({ handleButtonToggle, showDropdown }) => {
             className={`desktop-navbar-button`}
             onClick={() => {
               navigate("/habit-tracker");
+              setExpandSidebar(false);
             }}
           >
             Habits
@@ -80,6 +85,7 @@ export const HabitTrackerLinks = ({ handleButtonToggle, showDropdown }) => {
             className={`desktop-navbar-button`}
             onClick={() => {
               navigate("/habit-history");
+              setExpandSidebar(false);
             }}
           >
             Habit History

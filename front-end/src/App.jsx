@@ -1,12 +1,13 @@
 import "./app.scss";
 import { useState, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 
 import {
   screenVersionContext,
   themeContext,
-  userContext,
   preferencesContext,
 } from "./CustomContexts/Contexts";
+import { GetCookies } from "./CustomFunctions/HandleCookies";
 import CustomToastContainers from "./CustomFunctions/CustomToasts/CustomToastContainers";
 import DetectScreenSize from "./CustomFunctions/DetectScreenSize";
 import SmallResolution from "./CustomFunctions/SmallResolution/SmallResolution";
@@ -17,11 +18,33 @@ import Mobile from "./Mobile/Mobile";
 import CloudsBackground from "./components/3D-Background/CloudsBackground";
 
 const App = () => {
+  const navigate = useNavigate();
+
+  const authUser = GetCookies("authUser") || null;
   const screenVersion = useContext(screenVersionContext);
   const { themeState } = useContext(themeContext);
   const { preferences } = useContext(preferencesContext);
 
   const [screenSize, setScreenSize] = useState(DetectScreenSize().width);
+
+  useEffect(() => {
+    isStillAuthenticated();
+  }, []); // eslint-disable-line
+
+  const isStillAuthenticated = () => {
+    if (!authUser) {
+      if (
+        location.pathname === "/summary" ||
+        location.pathname === "/insights" ||
+        location.pathname === "/habit-tracker" ||
+        location.pathname === "/habit-history" ||
+        location.pathname === "/profile" ||
+        location.pathname === "/preferences"
+      ) {
+        navigate("/");
+      }
+    }
+  };
 
   useEffect(() => {
     const resizeSidebarInterval = setInterval(() => {

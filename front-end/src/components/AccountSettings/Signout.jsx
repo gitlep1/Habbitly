@@ -44,6 +44,11 @@ export const Signout = ({ showSignoutModal, handleSignoutModalClose }) => {
         RemoveCookies("theme");
         RemoveCookies("expandCookie");
         RemoveCookies("expandedLinks");
+        RemoveCookies("dailyMotivationalMessage");
+        RemoveCookies("dailyMotivationalMessageDate");
+        RemoveCookies("preferences");
+        RemoveCookies("lastActivityTimestamp");
+        RemoveCookies("totalTimeSpentMinutes");
 
         handleSignoutModalClose();
         toast.success("You have been signed out", {

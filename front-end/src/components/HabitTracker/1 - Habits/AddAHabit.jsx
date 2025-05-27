@@ -479,7 +479,7 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
             <Form.Group controlId="isActive">
               <Form.Check
                 type="checkbox"
-                label="Mark as Active?"
+                label="Check if active"
                 name="is_active"
                 checked={habitData.is_active}
                 onChange={handleInputChange}
@@ -488,7 +488,7 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
             <Form.Group controlId="habitCompleted">
               <Form.Check
                 type="checkbox"
-                label="Mark as Completed?"
+                label="Check if completed"
                 name="has_reached_end_date"
                 checked={habitData.has_reached_end_date}
                 onChange={handleInputChange}

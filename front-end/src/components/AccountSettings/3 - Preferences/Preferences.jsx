@@ -1,6 +1,6 @@
 import "./Preferences.scss";
 import { useState, useEffect, useContext } from "react";
-import { Form, Button, Row, Col, Card } from "react-bootstrap";
+import { Form, Row, Col, Card } from "react-bootstrap";
 import { toast } from "react-toastify";
 
 import { preferencesContext } from "../../../CustomContexts/Contexts";
@@ -13,75 +13,48 @@ export const Preferences = () => {
   const { preferences: globalPreferences, updateSitePreferences } =
     useContext(preferencesContext);
 
-  const [preferences, setPreferences] = useState(() => {
-    const initialPrefs = { ...globalPreferences };
-    if (!isWebGlSupported) {
-      initialPrefs.animatedBackground = false;
-    }
-    return initialPrefs;
-  });
-
-  const [originalPreferences, setOriginalPreferences] =
-    useState(globalPreferences);
-
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    setPreferences((prevPrefs) => {
-      const updatedPrefs = { ...globalPreferences };
-      if (!isWebGlSupported) {
-        updatedPrefs.animatedBackground = false;
-      }
-      return updatedPrefs;
-    });
-    setOriginalPreferences(globalPreferences);
-  }, [globalPreferences, isWebGlSupported]);
+    if (!isWebGlSupported && globalPreferences.animatedBackground) {
+      const prefsToUpdate = { ...globalPreferences, animatedBackground: false };
+      updateSitePreferences(prefsToUpdate);
+      SetCookies(
+        "isWebGlSupported",
+        "false",
+        new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
+      );
+    }
+  }, [globalPreferences, isWebGlSupported, updateSitePreferences]);
 
-  const handlePreferenceChange = (e) => {
-    const { name, type, checked, value } = e.target;
+  const handlePreferenceToggle = async (e) => {
+    const { name, type, checked } = e.target;
 
     if (name === "animatedBackground" && !isWebGlSupported) {
       return;
     }
 
-    setPreferences((prevPrefs) => ({
-      ...prevPrefs,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
-
-  const handleSavePreferences = (e) => {
-    e.preventDefault();
     setIsSaving(true);
-
     try {
-      const prefsToSave = { ...preferences };
-      if (!isWebGlSupported) {
-        prefsToSave.animatedBackground = false;
-        SetCookies(
-          "isWebGlSupported",
-          "false",
-          new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
-        );
-      }
+      const updatedValue = type === "checkbox" ? checked : e.target.value;
+      const prefsToSave = {
+        ...globalPreferences,
+        [name]: updatedValue,
+      };
 
-      updateSitePreferences(prefsToSave);
-      toast.success("Preferences saved successfully!", {
+      await updateSitePreferences(prefsToSave);
+      toast.success("Preference updated!", {
         containerId: "notify-success",
       });
     } catch (error) {
-      console.error("Error saving preferences:", error);
-      toast.error("Failed to save preferences. Please try again.", {
+      console.error("Error updating preference:", error);
+      toast.error("Failed to update preference. Please try again.", {
         containerId: "general-toast",
       });
     } finally {
       setIsSaving(false);
     }
   };
-
-  const isSaveDisabled =
-    isSaving ||
-    JSON.stringify(preferences) === JSON.stringify(originalPreferences);
 
   return (
     <div className="preferences-container p-4 md:p-8">
@@ -95,7 +68,7 @@ export const Preferences = () => {
           </div>
           <h1 className="preferences-title mb-4">Site Preferences</h1>
 
-          <Form onSubmit={handleSavePreferences}>
+          <div>
             <h3 className="section-subtitle">Visuals & Experience</h3>
             <Form.Group
               as={Row}
@@ -116,73 +89,20 @@ export const Preferences = () => {
                   id="animated-background-switch"
                   name="animatedBackground"
                   checked={
-                    isWebGlSupported ? preferences.animatedBackground : false
+                    isWebGlSupported
+                      ? globalPreferences.animatedBackground
+                      : false
                   }
-                  onChange={handlePreferenceChange}
-                  disabled={!isWebGlSupported}
+                  onChange={handlePreferenceToggle}
+                  disabled={!isWebGlSupported || isSaving}
                 />
               </Col>
             </Form.Group>
 
-            <Form.Group as={Row} className="mb-3" controlId="compactMode">
-              <Form.Label column sm="8">
-                Compact UI Mode
-              </Form.Label>
-              <Col sm="4" className="text-end">
-                <Form.Check
-                  type="switch"
-                  id="compact-mode-switch"
-                  name="compactMode"
-                  checked={preferences.compactMode}
-                  onChange={handlePreferenceChange}
-                />
-              </Col>
-            </Form.Group>
-
-            <hr className="my-4" />
-
-            <h3 className="section-subtitle">Sound & Guidance</h3>
-            <Form.Group as={Row} className="mb-3" controlId="uiSounds">
-              <Form.Label column sm="8">
-                UI Sound Effects
-              </Form.Label>
-              <Col sm="4" className="text-end">
-                <Form.Check
-                  type="switch"
-                  id="ui-sounds-switch"
-                  name="uiSounds"
-                  checked={preferences.uiSounds}
-                  onChange={handlePreferenceChange}
-                />
-              </Col>
-            </Form.Group>
-
-            <Form.Group as={Row} className="mb-3" controlId="showWelcomeTour">
-              <Form.Label column sm="8">
-                Show Welcome Tour & Tips
-              </Form.Label>
-              <Col sm="4" className="text-end">
-                <Form.Check
-                  type="switch"
-                  id="welcome-tour-switch"
-                  name="showWelcomeTour"
-                  checked={preferences.showWelcomeTour}
-                  onChange={handlePreferenceChange}
-                />
-              </Col>
-            </Form.Group>
-
-            <div className="text-center pt-4">
-              <Button
-                variant="primary"
-                type="submit"
-                className="px-6"
-                disabled={isSaveDisabled}
-              >
-                {isSaving ? "Saving..." : "Save Changes"}
-              </Button>
-            </div>
-          </Form>
+            {isSaving && (
+              <div className="text-center text-secondary">Saving...</div>
+            )}
+          </div>
         </Card.Body>
       </Card>
     </div>

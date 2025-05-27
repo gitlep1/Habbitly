@@ -4,7 +4,11 @@ import { Button } from "react-bootstrap";
 import { useSpring, animated } from "react-spring";
 import { FaLongArrowAltUp } from "react-icons/fa";
 
-export const HomepageLinks = ({ handleButtonToggle, showDropdown }) => {
+export const HomepageLinks = ({
+  handleButtonToggle,
+  showDropdown,
+  setExpandSidebar,
+}) => {
   const navigate = useNavigate();
 
   const slideDropdownHomepage = useSpring({
@@ -53,6 +57,7 @@ export const HomepageLinks = ({ handleButtonToggle, showDropdown }) => {
             className={`desktop-navbar-button`}
             onClick={() => {
               navigate("/");
+              setExpandSidebar(false);
             }}
           >
             Dashboard
@@ -63,20 +68,22 @@ export const HomepageLinks = ({ handleButtonToggle, showDropdown }) => {
             className={`desktop-navbar-button`}
             onClick={() => {
               navigate("/summary");
+              setExpandSidebar(false);
             }}
           >
             Daily Summary
           </Button>
 
-          <Button
+          {/* <Button
             id="desktop-navbar-insight-button"
             className={`desktop-navbar-button`}
             onClick={() => {
               navigate("/insights");
+              setExpandSidebar(false);
             }}
           >
             Insights & Analytics
-          </Button>
+          </Button> */}
         </animated.div>
       )}
     </div>

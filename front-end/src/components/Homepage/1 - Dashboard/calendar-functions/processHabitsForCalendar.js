@@ -8,7 +8,7 @@ import {
 
 export const processHabitsForCalendarLogic = (
   userHabits,
-  activeMonth,
+  dateToProcess,
   setProcessedHabitDataByDate
 ) => {
   if (!userHabits || userHabits.length === 0) {
@@ -19,14 +19,14 @@ export const processHabitsForCalendarLogic = (
   const habitsMap = new Map();
 
   const startOfCalendarView = new Date(
-    activeMonth.getFullYear(),
-    activeMonth.getMonth(),
+    dateToProcess.getFullYear(),
+    dateToProcess.getMonth(),
     1
   );
 
   const endOfCalendarView = new Date(
-    activeMonth.getFullYear(),
-    activeMonth.getMonth() + 1,
+    dateToProcess.getFullYear(),
+    dateToProcess.getMonth() + 1,
     0
   );
 

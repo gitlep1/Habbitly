@@ -142,7 +142,7 @@ export const Landing = () => {
           <Image
             src={LandingBackgroundCloud}
             alt="Landing Background Cloud"
-            className="w-full md:w-[80%]"
+            className="15em sm:w-[25em] md:w-[35em] lg:w-[40em]"
           />
           <Button
             variant="success"

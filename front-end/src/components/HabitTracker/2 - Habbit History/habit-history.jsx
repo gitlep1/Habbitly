@@ -11,13 +11,13 @@ import maxwell from "../../../assets/images/habit-tracker-images/Maxwell.png";
 const API = import.meta.env.VITE_PUBLIC_API_BASE;
 
 export const HabitHistory = () => {
-  const tokenData = GetCookies("authToken");
+  const tokenData = GetCookies("authToken") || null;
   const themeState = GetCookies("theme");
   const [history, setHistory] = useState([]);
 
   useEffect(() => {
     getUsersHabitHistory();
-  }, []); // eslint-disable-line
+  }, [tokenData]); // eslint-disable-line
 
   const getUsersHabitHistory = async () => {
     await axios
@@ -78,7 +78,7 @@ export const HabitHistory = () => {
                     <th>Habit ID</th>
                     <th>Habit Name</th>
                     <th>Action</th>
-                    <th>Habit Completed</th>
+                    <th>Full Habit Completion</th>
                     <th>History Logged At</th>
                   </tr>
                 </thead>
@@ -115,7 +115,11 @@ export const HabitHistory = () => {
                       <td className={`fw-bold ${getActionColor(entry.action)}`}>
                         {entry.action}
                       </td>
-                      <td>{entry.has_reached_end_date ? "Yes" : "No"}</td>
+                      <td>
+                        {entry.has_reached_end_date
+                          ? "Yes"
+                          : "Habit not fully completed yet"}
+                      </td>
                       <td style={{ minWidth: "150px" }}>
                         {new Date(entry.timestamp).toLocaleString()}
                       </td>

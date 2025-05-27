@@ -4,7 +4,11 @@ import { Button } from "react-bootstrap";
 import { useSpring, animated } from "react-spring";
 import { FaLongArrowAltUp } from "react-icons/fa";
 
-export const AccountSettingsLinks = ({ handleButtonToggle, showDropdown }) => {
+export const AccountSettingsLinks = ({
+  handleButtonToggle,
+  showDropdown,
+  setExpandSidebar,
+}) => {
   const navigate = useNavigate();
 
   const slideDropdownAccountSettings = useSpring({
@@ -53,26 +57,29 @@ export const AccountSettingsLinks = ({ handleButtonToggle, showDropdown }) => {
             className={`desktop-navbar-button`}
             onClick={() => {
               navigate("/profile");
+              setExpandSidebar(false);
             }}
           >
             Profile
           </Button>
 
-          <Button
+          {/* <Button
             id="desktop-navbar-notifications-button"
             className={`desktop-navbar-button`}
             onClick={() => {
               navigate("/notifications");
+              setExpandSidebar(false);
             }}
           >
             Notifications
-          </Button>
+          </Button> */}
 
           <Button
             id="desktop-navbar-preferences-button"
             className={`desktop-navbar-button`}
             onClick={() => {
               navigate("/preferences");
+              setExpandSidebar(false);
             }}
           >
             Preferences

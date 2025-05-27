@@ -177,18 +177,21 @@ export const EmailVerification = () => {
               </span>
               <br />
               <br />
-              <div className="d-flex justify-content-between align-items-center">
-                <Button type="submit" className="verify-button">
+              <div className="d-flex flex-column align-items-center">
+                <Button type="submit" className="verify-button mb-2">
                   Verify Email
                 </Button>
-                <Button
-                  variant="secondary"
-                  onClick={handleResendCode}
-                  disabled={cooldown > 0}
-                  className="resend-button"
+                <div
+                  onClick={cooldown > 0 ? null : handleResendCode}
+                  className={`resend-text ${
+                    cooldown > 0 ? "text-muted" : "text-primary cursor-pointer"
+                  }`}
+                  style={{
+                    textDecoration: cooldown > 0 ? "none" : "underline",
+                  }}
                 >
                   Resend Code {cooldown > 0 && `(${cooldown}s)`}
-                </Button>
+                </div>
               </div>
             </Form>
 
