@@ -51,12 +51,15 @@ export const processHabitsForCalendarLogic = (
       const habitStartDate = parseISO(habit.start_date);
       const habitEndDate = habit.end_date ? parseISO(habit.end_date) : null;
 
-      const isDateWithinActivePeriod = isWithinInterval(currentDate, {
-        start: startOfDay(habitStartDate),
-        end: habitEndDate
-          ? endOfDay(habitEndDate)
-          : endOfDay(new Date(9999, 11, 31)),
-      });
+      const isDateWithinActivePeriod = isWithinInterval(
+        startOfDay(currentDate),
+        {
+          start: startOfDay(habitStartDate),
+          end: habitEndDate
+            ? endOfDay(habitEndDate)
+            : endOfDay(new Date(9999, 11, 31)),
+        }
+      );
 
       if (!isDateWithinActivePeriod) {
         return;
