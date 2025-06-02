@@ -1,7 +1,13 @@
 import "./Summary.scss";
 import { useState, useEffect, useContext, useCallback } from "react";
 import { Image } from "react-bootstrap";
-import { format, isSameDay, parseISO, differenceInMinutes } from "date-fns";
+import {
+  format,
+  isSameDay,
+  parseISO,
+  differenceInMinutes,
+  startOfDay,
+} from "date-fns";
 import { toZonedTime } from "date-fns-tz";
 
 import { processHabitsForCalendarLogic } from "../1 - Dashboard/calendar-functions/processHabitsForCalendar";
@@ -15,9 +21,8 @@ import { GetCookies, SetCookies } from "../../../CustomFunctions/HandleCookies";
 
 const MESSAGE_COOKIE_NAME = "dailyMotivationalMessage";
 const MESSAGE_DATE_COOKIE_NAME = "dailyMotivationalMessageDate";
-const TIMEZONE = "America/New_York"; // Use a specific timezone like 'America/New_York' or 'Europe/London'
+const TIMEZONE = "America/New_York";
 
-// Cookie names for time tracking
 const TIME_SPENT_COOKIE_NAME = "totalTimeSpentMinutes";
 const LAST_ACTIVITY_COOKIE_NAME = "lastActivityTimestamp";
 
@@ -29,7 +34,7 @@ export const Summary = () => {
   const [totalTasksToday, setTotalTasksToday] = useState(0);
   const [habitsOnStreakCount, setHabitsOnStreakCount] = useState(0);
   const [dailyMessage, setDailyMessage] = useState("");
-  const [timeSpent, setTimeSpent] = useState(0); // New state for time spent in minutes
+  const [timeSpent, setTimeSpent] = useState(0);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -39,20 +44,22 @@ export const Summary = () => {
   );
 
   useEffect(() => {
-    const fetchAllHabits = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        await getUserHabits();
-      } catch (err) {
-        console.error("Error fetching all habits:", err);
-        setError("Failed to load summary.");
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchAllHabits();
-  }, [getUserHabits]);
+  }, []); // eslint-disable-line
+
+  const fetchAllHabits = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      await getUserHabits();
+    } catch (err) {
+      console.error("Error fetching all habits:", err);
+      setError("Failed to load summary.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const processHabitsForCalendar = useCallback(() => {
     processHabitsForCalendarLogic(
@@ -69,15 +76,21 @@ export const Summary = () => {
   }, [userHabits, processHabitsForCalendar]);
 
   useEffect(() => {
-    const today = format(new Date(), "yyyy-MM-dd");
-    const habitsForToday = processedHabitDataByDate.get(today) || [];
+    const today = startOfDay(new Date());
+    const todayFormatted = format(today, "yyyy-MM-dd");
+
+    const habitsForToday = processedHabitDataByDate.get(todayFormatted) || [];
     setTodayHabits(habitsForToday);
     setTotalTasksToday(habitsForToday.length);
 
     let completedCount = 0;
     let activeStreakCount = 0;
     habitsForToday.forEach((habit) => {
-      if (habit.habit_task_completed) {
+      const wasCompletedToday = habit.last_completed_on
+        ? isSameDay(parseISO(habit.last_completed_on), today)
+        : false;
+
+      if (wasCompletedToday) {
         completedCount++;
       }
 
@@ -222,7 +235,7 @@ export const Summary = () => {
               <h3 className="text-xl font-semibold mb-2">
                 Today&apos;s Habits
               </h3>
-              <ul className="list-disc list-inside text-sm space-y-1">
+              <ul className="list-disc list-inside text-sm space-y-1 max-h-20 overflow-y-auto">
                 {todayHabits.length > 0 ? (
                   todayHabits.map((habit) => (
                     <li key={habit.id}>{habit.habit_name}</li>
@@ -242,7 +255,7 @@ export const Summary = () => {
             </div>
 
             <div className="summary-box time-spent-box bg-dark-blue p-6 rounded-xl shadow-md">
-              <h3 className="text-xl font-semibold">Time Spent</h3>
+              <h3 className="text-xl font-semibold">Total Session Time</h3>
               <p className="text-3xl font-bold mt-1">
                 {formatTimeSpent(timeSpent)}
               </p>

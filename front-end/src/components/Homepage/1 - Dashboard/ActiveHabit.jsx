@@ -1,5 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import { Image, Modal } from "react-bootstrap";
+import { isSameDay, isSameWeek, isSameMonth, isSameYear } from "date-fns";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import { GetCookies } from "../../../CustomFunctions/HandleCookies";
@@ -14,6 +16,8 @@ import flamey4x from "../../../assets/images/Dashboard-images/flamey-4x.gif";
 const API = import.meta.env.VITE_PUBLIC_API_BASE;
 
 export const ActiveHabit = () => {
+  const navigate = useNavigate();
+
   const { userHabits, getUserHabits } = useContext(habitContext);
   const activeHabits = userHabits.filter((habit) => habit.is_active === true);
 
@@ -90,12 +94,47 @@ export const ActiveHabit = () => {
     }
   };
 
+  const isHabitCompleted = (habit, now = new Date()) => {
+    const lastCompleted = habit.last_completed_on
+      ? new Date(habit.last_completed_on)
+      : null;
+
+    if (!lastCompleted) return false;
+
+    switch (habit.habit_frequency) {
+      case "Daily":
+        return isSameDay(now, lastCompleted);
+
+      case "Weekly":
+        return isSameWeek(now, lastCompleted, { weekStartsOn: 1 });
+
+      case "Monthly":
+        return isSameMonth(now, lastCompleted);
+
+      case "Yearly":
+        return isSameYear(now, lastCompleted);
+
+      default:
+        return false;
+    }
+  };
+
   const renderActiveHabits = () => {
     if (initialLoad) return <Loading message={"Loading Active Habits ..."} />;
     if (error) return <p>Error: {error}</p>;
     if (activeHabits.length < 1) {
       return (
-        <span className="flex align-self-center">No active habits set</span>
+        <p className="flex align-self-center gap-2">
+          No active habits
+          <span
+            className="text-green-400 underline cursor-pointer hover:text-green-300"
+            onClick={() => {
+              navigate("/habit-tracker");
+            }}
+          >
+            add a habit here
+          </span>
+        </p>
       );
     }
     return activeHabits.map((habit) => {
@@ -104,10 +143,13 @@ export const ActiveHabit = () => {
         habit_task_description,
         habit_task_completed,
         progress_percentage,
+        last_completed_on,
         end_date,
         current_streak,
         longest_streak,
       } = habit;
+
+      const isCompleted = isHabitCompleted(habit);
 
       const hasEndDate = !!end_date;
 
@@ -124,10 +166,10 @@ export const ActiveHabit = () => {
             {hasEndDate && <span>Progress: {checkProgress?.toFixed(0)}%</span>}
           </div>
 
-          <div className="active-habit-card-checkmark-outer rounded-circle">
-            {habit_task_completed ? (
+          <div className="active-habit-card-icon-outer rounded-circle">
+            {isCompleted ? (
               <div
-                className="active-habit-card-checkmark-inner habit-completed"
+                className="active-habit-card-icon-inner habit-completed"
                 onClick={() => handleOpenModal(habit)}
               >
                 {quickLoading ? (
@@ -140,7 +182,7 @@ export const ActiveHabit = () => {
               </div>
             ) : (
               <div
-                className="active-habit-card-checkmark-inner"
+                className="active-habit-card-icon-inner"
                 onClick={() => handleQuickComplete(habit.id)}
               >
                 <svg

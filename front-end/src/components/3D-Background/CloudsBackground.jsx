@@ -80,7 +80,8 @@ export default function CloudsBackground() {
     loader.load(
       Cloudo,
       (texture) => {
-        const cloudGeo = new THREE.PlaneGeometry(10, 10); // size of the clouds Ex: 10 units wide by 10 units high
+        // size of the clouds Ex: 10 units wide by 10 units high
+        const cloudGeo = new THREE.PlaneGeometry(10, 10);
 
         const cloudMaterial = new THREE.MeshLambertMaterial({
           map: texture,
@@ -89,6 +90,7 @@ export default function CloudsBackground() {
           side: THREE.DoubleSide,
         });
 
+        // render the amount of clouds
         for (let i = 0; i < 20; i++) {
           const cloud = new THREE.Mesh(cloudGeo, cloudMaterial);
 

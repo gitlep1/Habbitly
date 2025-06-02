@@ -1,5 +1,6 @@
 import "./Dashboard.scss";
 import { useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { Image } from "react-bootstrap";
 import { FaCloudversify } from "react-icons/fa";
 import { GetCookies } from "../../../CustomFunctions/HandleCookies";
@@ -12,6 +13,8 @@ import { Calendar } from "./Calendar";
 import { SiteNews } from "./SiteNews";
 
 export const Dashboard = () => {
+  const navigate = useNavigate();
+
   const richardContainerRef = useRef(null);
   const anchorRef = useRef(null);
 
@@ -184,7 +187,7 @@ export const Dashboard = () => {
   return (
     <section className="desktop-dashboard-container p-4 md:p-8 min-h-screen min-w-screen">
       <div className="dashboard-header max-w-5xl mx-auto mt-[7em] md:mt-0 flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3">
-        <div className="dashboard-title md:col-2 lg:col-3 lg:row-1">
+        <div className="dashboard-title md:col-1 lg:col-1 lg:row-1">
           <h1>
             Dashboard
             <FaCloudversify />
@@ -195,20 +198,24 @@ export const Dashboard = () => {
             <span id="date">{dateInUserTimezone(new Date())}</span>
           </div>
         </div>
-        <div className="dashboard-welcome md:col-1 md:row-1">
-          <h1>HABBITLY</h1>
+        <div className="dashboard-welcome md:col-2 md:row-1 lg:col-3">
           <p>
-            {greetingInUserTimezone(new Date())},{" "}
-            <span id="username">
-              {userData ? ` ${userData.username}` : " User"}
+            {greetingInUserTimezone(new Date())}
+            <br />
+            <span id="username" className="flex justify-evenly items-center">
+              <Image
+                src={userData.profileimg}
+                alt="user profile icon"
+                className="w-[50px] hover:cursor-pointer"
+                onClick={() => {
+                  navigate("/profile");
+                }}
+              />
+              {userData.username}
             </span>
-            !
           </p>
         </div>
-        <div
-          ref={richardContainerRef}
-          className="richard-container lg:col-2 lg:row-1"
-        >
+        <div ref={richardContainerRef} className="richard-container lg:row-1">
           <Image
             ref={anchorRef}
             id="anchor"

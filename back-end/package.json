@@ -21,6 +21,7 @@
   "author": "gitlep1",
   "license": "ISC",
   "dependencies": {
+    "@google/genai": "^1.3.0",
     "axios": "^1.8.2",
     "cloudinary": "^2.6.1",
     "cors": "^2.8.5",

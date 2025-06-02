@@ -59,19 +59,23 @@
       h3 {
         font-size: 2rem;
       }
-    }
 
-    .habit-card-button {
-      font-weight: bold;
-      transition: background-color 0.2s ease-in-out;
+      .habit-card-button {
+        font-weight: bold;
+        transition: background-color 0.2s ease-in-out;
 
-      &:hover {
-        cursor: pointer;
+        &:hover {
+          cursor: pointer;
+        }
       }
-    }
 
-    .habit-card-icon {
-      color: #a0a0a0;
+      .habit-card-icon {
+        color: #a0a0a0;
+      }
+
+      .habit-description {
+        color: var(--text-color);
+      }
     }
   }
 }
@@ -87,6 +91,7 @@
   grid-template-columns: repeat(2, 1fr);
   width: 100%;
   gap: 1em;
+  background-color: var(--page-bg);
 }
 
 .add-habit-modal-title {

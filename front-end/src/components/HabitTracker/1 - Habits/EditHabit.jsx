@@ -182,6 +182,7 @@ export const EditHabit = ({ habit, onCancel }) => {
     setFormData((prevData) => ({
       ...prevData,
       habit_frequency: prevData.habit_frequency.toLowerCase(),
+      habit_task_completed: false,
     }));
 
     const tokenData = GetCookies("authToken");
@@ -241,7 +242,7 @@ export const EditHabit = ({ habit, onCancel }) => {
         <Form.Label>Category</Form.Label>
         <Form.Select
           name="habit_category"
-          value={formData.habit_category}
+          value={formData.habit_category || "Select category"}
           onChange={handleInputChange}
         >
           <option value="">Select category</option>
@@ -495,7 +496,7 @@ export const EditHabit = ({ habit, onCancel }) => {
       </div>
       <div className="flex justify-center gap-8 my-4">
         <Button variant="secondary" onClick={onCancel}>
-          Close
+          Cancel
         </Button>
         <Button variant="primary" type="submit">
           Save Changes

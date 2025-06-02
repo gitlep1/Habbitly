@@ -33,41 +33,37 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
 
     if (name === "repetitions_per_frequency") {
       if (value === "") {
-        setHabitData((prevData) => ({
+        return setHabitData((prevData) => ({
           ...prevData,
           [name]: value,
         }));
-        return;
       }
 
       const numValue = parseInt(value, 10);
       if (Number.isInteger(numValue) && numValue >= 1) {
-        setHabitData((prevData) => ({
+        return setHabitData((prevData) => ({
           ...prevData,
           [name]: numValue,
         }));
       }
-      return;
     }
 
     if (name === "yearly_month_of_year_to_complete") {
       if (value === "") {
-        setHabitData((prevData) => ({
+        return setHabitData((prevData) => ({
           ...prevData,
           [name]: "",
         }));
-        return;
       }
 
       const numValue = parseInt(value, 10);
       if (!Number.isNaN(numValue)) {
         const clamped = Math.max(1, Math.min(numValue, 12));
-        setHabitData((prevData) => ({
+        return setHabitData((prevData) => ({
           ...prevData,
           [name]: clamped,
         }));
       }
-      return;
     }
 
     if (
@@ -75,26 +71,24 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
       name === "day_of_month_to_complete"
     ) {
       if (value === "") {
-        setHabitData((prevData) => ({
+        return setHabitData((prevData) => ({
           ...prevData,
           [name]: "",
         }));
-        return;
       }
 
       const numValue = parseInt(value, 10);
       if (!Number.isNaN(numValue)) {
         const clamped = Math.max(1, Math.min(numValue, 31));
-        setHabitData((prevData) => ({
+        return setHabitData((prevData) => ({
           ...prevData,
           [name]: clamped,
         }));
       }
-      return;
     }
 
     if (name === "habit_frequency") {
-      setHabitData((prevData) => ({
+      return setHabitData((prevData) => ({
         ...prevData,
         [name]: value,
         days_of_week_to_complete: [],
@@ -102,10 +96,58 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
         yearly_month_of_year_to_complete: null,
         yearly_day_of_year_to_complete: null,
       }));
+    }
+
+    if (name === "start_date" || name === "end_date") {
+      const newDate = value;
+      const otherDate =
+        name === "start_date" ? habitData.end_date : habitData.start_date;
+
+      if (otherDate) {
+        const newDateObj = new Date(newDate);
+        const otherDateObj = new Date(otherDate);
+
+        // Prevent same-day selection
+        if (newDate === otherDate) {
+          return toast.error("Start and End dates cannot be the same.", {
+            containerId: "toast-notify",
+          });
+        }
+
+        // Swap dates if end_date is before start_date
+        if (
+          (name === "start_date" && newDateObj > otherDateObj) ||
+          (name === "end_date" && newDateObj < otherDateObj)
+        ) {
+          setHabitData((prevData) => ({
+            ...prevData,
+            start_date: name === "start_date" ? otherDate : newDate,
+            end_date: name === "start_date" ? newDate : otherDate,
+          }));
+          return;
+        }
+      }
+    }
+
+    if (name === "is_active" && checked) {
+      setHabitData((prevData) => ({
+        ...prevData,
+        is_active: true,
+        has_reached_end_date: false,
+      }));
       return;
     }
 
-    setHabitData((prevData) => ({
+    if (name === "has_reached_end_date" && checked) {
+      setHabitData((prevData) => ({
+        ...prevData,
+        has_reached_end_date: true,
+        is_active: false,
+      }));
+      return;
+    }
+
+    return setHabitData((prevData) => ({
       ...prevData,
       [name]: type === "checkbox" ? checked : value,
     }));
@@ -225,6 +267,7 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
               onChange={handleInputChange}
             />
           </Form.Group>
+
           <Form.Group controlId="habitTask">
             <Form.Label className="habit-form-label">Description *</Form.Label>
             <Form.Control
@@ -235,6 +278,7 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
               onChange={handleInputChange}
             />
           </Form.Group>
+
           <Form.Group controlId="habitCategory">
             <Form.Label>Category</Form.Label>
             <Form.Select
@@ -257,6 +301,7 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
               <option value="Work/Career">Work/Career</option>
             </Form.Select>
           </Form.Group>
+
           <Form.Group controlId="habitInterval">
             <Form.Label>Frequency *</Form.Label>
             <Form.Select
@@ -457,6 +502,7 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
               placeholder="ex: 1, 2, 3"
             />
           </Form.Group>
+
           <Form.Group controlId="startDate">
             <Form.Label>Start Date *</Form.Label>
             <Form.Control
@@ -466,6 +512,7 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
               onChange={handleInputChange}
             />
           </Form.Group>
+
           <Form.Group controlId="endDate">
             <Form.Label>End Date</Form.Label>
             <Form.Control
@@ -475,6 +522,7 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
               onChange={handleInputChange}
             />
           </Form.Group>
+
           <div className="flex justify-center gap-8 my-4">
             <Form.Group controlId="isActive">
               <Form.Check
@@ -485,6 +533,7 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
                 onChange={handleInputChange}
               />
             </Form.Group>
+
             <Form.Group controlId="habitCompleted">
               <Form.Check
                 type="checkbox"
@@ -495,12 +544,13 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
               />
             </Form.Group>
           </div>
+
           <div className="flex justify-center gap-8 my-4">
             <Button variant="secondary" onClick={onHide}>
               Close
             </Button>
             <Button variant="primary" type="submit">
-              Save Changes
+              Add Habit
             </Button>
           </div>
         </Form>

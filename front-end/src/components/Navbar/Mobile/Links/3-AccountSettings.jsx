@@ -8,6 +8,7 @@ export const AccountSettingsLinks = ({
   handleButtonToggle,
   showDropdown,
   themeState,
+  setExpandTopbar,
 }) => {
   const navigate = useNavigate();
 
@@ -59,6 +60,7 @@ export const AccountSettingsLinks = ({
             }`}
             onClick={() => {
               navigate("/profile");
+              setExpandTopbar(false);
             }}
           >
             Profile
@@ -71,6 +73,7 @@ export const AccountSettingsLinks = ({
             }`}
             onClick={() => {
               navigate("/notifications");
+              setExpandTopbar(false);
             }}
           >
             Notifications
@@ -83,6 +86,7 @@ export const AccountSettingsLinks = ({
             }`}
             onClick={() => {
               navigate("/preferences");
+              setExpandTopbar(false);
             }}
           >
             Preferences

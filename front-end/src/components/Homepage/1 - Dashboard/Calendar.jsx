@@ -33,7 +33,7 @@ export const Calendar = () => {
       strokeLinecap="round"
       strokeLinejoin="round"
     >
-      <path d="M5 13l4 4L19 7" />
+      <circle cx="12" cy="12" r="9" />
     </svg>
   );
 

@@ -1,5 +1,5 @@
 import "./Insights.scss";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { Image } from "react-bootstrap";
 import { Line } from "react-chartjs-2";
 import {
@@ -12,9 +12,11 @@ import {
   Legend,
 } from "chart.js";
 
-import { themeContext } from "../../../CustomContexts/Contexts";
+import { themeContext, habitContext } from "../../../CustomContexts/Contexts";
 
 import anthony from "../../../assets/images/insights-images/Anthony.png";
+
+import { Loading } from "../../../CustomFunctions/Loading/Loading";
 
 ChartJS.register(
   CategoryScale,
@@ -27,6 +29,9 @@ ChartJS.register(
 
 export const Insights = () => {
   const { themeState } = useContext(themeContext);
+  const { userHabits } = useContext(habitContext);
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const lineColor =
     themeState === "light" ? "rgb(204, 136, 0)" : "rgb(255, 165, 0)";

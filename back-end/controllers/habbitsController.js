@@ -158,6 +158,8 @@ habbits.put("/:id", requireAuth(), async (req, res) => {
     end_date: req.body.end_date || null,
     is_active: req.body.is_active || true,
     has_reached_end_date: req.body.has_reached_end_date || false,
+    total_tasks_completed: req.body.total_tasks_completed,
+    total_habits_completed: req.body.total_habits_completed,
     days_of_week_to_complete: req.body.days_of_week_to_complete || null,
     day_of_month_to_complete: req.body.day_of_month_to_complete || null,
     yearly_month_of_year_to_complete:
@@ -193,151 +195,174 @@ habbits.put("/:id", requireAuth(), async (req, res) => {
     updatedHabbitData.habit_task_completed &&
     !previousHabit.habit_task_completed;
 
+  const today = dayjs().startOf("day");
+
+  if (wasJustCompletedNow) {
+    updatedHabbitData.last_completed_on = today.toISOString();
+    // Increment total_tasks_completed when any habit is completed
+    updatedHabbitData.total_tasks_completed =
+      (previousHabit.total_tasks_completed || 0) + 1;
+  } else {
+    // If not just completed, retain the previous last_completed_on
+    updatedHabbitData.last_completed_on = previousHabit.last_completed_on;
+    // Also retain total_tasks_completed if not completed now
+    updatedHabbitData.total_tasks_completed =
+      previousHabit.total_tasks_completed || 0;
+  }
+
   // === PROGRESS PERCENTAGE CALCULATION === \\
   if (updatedHabbitData.end_date) {
-    console.log("inside if end date", updatedHabbitData.end_date);
-    const startDate = dayjs(updatedHabbitData.start_date);
-    const endDate = dayjs(updatedHabbitData.end_date);
-    const currentDate = dayjs();
+    if (wasJustCompletedNow) {
+      console.log("inside if end date", updatedHabbitData.end_date);
+      const startDate = dayjs(updatedHabbitData.start_date);
+      const endDate = dayjs(updatedHabbitData.end_date);
+      const currentDate = dayjs();
 
-    const normalizedStartDate = startDate.startOf("day");
-    const normalizedEndDate = endDate.startOf("day");
-    const normalizedCurrentDate = currentDate.startOf("day");
+      const normalizedStartDate = startDate.startOf("day");
+      const normalizedEndDate = endDate.startOf("day");
+      const normalizedCurrentDate = currentDate.startOf("day");
 
-    console.log(
-      { normalizedStartDate },
-      { normalizedEndDate },
-      { normalizedCurrentDate }
-    );
+      console.log(
+        { normalizedStartDate },
+        { normalizedEndDate },
+        { normalizedCurrentDate }
+      );
 
-    if (normalizedCurrentDate.isBefore(normalizedStartDate, "day")) {
-      console.log("inside if habit not started");
-      // Habit hasn't started yet
-      updatedHabbitData.progress_percentage = 0;
-      updatedHabbitData.has_reached_end_date = false;
-    } else if (normalizedCurrentDate.isSameOrAfter(normalizedEndDate, "day")) {
-      console.log("inside else if reached or passed end date");
-      // Habit has reached or passed its end date
-      updatedHabbitData.progress_percentage = 100;
-      updatedHabbitData.has_reached_end_date = true;
-      updatedHabbitData.is_active = false;
-    } else {
-      console.log("inside else habit not neither");
-      const totalDurationDays =
-        normalizedEndDate.diff(normalizedStartDate, "day") + 1;
-      const daysPassed =
-        normalizedCurrentDate.diff(normalizedStartDate, "day") + 1;
-
-      if (totalDurationDays > 0) {
-        updatedHabbitData.progress_percentage = Math.min(
-          100,
-          Math.round((daysPassed / totalDurationDays) * 100)
-        );
-      } else {
-        console.log("inside else start and end date are the same");
-        // start and end date are the same
+      if (normalizedCurrentDate.isBefore(normalizedStartDate, "day")) {
+        console.log("inside if habit not started");
+        // Habit hasn't started yet
+        updatedHabbitData.progress_percentage = 0;
+        updatedHabbitData.has_reached_end_date = false;
+      } else if (
+        normalizedCurrentDate.isSameOrAfter(normalizedEndDate, "day")
+      ) {
+        console.log("inside else if reached or passed end date");
+        // Habit has reached or passed its end date
         updatedHabbitData.progress_percentage = 100;
+        updatedHabbitData.has_reached_end_date = true;
+        updatedHabbitData.is_active = false;
+        updatedHabbitData.total_habits_completed =
+          (previousHabit.total_habits_completed || 0) + 1;
+      } else {
+        console.log("inside else habit not neither");
+        const totalDurationDays =
+          normalizedEndDate.diff(normalizedStartDate, "day") + 1;
+        const daysPassed =
+          normalizedCurrentDate.diff(normalizedStartDate, "day") + 1;
+
+        if (totalDurationDays > 0) {
+          updatedHabbitData.progress_percentage = Math.min(
+            100,
+            Math.round((daysPassed / totalDurationDays) * 100)
+          );
+        } else {
+          console.log("inside else start and end date are the same");
+          // start and end date are the same
+          updatedHabbitData.progress_percentage = 100;
+        }
+        updatedHabbitData.has_reached_end_date = false;
       }
-      updatedHabbitData.has_reached_end_date = false;
     }
   } else {
     console.log("inside else no end date");
     updatedHabbitData.progress_percentage = 0;
     updatedHabbitData.has_reached_end_date = false;
-  }
 
-  // === STREAK CALCULATION === \\
-  let newCurrentStreak = previousHabit.current_streak || 0;
-  let newLongestStreak = previousHabit.longest_streak || 0;
-  let newMissedPeriodsCount = previousHabit.missed_periods_count || 0;
-  let newLastCompletedOn = previousHabit.last_completed_on
-    ? dayjs(previousHabit.last_completed_on)
-    : null;
+    // === STREAK CALCULATION === \\
+    let newCurrentStreak = previousHabit.current_streak || 0;
+    let newLongestStreak = previousHabit.longest_streak || 0;
+    let newMissedPeriodsCount = previousHabit.missed_periods_count || 0;
+    let newLastCompletedOn = previousHabit.last_completed_on
+      ? dayjs(previousHabit.last_completed_on)
+      : null;
 
-  // Match my habit_frequency to what dayjs expects (EX: user puts "Daily" dayjs expects "day")
-  const dayjsUnitMap = {
-    Daily: "day",
-    Weekly: "week",
-    Monthly: "month",
-    Yearly: "year",
-  };
+    // Match my habit_frequency to what dayjs expects (EX: user puts "Daily" dayjs expects "day")
+    const dayjsUnitMap = {
+      Daily: "day",
+      Weekly: "week",
+      Monthly: "month",
+      Yearly: "year",
+    };
 
-  const today = dayjs().startOf("day");
-  const dayjsUnit = dayjsUnitMap[updatedHabbitData.habit_frequency];
+    const dayjsUnit = dayjsUnitMap[updatedHabbitData.habit_frequency];
 
-  // === How streak calculation works === \\
+    // === How streak calculation works === \\
 
-  // 1. Update missed_periods_count before handling current completion
-  // Should run when a user views a habit to ensure missed_periods_count is up to date before a completion
+    // 1. Update missed_periods_count before handling current completion
+    // Should run when a user views a habit to ensure missed_periods_count is up to date before a completion
 
-  if (newLastCompletedOn) {
-    const lastCompletedDay = newLastCompletedOn.startOf("day");
-    // Calculate how many "periods" have passed since last completion
-    const periodsPassed = today.diff(lastCompletedDay, dayjsUnit);
+    if (newLastCompletedOn) {
+      const lastCompletedDay = newLastCompletedOn.startOf("day");
+      // Calculate how many "periods" have passed since last completion
+      const periodsPassed = today.diff(lastCompletedDay, dayjsUnit);
 
-    // If statement (more than one period has passed) (ex: today is Tue, last completed Mon for daily, then periodsPassed is 1)
-    // or if today is not the same period as last completion (ex: today Mon, last Sun for weekly)
-    // and the habit was NOT completed "today"
-    if (periodsPassed > 0 && !today.isSame(lastCompletedDay, dayjsUnit)) {
-      // Only increment missed_periods_count if the habit was NOT completed today,
-      // AND the period boundary has passed since last completion.
-      // This prevents incrementing misses if the user just completes it in the current period.
-      newMissedPeriodsCount = Math.max(
-        0,
-        newMissedPeriodsCount + periodsPassed - 1
-      ); // Only count new full missed periods
-    }
-  }
-
-  // 2. Handle the current completion
-  if (wasJustCompletedNow) {
-    // A. Check if the habit was already completed in the "current period"
-    // This handles repetitions_per_frequency > 1 or multiple quick completes in a day/week
-    let alreadyCompletedInCurrentPeriod = false;
-    if (
-      newLastCompletedOn &&
-      today.isSame(newLastCompletedOn.startOf("day"), dayjsUnit)
-    ) {
-      // If it was already completed in this period (ex: same day for daily, same week for weekly)
-      // and not tracking specific repetitions_per_frequency for streak
-      // then don't change streak
-      alreadyCompletedInCurrentPeriod = true;
+      // If statement (more than one period has passed) (ex: today is Tue, last completed Mon for daily, then periodsPassed is 1)
+      // or if today is not the same period as last completion (ex: today Mon, last Sun for weekly)
+      // and the habit was NOT completed "today"
+      if (periodsPassed > 0 && !today.isSame(lastCompletedDay, dayjsUnit)) {
+        // Only increment missed_periods_count if the habit was NOT completed today,
+        // AND the period boundary has passed since last completion.
+        // This prevents incrementing misses if the user just completes it in the current period.
+        newMissedPeriodsCount = Math.max(
+          0,
+          newMissedPeriodsCount + periodsPassed - 1
+        ); // Only count new full missed periods
+      }
     }
 
-    /** 
+    // 2. Handle the current completion
+    if (wasJustCompletedNow) {
+      // A. Check if the habit was already completed in the "current period"
+      // This handles repetitions_per_frequency > 1 or multiple quick completes in a day/week
+      let alreadyCompletedInCurrentPeriod = false;
+      if (
+        newLastCompletedOn &&
+        today.isSame(newLastCompletedOn.startOf("day"), dayjsUnit)
+      ) {
+        // If it was already completed in this period (ex: same day for daily, same week for weekly)
+        // and not tracking specific repetitions_per_frequency for streak
+        // then don't change streak
+        alreadyCompletedInCurrentPeriod = true;
+      }
+
+      /** 
       "wasJustCompletedNow" means the user has satisfied the habit's requirement for the current period (ex: once for daily, or repetitions_per_frequency times)
     */
 
-    if (!alreadyCompletedInCurrentPeriod) {
-      if (newMissedPeriodsCount >= 7) {
-        // User has accumulated 7 misses
-        // Streak goes down by 1 for every 7 misses
-        const streakDecay = Math.floor(newMissedPeriodsCount / 7);
-        newCurrentStreak = Math.max(0, newCurrentStreak - streakDecay);
+      if (!alreadyCompletedInCurrentPeriod) {
+        if (newMissedPeriodsCount >= 7) {
+          // User has accumulated 7 misses
+          // Streak goes down by 1 for every 7 misses
+          const streakDecay = Math.floor(newMissedPeriodsCount / 7);
+          newCurrentStreak = Math.max(0, newCurrentStreak - streakDecay);
+        }
+
+        // Apply streak catch-up/increment
+        if (newMissedPeriodsCount > 0) {
+          newCurrentStreak += 2; // Regain 1, add 1
+        } else {
+          newCurrentStreak += 1; // No misses, regular increment
+        }
+        newMissedPeriodsCount = 0; // Reset misses on successful completion
       }
 
-      // Apply streak catch-up/increment
-      if (newMissedPeriodsCount > 0) {
-        newCurrentStreak += 2; // Regain 1, add 1
-      } else {
-        newCurrentStreak += 1; // No misses, regular increment
+      if (newCurrentStreak > newLongestStreak) {
+        newLongestStreak = newCurrentStreak;
       }
-      newMissedPeriodsCount = 0; // Reset misses on successful completion
+      // Update last_completed_on to today if it was just completed otherwise set to previous day
+      updatedHabbitData.last_completed_on = today.toISOString();
+      updatedHabbitData.total_tasks_completed++;
+    } else {
+      updatedHabbitData.last_completed_on = previousHabit.last_completed_on;
     }
 
-    if (newCurrentStreak > newLongestStreak) {
-      newLongestStreak = newCurrentStreak;
-    }
-    // Update last_completed_on to today if it was just completed
-    updatedHabbitData.last_completed_on = today.toISOString();
-  } else {
-    updatedHabbitData.last_completed_on = previousHabit.last_completed_on;
+    // Update the updatedHabbitData with the new streak values
+    updatedHabbitData.current_streak = newCurrentStreak;
+    updatedHabbitData.longest_streak = newLongestStreak;
+    updatedHabbitData.missed_periods_count = newMissedPeriodsCount;
   }
 
-  // Update the updatedHabbitData with the new streak values
-  updatedHabbitData.current_streak = newCurrentStreak;
-  updatedHabbitData.longest_streak = newLongestStreak;
-  updatedHabbitData.missed_periods_count = newMissedPeriodsCount;
+  updatedHabbitData.habit_task_completed = false;
 
   try {
     const updatedHabbit = await updateHabbit(id, updatedHabbitData);

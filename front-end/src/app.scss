@@ -197,3 +197,112 @@ body {
     }
   }
 }
+
+.offcanvas {
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  border-left: 1px solid var(--border-color); // Added for right-aligned offcanvas
+
+  .offcanvas-header {
+    background-color: var(--card-bg-light);
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-color);
+
+    .offcanvas-title {
+      color: var(--text-color);
+    }
+
+    .btn-close {
+      color: var(--text-color-light);
+    }
+  }
+
+  .offcanvas-body {
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    padding: 1.5rem;
+  }
+
+  .offcanvas-footer-buttons {
+    // Custom class added to the div enclosing buttons in your component
+    background-color: var(--card-bg-light);
+    border-top: 1px solid var(--border-color);
+  }
+
+  /* Form elements within the offcanvas (assuming similar forms as modals) */
+  .form-group {
+    margin-bottom: 1rem;
+  }
+
+  .form-label {
+    color: var(--text-color-light);
+    font-weight: 500;
+    margin-bottom: 0.3rem;
+    display: block;
+  }
+
+  .form-control,
+  .form-select {
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.25rem;
+
+    &:focus {
+      background-color: var(--input-bg-focus);
+      border-color: var(--focus-color);
+      color: var(--text-color) !important;
+      box-shadow: 0 0 0 0.25rem rgba(var(--focus-color), 0.25);
+      outline: 0;
+    }
+
+    &:-webkit-autofill {
+      -webkit-box-shadow: 0 0 0px 1000px var(--input-bg) inset !important;
+      -webkit-text-fill-color: var(--text-color) !important;
+      caret-color: var(--text-color) !important;
+    }
+
+    &::placeholder {
+      color: var(--placeholder-color);
+      opacity: 1;
+    }
+  }
+
+  /* Checkboxes */
+  .form-check-label {
+    color: var(--text-color);
+  }
+
+  .form-check-input {
+    background-color: var(--primary);
+    border-color: var(--border-color);
+
+    &:checked {
+      background-color: var(--primary-dark);
+      border-color: var(--primary-dark);
+    }
+  }
+
+  /* Buttons */
+  .btn-primary {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: var(--text-color);
+
+    &:hover {
+      background-color: var(--primary-dark);
+      border-color: var(--primary-dark);
+    }
+  }
+
+  .btn-secondary {
+    background-color: var(--card-bg-light);
+    border-color: var(--border-color);
+    color: var(--text-color);
+
+    &:hover {
+      background-color: var(--border-color);
+    }
+  }
+}

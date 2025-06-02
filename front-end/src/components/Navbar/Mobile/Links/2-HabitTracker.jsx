@@ -11,6 +11,7 @@ export const HabitTrackerLinks = ({
   handleButtonToggle,
   showDropdown,
   themeState,
+  setExpandTopbar,
 }) => {
   const navigate = useNavigate();
 
@@ -68,20 +69,24 @@ export const HabitTrackerLinks = ({
             }`}
             onClick={() => {
               navigate("/habit-tracker");
+              setExpandTopbar(false);
             }}
           >
             Habits
           </Button>
 
-          <Button
+          {/* <Button
             id="mobile-navbar-create-button"
             className={`mobile-navbar-button ${
               themeState === "dark" ? "dark-button" : "light-button"
             }`}
-            onClick={() => handleAddClick()}
+            onClick={() => 
+              handleAddClick()
+              setExpandTopbar(false)
+            }
           >
             Create New Habit
-          </Button>
+          </Button> */}
 
           <Button
             id="mobile-navbar-history-button"
@@ -90,6 +95,7 @@ export const HabitTrackerLinks = ({
             }`}
             onClick={() => {
               navigate("/habit-history");
+              setExpandTopbar(false);
             }}
           >
             Habit History

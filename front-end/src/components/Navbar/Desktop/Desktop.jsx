@@ -1,5 +1,5 @@
 import "./Desktop.scss";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 import { Button, Image } from "react-bootstrap";
 import { useSpring, animated } from "react-spring";
 import { useLocation } from "react-router-dom";
@@ -37,6 +37,8 @@ export default function Desktop() {
     expandCookie ? true : false
   );
 
+  const sidebarRef = useRef(null);
+
   const handleSignoutModalShow = () => {
     setShowSignoutModal(true);
   };
@@ -71,6 +73,27 @@ export default function Desktop() {
     setShowDropdown(GetCookies("expandedLinks") || []);
   }, [location]);
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        sidebarRef.current &&
+        !sidebarRef.current.contains(event.target) &&
+        expandSidebar
+      ) {
+        setExpandSidebar(false);
+        SetCookies("expandCookie", false, 30);
+      }
+    };
+
+    if (expandSidebar) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [expandSidebar]);
+
   const expandSidebarCookie = () => {
     const expirationDate = new Date();
     expirationDate.setDate(expirationDate.getDate() + 30);
@@ -100,6 +123,7 @@ export default function Desktop() {
     <animated.nav
       className={`desktop-navbar desktop-navbar-container`}
       style={sidebarAnimation}
+      ref={sidebarRef}
     >
       <div className="desktop-navbar-links-container">
         <div className="desktop-navbar-title-container">

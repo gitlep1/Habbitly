@@ -91,13 +91,16 @@ $large-desktop: 1200px;
     }
 
     .richard-container {
-      text-align: center;
       display: flex;
       flex-direction: column;
       align-items: center;
 
       @media screen and (min-width: $small-desktop) {
         grid-column: 1 / -1;
+      }
+
+      @media screen and (min-width: $medium-desktop) {
+        grid-column: 2;
       }
 
       #anchor {
@@ -198,7 +201,7 @@ $large-desktop: 1200px;
               font-size: 20px;
             }
 
-            .active-habit-card-checkmark-outer {
+            .active-habit-card-icon-outer {
               display: flex;
               align-items: center;
               justify-content: center;
@@ -209,7 +212,7 @@ $large-desktop: 1200px;
               box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
               border-radius: 50%;
 
-              .active-habit-card-checkmark-inner {
+              .active-habit-card-icon-inner {
                 width: 90%;
                 height: 90%;
                 background-color: #4a90e2;

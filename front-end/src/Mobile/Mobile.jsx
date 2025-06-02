@@ -4,6 +4,7 @@ import { Route, Routes } from "react-router-dom";
 
 import { screenVersionContext, userContext } from "../CustomContexts/Contexts";
 
+import { StellyAI } from "../components/StellyAI/Stelly";
 import { Notfound } from "../components/Notfound/Notfound";
 import { Navbar } from "../components/Navbar/Navbar";
 import { EmailVerification } from "../components/AccountSettings/EmailVerification";
@@ -26,6 +27,7 @@ const Mobile = () => {
   return (
     <section className={screenVersion}>
       {!authUser ? null : <Navbar />}
+      {!authUser ? null : <StellyAI />}
 
       <Routes>
         {!authUser ? (

@@ -16,6 +16,8 @@ const habitFields = [
   "end_date",
   "is_active",
   "has_reached_end_date",
+  "total_tasks_completed",
+  "total_habits_completed",
   "days_of_week_to_complete",
   "day_of_month_to_complete",
   "yearly_month_of_year_to_complete",

@@ -8,6 +8,7 @@ export const HomepageLinks = ({
   handleButtonToggle,
   showDropdown,
   themeState,
+  setExpandTopbar,
 }) => {
   const navigate = useNavigate();
 
@@ -59,6 +60,7 @@ export const HomepageLinks = ({
             }`}
             onClick={() => {
               navigate("/");
+              setExpandTopbar(false);
             }}
           >
             Dashboard
@@ -71,22 +73,24 @@ export const HomepageLinks = ({
             }`}
             onClick={() => {
               navigate("/summary");
+              setExpandTopbar(false);
             }}
           >
             Daily Summary
           </Button>
 
-          <Button
+          {/* <Button
             id="mobile-navbar-insight-button"
             className={`mobile-navbar-button ${
               themeState === "dark" ? "dark-button" : "light-button"
             }`}
             onClick={() => {
               navigate("/insights");
+              setExpandTopbar(false);
             }}
           >
             Insights & Analytics
-          </Button>
+          </Button> */}
         </animated.div>
       )}
     </div>

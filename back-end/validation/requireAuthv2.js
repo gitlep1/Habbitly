@@ -16,13 +16,13 @@ export const createToken = async (payload, expiresIn = "30d") => {
 const verifyToken = async (token) => {
   const key = await getSecretKey();
   const verifiedToken = await jwtVerify(token, key);
-  console.log("=== verifyToken", { token }, { verifiedToken }, "===");
+  // console.log("=== verifyToken", { token }, { verifiedToken }, "===");
   return verifiedToken;
 };
 
 const decodeToken = (token) => {
   const decoded = decodeJwt(token);
-  console.log("=== decodeToken", { token }, { decoded }, "===");
+  // console.log("=== decodeToken", { token }, { decoded }, "===");
   return decoded;
 };
 
@@ -31,7 +31,7 @@ export const requireAuth = () => {
     const authHeader = req.headers.authorization;
     const cookieHeader = req.headers.cookie;
 
-    console.log("=== requireAuth", { authHeader }, { cookieHeader }, "===");
+    // console.log("=== requireAuth", { authHeader }, { cookieHeader }, "===");
 
     let token = null;
 

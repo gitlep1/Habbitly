@@ -68,6 +68,8 @@ CREATE TABLE habbits (
 
   is_active BOOLEAN DEFAULT TRUE,
   has_reached_end_date BOOLEAN DEFAULT FALSE,
+  total_tasks_completed INTEGER DEFAULT 0,
+  total_habits_completed INTEGER DEFAULT 0,
 
   days_of_week_to_complete TEXT[] DEFAULT '{}',
   day_of_month_to_complete INTEGER DEFAULT NULL,

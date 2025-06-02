@@ -2,6 +2,7 @@ import "./habits.scss";
 import { useState, useEffect, useContext } from "react";
 import { Image } from "react-bootstrap";
 import { Button } from "@mui/material";
+import { isSameDay, isSameWeek, isSameMonth, isSameYear } from "date-fns";
 
 import { habitContext } from "../../../CustomContexts/Contexts";
 
@@ -15,19 +16,24 @@ export const Habits = () => {
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [activeHabitId, setActiveHabitId] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const [error, setError] = useState("");
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchUserHabits = async () => {
-      try {
-        await getUserHabits();
-      } catch (err) {
-        setError("Failed to fetch user habits", err?.response?.data?.error);
-      }
-    };
     fetchUserHabits();
   }, []); // eslint-disable-line
+
+  const fetchUserHabits = async () => {
+    setIsLoading(true);
+    try {
+      await getUserHabits();
+    } catch (err) {
+      setError("Failed to fetch user habits", err?.response?.data?.error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleAddClick = () => {
     setShowAddModal(true);
@@ -35,6 +41,31 @@ export const Habits = () => {
 
   const handleHabitClick = (id) => {
     setActiveHabitId(id);
+  };
+
+  const isHabitCompleted = (habit, now = new Date()) => {
+    const lastCompleted = habit.last_completed_on
+      ? new Date(habit.last_completed_on)
+      : null;
+
+    if (!lastCompleted) return false;
+
+    switch (habit.habit_frequency) {
+      case "Daily":
+        return isSameDay(now, lastCompleted);
+
+      case "Weekly":
+        return isSameWeek(now, lastCompleted, { weekStartsOn: 1 });
+
+      case "Monthly":
+        return isSameMonth(now, lastCompleted);
+
+      case "Yearly":
+        return isSameYear(now, lastCompleted);
+
+      default:
+        return false;
+    }
   };
 
   return (
@@ -61,7 +92,7 @@ export const Habits = () => {
             className="habit-card add-habit-card p-4 rounded-2xl shadow-lg flex items-center justify-center text-center relative overflow-hidden cursor-pointer"
             onClick={() => handleAddClick()}
           >
-            <span className="text-6xl text-gray-400">+</span>
+            <span className="text-6xl text-gray-400">Add a Habit</span>
           </div>
 
           {error && <p className="text-center text-danger">ERROR: {error}</p>}
@@ -71,7 +102,6 @@ export const Habits = () => {
               id,
               habit_name,
               habit_task_description,
-              habit_task_completed,
               habit_category,
               habit_frequency,
               repetitions_per_frequency,
@@ -87,6 +117,8 @@ export const Habits = () => {
               yearly_day_of_year_to_complete,
             } = habit;
 
+            const isCompleted = isHabitCompleted(habit);
+
             return (
               <div
                 key={id}
@@ -98,17 +130,21 @@ export const Habits = () => {
 
                 <h3 className="text-lg font-semibold mb-2">{habit_name}</h3>
 
-                <div className="flex flex-col gap-1 text-sm text-gray-600 mb-4">
-                  <p>{habit_task_description}</p>
-                  <p
-                    className={
-                      habit_task_completed ? "text-green-500" : "text-red-500"
-                    }
-                  >
-                    {habit_task_completed
-                      ? `${habit_frequency} task completed`
-                      : `${habit_frequency} task not completed yet`}
-                  </p>
+                <div className="flex flex-col gap-1 mb-4">
+                  <p className="habit-description">{habit_task_description}</p>
+                  {!has_reached_end_date ? (
+                    <p
+                      className={
+                        isCompleted ? "text-green-500" : "text-red-500"
+                      }
+                    >
+                      {isCompleted
+                        ? `${habit_frequency} task completed`
+                        : `${habit_frequency} task not completed yet`}
+                    </p>
+                  ) : (
+                    <p className="text-blue-500">Habit Fully Completed</p>
+                  )}
                 </div>
 
                 <Button

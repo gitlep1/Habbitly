@@ -6,7 +6,7 @@ import { getAllNews } from "../queries/newsQueries.js";
 news.get("/", async (req, res) => {
   try {
     const allNews = await getAllNews();
-    console.log("=== GET all news", allNews, "===");
+    // console.log("=== GET all news", allNews, "===");
 
     if (allNews) {
       res.status(200).json({ payload: allNews });
