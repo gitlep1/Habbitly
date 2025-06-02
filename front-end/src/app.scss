@@ -6,6 +6,7 @@ body {
     --primary-dark: #8b5cf6;
     --text-color: #333333;
     --text-color-light: #555555;
+    --text-color-reverse: #fff;
     --card-bg: #ffffff;
     --card-bg-light: #e2e8f0;
     --input-bg: #f9f9f9;
@@ -13,7 +14,8 @@ body {
     --border-color: #ccc;
     --focus-color: #6366f1;
     --disabled-bg: #e0e0e0;
-    --page-bg: rgb(245, 245, 245);
+    --page-bg: #f5f5f5;
+    --page-bg-reverse: #1a1a1a;
     --navbar-expand-button: #2a2a2a;
     --navbar-hover-color: #3d3d3d;
 
@@ -43,6 +45,7 @@ body {
     --primary-dark: #5056e9;
     --text-color: #ffffff;
     --text-color-light: #cccccc;
+    --text-color-reverse: #000;
     --card-bg: #282c34;
     --card-bg-light: #343942;
     --input-bg: #3a3f47;
@@ -51,6 +54,7 @@ body {
     --focus-color: #8a8dff;
     --disabled-bg: #4a4f57;
     --page-bg: #1a1a1a;
+    --page-bg-reverse: #f5f5f5;
     --navbar-expand-button: #999999;
     --navbar-hover-color: #e1e1e1;
 
