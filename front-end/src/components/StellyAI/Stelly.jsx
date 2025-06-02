@@ -31,7 +31,7 @@ export const StellyAI = () => {
         : [
             {
               content:
-                "Hello! I'm Stelly, your personal AI assistant. How can I help you today? *Parsed*",
+                "Hello! I'm Stelly, your personal AI assistant. How can I help you today?",
               sender: "ai",
             },
           ];
@@ -40,7 +40,7 @@ export const StellyAI = () => {
       return [
         {
           content:
-            "Hello! I'm Stelly, your personal AI assistant. How can I help you today? *Not Parsed*",
+            "Hello! I'm Stelly, your personal AI assistant. How can I help you today?",
           sender: "ai",
         },
       ];
@@ -56,8 +56,10 @@ export const StellyAI = () => {
   }, [messages]);
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    if (isExpanded) {
+      scrollToBottom();
+    }
+  }, [messages, isExpanded]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -81,6 +83,10 @@ export const StellyAI = () => {
       lowerCaseMessage.includes("thanks")
     ) {
       return "You're most welcome! Is there anything else I can do?";
+    } else if (lowerCaseMessage.includes("any")) {
+      return "You have 1 habit to do today: Drink water.";
+    } else if (lowerCaseMessage.includes("nope")) {
+      return "Ok, I'll be here if you need any support!";
     }
     return "That's an interesting question! Tell me more, or ask me about your habits.";
   }, []);
@@ -194,7 +200,7 @@ export const StellyAI = () => {
               }}
             >
               <Image
-                className="stelly-chat-header-img w-10 h-10 rounded-full mr-2 object-cover"
+                className="stelly-chat-header-img w-15 h-15 rounded-full mr-2 object-cover"
                 src={isLoading ? StellyA : StellyH}
                 alt={isLoading ? "Stelly Thinking" : "Stelly Happy"}
               />
@@ -209,7 +215,7 @@ export const StellyAI = () => {
                     key={index}
                     className={`
                       stelly-message
-                      rounded-lg p-2 max-w-[75%]
+                      rounded-lg p-2 max-w-[50%]
                       ${
                         msg.sender === "user"
                           ? "bg-blue-500 text-white self-end ml-auto"
@@ -228,7 +234,7 @@ export const StellyAI = () => {
                 <div ref={messagesEndRef} />
               </div>
               {/* Chat Input Area */}
-              <div className="stelly-chat-input flex p-2 rounded-lg">
+              <div className="stelly-chat-input flex p-2">
                 <Form.Control
                   type="text"
                   placeholder="Type your message..."

@@ -23,9 +23,10 @@
 
   .stelly-chat-body {
     background-color: var(--page-bg);
+    border-radius: 0 0 0.5rem 0.5rem;
 
     .stelly-chat-input {
-      // border-radius: 1em;
+      border-radius: 0.5rem;
     }
   }
 }

@@ -158,7 +158,7 @@ export const Landing = () => {
 
         <div className="landing-main-content-side-container hidden md:flex flex-col justify-between w-[200%] relative md:right-[6.5em] lg:right-[12.5em] mt-4">
           <h1>
-            AI <br /> Reminders
+            AI-Driven <br /> Support
           </h1>
           <Image
             src={RightSideCloud}

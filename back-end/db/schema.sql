@@ -38,6 +38,34 @@ CREATE TABLE profile_images (
   created_at TIMESTAMP DEFAULT NOW()
 );
 
+DROP TABLE IF EXISTS conversations;
+CREATE TABLE conversations (
+    id UUID DEFAULT uuid_generate_v4() NOT NULL PRIMARY KEY,
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    title VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    is_saved BOOLEAN NOT NULL DEFAULT FALSE,
+    last_message_at TIMESTAMP WITH TIME ZONE
+);
+
+CREATE INDEX idx_conversations_user_id ON conversations (user_id);
+CREATE INDEX idx_conversations_is_saved ON conversations (is_saved);
+
+DROP TABLE IF EXISTS messages;
+CREATE TABLE messages (
+    id UUID DEFAULT uuid_generate_v4() NOT NULL PRIMARY KEY,
+    conversation_id UUID UNIQUE NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
+    sender VARCHAR(50) NOT NULL,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    message_index INT UNIQUE NOT NULL
+);
+
+CREATE INDEX idx_messages_conversation_id ON messages (conversation_id);
+CREATE INDEX idx_messages_created_at ON messages (created_at);
+CREATE INDEX idx_messages_conversation_id_message_index ON messages (conversation_id, message_index);
+
 DROP TABLE IF EXISTS timed_account_deletions;
 CREATE TABLE timed_account_deletions (
   id UUID DEFAULT uuid_generate_v4() NOT NULL PRIMARY KEY,

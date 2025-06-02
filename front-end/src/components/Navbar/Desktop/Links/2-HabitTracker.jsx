@@ -3,7 +3,7 @@ import { PropTypes } from "prop-types";
 import { useNavigate } from "react-router-dom";
 import { Button } from "react-bootstrap";
 import { useSpring, animated } from "react-spring";
-import { FaLongArrowAltUp } from "react-icons/fa";
+import { IoChevronUpSharp } from "react-icons/io5";
 
 import { AddAHabit } from "../../../HabitTracker/1 - Habits/AddAHabit";
 
@@ -37,17 +37,17 @@ export const HabitTrackerLinks = ({
 
   return (
     <div className="desktop-navbar-link-container">
-      <div className="desktop-navbar-link-title">
-        <animated.div style={arrowAnimationHabitTracker}>
-          <FaLongArrowAltUp />
-        </animated.div>
-
+      <div
+        className="desktop-navbar-link-title"
+        data-name="habitTracker"
+        onClick={handleButtonToggle}
+      >
         <h3 data-name="habitTracker" onClick={handleButtonToggle}>
           Habit Tracker
         </h3>
 
         <animated.div style={arrowAnimationHabitTracker}>
-          <FaLongArrowAltUp />
+          <IoChevronUpSharp />
         </animated.div>
       </div>
 

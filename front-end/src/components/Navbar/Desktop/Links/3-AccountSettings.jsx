@@ -2,7 +2,7 @@ import { PropTypes } from "prop-types";
 import { useNavigate } from "react-router-dom";
 import { Button } from "react-bootstrap";
 import { useSpring, animated } from "react-spring";
-import { FaLongArrowAltUp } from "react-icons/fa";
+import { IoChevronUpSharp } from "react-icons/io5";
 
 export const AccountSettingsLinks = ({
   handleButtonToggle,
@@ -28,17 +28,17 @@ export const AccountSettingsLinks = ({
 
   return (
     <div className="desktop-navbar-link-container">
-      <div className="desktop-navbar-link-title">
-        <animated.div style={arrowAnimationAccountSettings}>
-          <FaLongArrowAltUp />
-        </animated.div>
-
+      <div
+        className="desktop-navbar-link-title"
+        data-name="accountSettings"
+        onClick={handleButtonToggle}
+      >
         <h3 data-name="accountSettings" onClick={handleButtonToggle}>
           Account Settings
         </h3>
 
         <animated.div style={arrowAnimationAccountSettings}>
-          <FaLongArrowAltUp />
+          <IoChevronUpSharp />
         </animated.div>
       </div>
 

@@ -2,7 +2,7 @@ import { PropTypes } from "prop-types";
 import { useNavigate } from "react-router-dom";
 import { Button } from "react-bootstrap";
 import { useSpring, animated } from "react-spring";
-import { FaLongArrowAltUp } from "react-icons/fa";
+import { IoChevronUpSharp } from "react-icons/io5";
 
 export const HomepageLinks = ({
   handleButtonToggle,
@@ -28,17 +28,17 @@ export const HomepageLinks = ({
 
   return (
     <div className="desktop-navbar-link-container">
-      <div className="desktop-navbar-link-title">
-        <animated.div style={arrowAnimationHomepage}>
-          <FaLongArrowAltUp />
-        </animated.div>
-
+      <div
+        className="desktop-navbar-link-title"
+        data-name="homepage"
+        onClick={handleButtonToggle}
+      >
         <h3 data-name="homepage" onClick={handleButtonToggle}>
           Homepage
         </h3>
 
         <animated.div style={arrowAnimationHomepage}>
-          <FaLongArrowAltUp />
+          <IoChevronUpSharp />
         </animated.div>
       </div>
 

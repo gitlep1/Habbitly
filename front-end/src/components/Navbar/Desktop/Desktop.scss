@@ -115,14 +115,6 @@
       grid-template-columns: 1fr;
       justify-content: center;
       overflow: auto;
-
-      h3 {
-        color: var(--text-color);
-        &:hover {
-          cursor: pointer;
-          color: gold;
-        }
-      }
     }
 
     .navbar-links-scrollable {
@@ -136,8 +128,15 @@
 
       .desktop-navbar-link-title {
         display: flex;
-        justify-content: space-around;
+        justify-content: space-between;
+        margin-left: 1em;
+        margin-right: 1em;
         align-items: center;
+
+        &:hover {
+          cursor: pointer;
+          color: gold;
+        }
       }
 
       .line-under-title {

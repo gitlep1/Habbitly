@@ -189,18 +189,19 @@ body.light-theme {
 
   .mobile-navbar-link-title {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
+    margin-left: 1em;
+    margin-right: 1em;
     align-items: center;
-    color: var(--text-color);
+
+    &:hover {
+      cursor: pointer;
+      color: gold;
+    }
   }
 
   .line-under-title {
     margin-bottom: 1em;
-  }
-
-  h3 {
-    text-align: center;
-    color: var(--text-color);
   }
 
   hr {
