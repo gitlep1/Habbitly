@@ -214,7 +214,7 @@ export const StellyAI = () => {
                       stelly-message
                       ${
                         msg.sender === "user"
-                          ? "bg-blue-500 text-white rounded-lg p-2 max-w-[65%] self-end ml-auto"
+                          ? "bg-gray-500 text-white rounded-lg p-2 max-w-[65%] self-end ml-auto"
                           : "prose prose-sm dark:prose-invert max-w-full self-start"
                       }
                     `}
