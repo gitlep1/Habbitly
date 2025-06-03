@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback, useContext, useRef } from "react";
 import { Image, Button, Form } from "react-bootstrap";
 import { Tooltip } from "react-tooltip";
 import axios from "axios";
+import ReactMarkdown from "react-markdown";
 
 import { habitContext } from "../../CustomContexts/Contexts";
 import { GetCookies, SetCookies } from "../../CustomFunctions/HandleCookies";
@@ -10,10 +11,11 @@ import { GetCookies, SetCookies } from "../../CustomFunctions/HandleCookies";
 import StellyH from "../../assets/images/StellyHappy.png";
 import StellyA from "../../assets/images/StellyAngry.png";
 
+const API = import.meta.env.VITE_PUBLIC_API_BASE;
+
 const STELLY_CHAT_HISTORY_KEY = "stelly_chat_history";
 
 export const StellyAI = () => {
-  const authUser = GetCookies("authUser");
   const authToken = GetCookies("authToken");
 
   const { userHabits, getUserHabits } = useContext(habitContext);
@@ -23,29 +25,31 @@ export const StellyAI = () => {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
 
-  const [messages, setMessages] = useState(() => {
+  const [messages, setMessages] = useState(getSavedMessages);
+
+  function getSavedMessages() {
     try {
-      const savedMessages = localStorage.getItem(STELLY_CHAT_HISTORY_KEY);
-      return savedMessages
-        ? JSON.parse(savedMessages)
+      const saved = localStorage.getItem(STELLY_CHAT_HISTORY_KEY);
+      return saved
+        ? JSON.parse(saved)
         : [
             {
+              sender: "model",
               content:
                 "Hello! I'm Stelly, your personal AI assistant. How can I help you today?",
-              sender: "ai",
             },
           ];
-    } catch (error) {
-      console.error("Failed to parse chat history from localStorage:", error);
+    } catch (err) {
+      console.error("Corrupt chat history in localStorage:", err);
       return [
         {
+          sender: "model",
           content:
             "Hello! I'm Stelly, your personal AI assistant. How can I help you today?",
-          sender: "ai",
         },
       ];
     }
-  });
+  }
 
   useEffect(() => {
     try {
@@ -65,79 +69,59 @@ export const StellyAI = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const getMockAIResponse = useCallback((userMessage) => {
-    const lowerCaseMessage = userMessage.toLowerCase();
-    if (lowerCaseMessage.includes("hello") || lowerCaseMessage.includes("hi")) {
-      return "Hi there! What's on your mind?";
-    } else if (
-      lowerCaseMessage.includes("habit") ||
-      lowerCaseMessage.includes("goal")
-    ) {
-      return "I can help you with your habits and goals! What would you like to know?";
-    } else if (lowerCaseMessage.includes("weather")) {
-      return "I'm not connected to real-time weather data, but I hope it's sunny where you are!";
-    } else if (lowerCaseMessage.includes("how are you")) {
-      return "As an AI, I don't have feelings, but I'm ready to assist you!";
-    } else if (
-      lowerCaseMessage.includes("thank you") ||
-      lowerCaseMessage.includes("thanks")
-    ) {
-      return "You're most welcome! Is there anything else I can do?";
-    } else if (lowerCaseMessage.includes("any")) {
-      return "You have 1 habit to do today: Drink water.";
-    } else if (lowerCaseMessage.includes("nope")) {
-      return "Ok, I'll be here if you need any support!";
-    }
-    return "That's an interesting question! Tell me more, or ask me about your habits.";
-  }, []);
-
   const sendMessageToAI = useCallback(
     async (text) => {
       setIsLoading(true);
       try {
-        // === MOCK API CALL ===
-        await new Promise((resolve) => setTimeout(resolve, 800));
-        const mockResponse = getMockAIResponse(text);
+        const messageData = {
+          message: text,
+          chatHistory: messages.map((msg) => ({
+            sender: msg.sender,
+            content: msg.content,
+          })),
+        };
 
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          { content: mockResponse, sender: "ai" },
-        ]);
-        // === END MOCK API CALL ===
-
-        /*
-      // === REAL AXIOS API CALL ===
-      const messageData = {
-        message: text,
-        userId: authUser?.id
-      }
-
-      const response = await axios.post('/api/chat-with-stelly', messageData, {
-        headers: {
-          'Authorization': `Bearer ${authToken}`
-        }
-      });
-
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { content: response.data.aiResponse, sender: "ai" }, // Assuming backend sends { aiResponse: "..." }
-      ]);
-      // === END REAL AXIOS API CALL ===
-      */
+        await axios
+          .post(`${API}/stelly`, messageData, {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+            withCredentials: true,
+          })
+          .then((res) => {
+            setMessages((prevMessages) => [
+              ...prevMessages,
+              { sender: "model", content: res.data.payload },
+            ]);
+          })
+          .catch((err) => {
+            console.error("Error from Stelly AI API:", err);
+            setMessages((prevMessages) => [
+              ...prevMessages,
+              {
+                sender: "model",
+                content:
+                  "Oops! I encountered an error. Please try again later.",
+              },
+            ]);
+          })
+          .finally(() => {
+            setIsLoading(false);
+          });
       } catch (error) {
         console.error("Error sending message to AI:", error);
         setMessages((prevMessages) => [
           ...prevMessages,
           {
+            sender: "model",
             content: "Oops! I encountered an error. Please try again later.",
-            sender: "ai",
           },
         ]);
       } finally {
         setIsLoading(false);
       }
     },
-    [getMockAIResponse]
+    [messages, authToken]
   );
 
   const handleSendMessage = useCallback(() => {
@@ -145,7 +129,7 @@ export const StellyAI = () => {
       const userMessage = inputValue.trim();
       setMessages((prevMessages) => [
         ...prevMessages,
-        { content: userMessage, sender: "user" },
+        { sender: "user", content: userMessage },
       ]);
       setInputValue("");
       sendMessageToAI(userMessage);
@@ -190,7 +174,7 @@ export const StellyAI = () => {
             <div
               className={`
                 stelly-chat-header
-                flex items-center
+                flex justify-between items-center
                 font-semibold
                 rounded-t-xl cursor-pointer
               `}
@@ -199,12 +183,25 @@ export const StellyAI = () => {
                 setIsExpanded(false);
               }}
             >
-              <Image
-                className="stelly-chat-header-img w-15 h-15 rounded-full mr-2 object-cover"
-                src={isLoading ? StellyA : StellyH}
-                alt={isLoading ? "Stelly Thinking" : "Stelly Happy"}
-              />
-              <h1 className="text-lg">Stelly</h1>
+              <div className="flex items-center">
+                <Image
+                  className="stelly-chat-header-img w-15 h-15 rounded-full mr-2 object-cover"
+                  src={isLoading ? StellyA : StellyH}
+                  alt={isLoading ? "Stelly Thinking" : "Stelly Happy"}
+                />
+                <h1 className="text-lg">Stelly</h1>
+              </div>
+              <Button
+                className="stelly-chat-close-btn"
+                variant="outline-secondary"
+                size="lg"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsExpanded(false);
+                }}
+              >
+                X
+              </Button>
             </div>
 
             <div className="stelly-chat-body flex flex-col h-[calc(100%-60px)]">
@@ -215,19 +212,23 @@ export const StellyAI = () => {
                     key={index}
                     className={`
                       stelly-message
-                      rounded-lg p-2 max-w-[50%]
                       ${
                         msg.sender === "user"
-                          ? "bg-blue-500 text-white self-end ml-auto"
-                          : "bg-gray-300 text-gray-800 self-start mr-auto"
+                          ? "bg-blue-500 text-white rounded-lg p-2 max-w-[65%] self-end ml-auto"
+                          : "prose prose-sm dark:prose-invert max-w-full self-start"
                       }
                     `}
                   >
-                    <p>{msg.content}</p>
+                    {msg.sender === "user" ? (
+                      <p>{msg.content}</p>
+                    ) : (
+                      <ReactMarkdown>{msg.content}</ReactMarkdown>
+                    )}
                   </div>
                 ))}
+
                 {isLoading && (
-                  <div className="stelly-message ai-message bg-gray-300 text-gray-800 rounded-lg p-2 max-w-[75%] self-start">
+                  <div className="stelly-message ai-message prose prose-sm dark:prose-invert max-w-full self-start">
                     <p>Stelly is thinking...</p>
                   </div>
                 )}

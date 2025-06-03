@@ -19,6 +19,11 @@
 
   .stelly-chat-header {
     background-color: var(--card-bg-light);
+
+    .stelly-chat-close-btn {
+      margin-right: 0.5em;
+      color: var(--text-color);
+    }
   }
 
   .stelly-chat-body {

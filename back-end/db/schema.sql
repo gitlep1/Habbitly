@@ -55,11 +55,13 @@ CREATE INDEX idx_conversations_is_saved ON conversations (is_saved);
 DROP TABLE IF EXISTS messages;
 CREATE TABLE messages (
     id UUID DEFAULT uuid_generate_v4() NOT NULL PRIMARY KEY,
-    conversation_id UUID UNIQUE NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
+    conversation_id UUID NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
     sender VARCHAR(50) NOT NULL,
     content TEXT NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    message_index INT UNIQUE NOT NULL
+    message_index INT NOT NULL,
+
+    UNIQUE (conversation_id, message_index)
 );
 
 CREATE INDEX idx_messages_conversation_id ON messages (conversation_id);
@@ -160,5 +162,10 @@ $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE TRIGGER update_notifications_timestamp
 BEFORE UPDATE ON notifications
+FOR EACH ROW
+EXECUTE FUNCTION update_timestamp();
+
+CREATE OR REPLACE TRIGGER set_conversations_updated_at
+BEFORE UPDATE ON conversations
 FOR EACH ROW
 EXECUTE FUNCTION update_timestamp();

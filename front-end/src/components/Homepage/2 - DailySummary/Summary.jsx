@@ -248,9 +248,8 @@ export const Summary = () => {
 
             <div className="summary-box streak-box bg-orange-gradient p-6 rounded-xl shadow-md">
               <h3 className="text-xl font-semibold">Habits on Streak</h3>
-              <p className="text-4xl font-bold mt-1">
+              <p className="text-4xl font-bold mt-1 flex justify-center">
                 {habitsOnStreakCount}{" "}
-                {habitsOnStreakCount === 1 ? "habit" : "habits"}
               </p>
             </div>
 

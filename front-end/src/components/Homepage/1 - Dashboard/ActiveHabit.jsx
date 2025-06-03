@@ -281,7 +281,7 @@ export const ActiveHabit = () => {
         </Modal.Header>
         <Modal.Body>
           <p>
-            <strong>ID:</strong> {selectedHabit?.id}
+            <strong>ID:</strong> {selectedHabit?.id.slice(0, 6)}
           </p>
           <p>
             <strong>Task:</strong> {selectedHabit?.habit_task_description}

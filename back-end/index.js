@@ -2,6 +2,7 @@ import express, { json, urlencoded } from "express";
 import cors from "cors";
 import { createServer } from "http";
 
+import oauthRouter from "./Utils/oauthRoutes.js";
 import usersController from "./controllers/usersController.js";
 import habbitsController from "./controllers/habbitsController.js";
 import habitHistoryController from "./controllers/habitHistoryController.js";
@@ -10,7 +11,9 @@ import imageUploaderController from "./controllers/imageUploaderController.js";
 import newsController from "./controllers/newsController.js";
 import registeredCountController from "./controllers/registeredCountController.js";
 import notificationsController from "./controllers/notificationsController.js";
-import oauthRouter from "./Utils/oauthRoutes.js";
+import conversationsController from "./controllers/conversationsController.js";
+import messagesController from "./controllers/messagesController.js";
+import chatController from "./controllers/chatController.js";
 
 import "dotenv/config";
 
@@ -54,6 +57,7 @@ if (process.env.ALLOW_OAUTH_SETUP === "true") {
 app.use("/email", emailAuthController);
 app.use("/users", usersController);
 app.use("/notifications", notificationsController);
+app.use("/registered-count", registeredCountController);
 
 // === Habbit Routes === \\
 app.use("/habbits", habbitsController);
@@ -65,7 +69,12 @@ app.use("/images", imageUploaderController);
 // === News Routes === \\
 app.use("/news", newsController);
 
-app.use("/registered-count", registeredCountController);
+// === Conversations and Messages Routes === \\
+app.use("/conversations", conversationsController);
+app.use("/messages", messagesController);
+
+// === Chat Routes === \\
+app.use("/stelly", chatController);
 
 app.post("/login", (req, res) => {
   const { username, password } = req.body;
