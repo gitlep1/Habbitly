@@ -185,7 +185,7 @@ export const Dashboard = () => {
   };
 
   return (
-    <section className="desktop-dashboard-container p-4 md:p-8 min-h-screen min-w-screen">
+    <section className="desktop-dashboard-container">
       <div className="dashboard-header max-w-5xl mx-auto mt-[7em] md:mt-0 flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3">
         <div className="dashboard-title md:col-1 lg:col-1 lg:row-1">
           <h1>

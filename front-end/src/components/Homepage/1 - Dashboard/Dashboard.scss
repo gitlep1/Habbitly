@@ -132,11 +132,13 @@ $large-desktop: 1200px;
     display: flex;
     flex-direction: column;
     gap: 1em;
+    padding: 0 1em 0 1em;
 
     @media screen and (min-width: $medium-desktop) {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 1em;
+      padding: 0 0.5em 0 2em;
     }
 
     .active-habit-container {

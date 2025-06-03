@@ -4,6 +4,7 @@ import { Image, Button, Form } from "react-bootstrap";
 import { Tooltip } from "react-tooltip";
 import axios from "axios";
 import ReactMarkdown from "react-markdown";
+import TextareaAutosize from "react-textarea-autosize";
 
 import { habitContext } from "../../CustomContexts/Contexts";
 import { GetCookies, SetCookies } from "../../CustomFunctions/HandleCookies";
@@ -16,6 +17,9 @@ const API = import.meta.env.VITE_PUBLIC_API_BASE;
 const STELLY_CHAT_HISTORY_KEY = "stelly_chat_history";
 
 export const StellyAI = () => {
+  const inputRef = useRef(null);
+  const messagesEndRef = useRef(null);
+
   const authToken = GetCookies("authToken");
 
   const { userHabits, getUserHabits } = useContext(habitContext);
@@ -23,7 +27,6 @@ export const StellyAI = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const messagesEndRef = useRef(null);
 
   const [messages, setMessages] = useState(getSavedMessages);
 
@@ -59,11 +62,23 @@ export const StellyAI = () => {
     }
   }, [messages]);
 
+  const resetTextareaHeight = useCallback(() => {
+    const el = inputRef.current;
+    if (el) {
+      el.style.height = "auto";
+      el?.resize?.();
+    }
+  }, []);
+
   useEffect(() => {
     if (isExpanded) {
       scrollToBottom();
+
+      setTimeout(() => {
+        resetTextareaHeight();
+      }, 50);
     }
-  }, [messages, isExpanded]);
+  }, [messages, isExpanded, resetTextareaHeight]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -135,15 +150,6 @@ export const StellyAI = () => {
       sendMessageToAI(userMessage);
     }
   }, [inputValue, isLoading, sendMessageToAI]);
-
-  const handleKeyPress = useCallback(
-    (e) => {
-      if (e.key === "Enter") {
-        handleSendMessage();
-      }
-    },
-    [handleSendMessage]
-  );
 
   return (
     <>
@@ -236,14 +242,23 @@ export const StellyAI = () => {
               </div>
               {/* Chat Input Area */}
               <div className="stelly-chat-input flex p-2">
-                <Form.Control
-                  type="text"
+                <TextareaAutosize
+                  ref={inputRef}
+                  minRows={2}
+                  maxRows={6}
                   placeholder="Type your message..."
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
-                  onKeyDown={handleKeyPress}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSendMessage();
+                    }
+                  }}
                   disabled={isLoading}
+                  className="form-control resize-none max-h-40"
                 />
+
                 <Button
                   className="ml-2 bg-blue-500 text-white rounded-lg px-4 py-2 hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={handleSendMessage}
