@@ -159,7 +159,7 @@ export const StellyAI = () => {
           ${
             !isExpanded
               ? "collapsed cursor-pointer"
-              : "w-full md:w-150 h-full md:h-full rounded-t-xl md:rounded-xl"
+              : "w-full md:w-115 h-full md:h-full rounded-t-xl md:rounded-xl"
           }
         `}
         onClick={() => !isExpanded && setIsExpanded(true)}
@@ -241,7 +241,7 @@ export const StellyAI = () => {
                 <div ref={messagesEndRef} />
               </div>
               {/* Chat Input Area */}
-              <div className="stelly-chat-input flex p-2">
+              <div className="chat-input-container relative w-full">
                 <TextareaAutosize
                   ref={inputRef}
                   minRows={2}
@@ -256,16 +256,15 @@ export const StellyAI = () => {
                     }
                   }}
                   disabled={isLoading}
-                  className="form-control resize-none max-h-40"
+                  className="stelly-input-box w-full resize-none rounded-md p-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50"
                 />
-
-                <Button
-                  className="ml-2 bg-blue-500 text-white rounded-lg px-4 py-2 hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                <button
+                  className="absolute bottom-1 right-1 flex h-8 w-8 items-center justify-center rounded-md bg-indigo-600 text-white hover:bg-indigo-700 disabled:bg-gray-400"
                   onClick={handleSendMessage}
                   disabled={!inputValue.trim() || isLoading}
                 >
-                  Send
-                </Button>
+                  ➤
+                </button>
               </div>
             </div>
           </>

@@ -1,7 +1,7 @@
 import { db } from "../db/dbConfig.js";
 
 export const getRegisteredCount = async () => {
-  const query = "SELECT * FROM registered_count";
+  const query = "SELECT count FROM registered_count";
   const registeredCount = await db.oneOrNone(query);
   return registeredCount;
 };

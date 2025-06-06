@@ -220,13 +220,13 @@ export const ActiveHabit = () => {
                 ></div>
               </span>
             ) : (
-              <div className="flex items-center text-sm font-semibold ml-2 gap-1">
+              <div className="flex flex-col items-center text-sm font-semibold ml-2 gap-1">
                 <span className="text-gray-100">
-                  CS:{" "}
+                  Current Streak:{" "}
                   <span className="text-orange-300">{current_streak || 0}</span>
                 </span>
                 <span className="text-gray-100">
-                  LS:{" "}
+                  Longest Streak:{" "}
                   <span className="text-blue-300">{longest_streak || 0}</span>
                 </span>
               </div>

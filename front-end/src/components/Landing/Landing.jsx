@@ -1,10 +1,11 @@
 import "./Landing.scss";
-
 import { useState, useEffect } from "react";
 import { Button, Image, Modal } from "react-bootstrap";
+import axios from "axios";
 
 import { Signin } from "../AccountSettings/Signin";
 import { Signup } from "../AccountSettings/Signup";
+import { ForgotPassword } from "../AccountSettings/ForgotPassword";
 
 import { GetCookies } from "../../CustomFunctions/HandleCookies";
 
@@ -12,19 +13,25 @@ import LandingBackgroundCloud from "../../assets/images/LandingPage/LandingBackg
 import LeftSideCloud from "../../assets/images/LandingPage/LeftSideCloud.png";
 import RightSideCloud from "../../assets/images/LandingPage/RightSideCloud.png";
 
+const API = import.meta.env.VITE_PUBLIC_API_BASE;
+
 export const Landing = () => {
   const authUserData = GetCookies("authUser") || null;
 
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [isSignin, setIsSignin] = useState(true);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [registeredCount, setRegisteredCount] = useState(1500);
 
   const handleAuthModal = () => {
     setShowAuthModal(!showAuthModal);
   };
 
   const toggleForm = () => setIsSignin(!isSignin);
+  const toggleForgotPassword = () => setIsForgotPassword(!isForgotPassword);
 
   useEffect(() => {
+    fetchRegisteredCount();
     const interval = setInterval(() => {
       if (authUserData) {
         window.location.reload();
@@ -38,7 +45,10 @@ export const Landing = () => {
     return (
       <Modal
         show={showAuthModal}
-        onHide={handleAuthModal}
+        onHide={() => {
+          handleAuthModal();
+          setIsForgotPassword(false);
+        }}
         className="navbar-auth-modal"
       >
         <Modal.Header closeButton className="navbar-auth-modal-header">
@@ -46,10 +56,18 @@ export const Landing = () => {
         </Modal.Header>
         <Modal.Body className="navbar-auth-modal-body">
           {isSignin ? (
-            <Signin
-              handleSignUpClick={toggleForm}
-              handleAuthModal={handleAuthModal}
-            />
+            isForgotPassword ? (
+              <ForgotPassword
+                handleAuthModal={handleAuthModal}
+                handleForgotPassword={toggleForgotPassword}
+              />
+            ) : (
+              <Signin
+                handleSignUpClick={toggleForm}
+                handleAuthModal={handleAuthModal}
+                handleForgotPassword={toggleForgotPassword}
+              />
+            )
           ) : (
             <Signup
               handleSignUpClick={toggleForm}
@@ -59,6 +77,27 @@ export const Landing = () => {
         </Modal.Body>
       </Modal>
     );
+  };
+
+  const fetchRegisteredCount = async () => {
+    return axios
+      .get(`${API}/registered-count`)
+      .then((res) => {
+        const count = res.data.payload.count;
+        if (count <= 50) {
+          setRegisteredCount(50);
+        } else if (count <= 100) {
+          setRegisteredCount(100);
+        } else if (count <= 500) {
+          setRegisteredCount(500);
+        } else if (count <= 1000) {
+          setRegisteredCount(res.data.payload.count);
+        }
+      })
+      .catch((err) => {
+        console.error("Error fetching registered count:", err);
+        setRegisteredCount(1500);
+      });
   };
 
   const features = [
@@ -129,7 +168,7 @@ export const Landing = () => {
       <div className="landing-main-content flex flex-col justify-center md:grid md:grid-cols-[100px_1fr_100px] lg:grid-cols-[200px_1fr_200px]">
         <div className="landing-main-content-side-container hidden md:flex flex-col justify-between w-[200%] mt-4">
           <h1>
-            Habbitly Users <br /> 1500
+            Habbitly Users <br /> {registeredCount}
           </h1>
           <Image
             src={LeftSideCloud}

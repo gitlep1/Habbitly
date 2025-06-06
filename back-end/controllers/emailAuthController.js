@@ -13,6 +13,8 @@ import {
 
 import { checkUserCredentials } from "../queries/usersQueries.js";
 
+import { getUserByID } from "../queries/usersQueries.js";
+
 emailAuth.post("/verify-code", async (req, res) => {
   const { email, code } = req.body;
 
@@ -104,6 +106,49 @@ emailAuth.post("/send-verification", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Failed to send verification code." });
+  }
+});
+
+emailAuth.post("/forgot-password", async (req, res) => {
+  const userEmailData = {
+    email: req.body.email,
+  };
+
+  const checkIfEmailExists = await checkUserCredentials(userEmailData, "email");
+
+  console.log("Check if email exists:", checkIfEmailExists);
+
+  if (!checkIfEmailExists) {
+    return res.status(404).json({ error: "Email not found." });
+  }
+
+  try {
+    const userData = await getUserByID(checkIfEmailExists.id);
+    if (!userData) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    if (userEmailData.email !== userData.email) {
+      return res
+        .status(400)
+        .json({ error: "Email does not match the specified account." });
+    }
+
+    const transporter = await createTransporter();
+    const mailOptions = {
+      from: `Habbitly <${process.env.EMAIL}>`,
+      to: userData.email,
+      subject: "Habbitly forgot password",
+      text: `Your password is : ${userData.password}`,
+    };
+
+    await transporter.sendMail(mailOptions);
+    res.status(200).json({
+      success: "Password has been sent to the specified email address.",
+    });
+  } catch (error) {
+    console.error("Error in forgot-password:", error);
+    res.status(500).json({ error: "Failed to send password." });
   }
 });
 

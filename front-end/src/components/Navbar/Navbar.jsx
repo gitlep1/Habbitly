@@ -1,4 +1,3 @@
-import "./Navbar.scss";
 import { useState, useContext } from "react";
 import { useSpring, animated } from "react-spring";
 

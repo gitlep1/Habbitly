@@ -23,17 +23,16 @@ export const Calendar = () => {
   const [habitsForSelectedDateInModal, setHabitsForSelectedDateInModal] =
     useState([]);
 
-  const CheckmarkSVG = () => (
+  const KebabMenuSVG = () => (
     <svg
-      className="calendar-tile-icon checkmark-icon"
+      className="calendar-tile-icon kebab-icon"
       viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
+      fill="currentColor"
+      xmlns="http://www.w3.org/2000/svg"
     >
-      <circle cx="12" cy="12" r="9" />
+      <circle cx="5" cy="5" r="2" />
+      <circle cx="12" cy="12" r="2" />
+      <circle cx="19" cy="19" r="2" />
     </svg>
   );
 
@@ -87,15 +86,13 @@ export const Calendar = () => {
         }
 
         const allCompletedOnDate = relevantHabits.every(
-          (habit) =>
-            habit.last_completed_on &&
-            isSameDay(date, parseISO(habit.last_completed_on))
+          (habit) => habit.log_date && isSameDay(date, parseISO(habit.log_date))
         );
 
         if (allCompletedOnDate) {
           return <StarSVG />;
         } else if (relevantHabits.length > 0) {
-          return <CheckmarkSVG />;
+          return <KebabMenuSVG />;
         }
       }
       return null;
@@ -131,9 +128,9 @@ export const Calendar = () => {
             <li key={habit.id} className="modal-habit-item mb-2">
               <h5 className="text-center mb-1">{habit.habit_name}</h5>
               <p className="text-center">{habit.habit_task_description}</p>
-              {habit.last_completed_on &&
+              {habit.log_date &&
                 selectedDate &&
-                isSameDay(selectedDate, parseISO(habit.last_completed_on)) && (
+                isSameDay(selectedDate, parseISO(habit.log_date)) && (
                   <p className="text-success text-center">Completed!</p>
                 )}
             </li>
@@ -149,7 +146,13 @@ export const Calendar = () => {
     <div className="calendar-container">
       <div className="calendar-card">
         <div className="calendar-card-header">
+          <span className="calendar-header-icon">
+            <StarSVG /> <p className="text-sm">Tasks completed</p>
+          </span>
           <h1>Calendar</h1>
+          <span className="calendar-header-icon">
+            <KebabMenuSVG /> <p className="text-sm">Tasks remaining</p>
+          </span>
         </div>
 
         <ReactCalendar

@@ -31,13 +31,23 @@ export const getAllHabbits = async () => {
 };
 
 export const getUserHabbits = async (userId) => {
-  const query = "SELECT * FROM habbits WHERE user_id = $1";
+  const query = `
+    SELECT habbits.*, habit_logs.log_date
+    FROM habbits
+    LEFT JOIN habit_logs ON habbits.id = habit_logs.habit_id
+    WHERE habbits.user_id = $1
+  `;
   const userHabbits = await db.manyOrNone(query, [userId]);
   return userHabbits;
 };
 
 export const getHabbitByID = async (id) => {
-  const query = "SELECT * FROM habbits WHERE id = $1";
+  const query = `
+    SELECT habbits.*, habit_logs.log_date
+    FROM habbits
+    LEFT JOIN habit_logs ON habbits.id = habit_logs.habit_id
+    WHERE habbits.id = $1
+  `;
   const habbit = await db.oneOrNone(query, [id]);
 
   if (!habbit) {

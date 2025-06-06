@@ -55,33 +55,36 @@ export const deleteUser = async (id) => {
   return deletedUser;
 };
 
-// prettier-ignore
 export const checkUserCredentials = async (userData, checker) => {
-  let query = 'SELECT id FROM users WHERE ';
+  let query = "SELECT id FROM users WHERE ";
   const params = [];
   const conditions = [];
 
-  if (checker.includes('email') && userData.email) {
+  if (checker.includes("email") && userData.email) {
     params.push(userData.email);
     conditions.push(`email = $${params.length}`);
   }
 
-  if (checker.includes('username') && userData.username) {
+  if (checker.includes("username") && userData.username) {
     params.push(userData.username);
     conditions.push(`username = $${params.length}`);
   }
 
-  if (checker.includes('password') && userData.password) {
+  if (checker.includes("password") && userData.password) {
     params.push(userData.password);
     conditions.push(`password = $${params.length}`);
   }
 
   if (conditions.length === 0) return null;
 
-  const joiner = checker === 'email|username' ? ' OR ' : ' AND ';
+  const joiner = checker === "email|username" ? " OR " : " AND ";
   query += conditions.join(joiner);
 
   const userCredentials = await db.oneOrNone(query, params);
-  console.log(`=== checkUserCredentials ${checker}`, { userData, checker, userCredentials }, "===");
+  console.log(
+    `=== checkUserCredentials ${checker}`,
+    { userData, checker, userCredentials },
+    "==="
+  );
   return userCredentials;
 };

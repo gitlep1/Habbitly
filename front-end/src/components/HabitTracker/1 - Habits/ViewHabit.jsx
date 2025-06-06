@@ -217,12 +217,12 @@ export const ViewHabit = ({ habitData, show, onClose }) => {
             This action is irreversible
           </span>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
-            Cancel
-          </Button>
+        <Modal.Footer className="justify-content-between">
           <Button variant="danger" onClick={handleDeleteConfirm}>
             {isDeleting ? <Loading /> : "Delete"}
+          </Button>
+          <Button variant="primary" onClick={() => setShowDeleteModal(false)}>
+            Cancel
           </Button>
         </Modal.Footer>
       </Modal>

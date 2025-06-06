@@ -299,7 +299,9 @@ $large-desktop: 1200px;
         padding-bottom: 5em;
 
         .calendar-card-header {
-          text-align: center;
+          display: flex;
+          justify-content: space-around;
+          align-items: center;
 
           #calendar-cloud {
             position: relative;
@@ -307,6 +309,23 @@ $large-desktop: 1200px;
             width: 20em;
             margin: 0 auto;
           }
+
+          .calendar-header-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            width: 50px;
+          }
+        }
+
+        .kebab-icon {
+          color: #007bff;
+        }
+
+        .star-icon {
+          color: #ffc107;
         }
 
         .calendar-content {
@@ -328,14 +347,6 @@ $large-desktop: 1200px;
             right: 2px;
             width: 30px;
             height: 30px;
-          }
-
-          .checkmark-icon {
-            color: #007bff;
-          }
-
-          .star-icon {
-            color: #ffc107;
           }
 
           .react-calendar__tile--now {
@@ -450,4 +461,10 @@ $large-desktop: 1200px;
 .active-habit-modal-title {
   width: 100%;
   text-align: center;
+}
+
+.react-calendar__navigation__label {
+  &:hover {
+    color: black;
+  }
 }

@@ -1,3 +1,4 @@
+import "./auth-styles.scss";
 import { useState } from "react";
 import { Form, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
@@ -6,11 +7,15 @@ import axios from "axios";
 
 import { Loading } from "../../CustomFunctions/Loading/Loading";
 
-import { GetCookies, SetCookies } from "../../CustomFunctions/HandleCookies";
+import { SetCookies } from "../../CustomFunctions/HandleCookies";
 
 const API = import.meta.env.VITE_PUBLIC_API_BASE;
 
-export const Signin = ({ handleSignUpClick, handleAuthModal }) => {
+export const Signin = ({
+  handleSignUpClick,
+  handleAuthModal,
+  handleForgotPassword,
+}) => {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -114,15 +119,25 @@ export const Signin = ({ handleSignUpClick, handleAuthModal }) => {
             Close
           </Button>
         </Form>
-        <p className="switch-auth-mode-container">
-          Don&apos;t have an account?{" "}
+        <p className="switch-auth-mode-container flex flex-col items-center">
+          <span>
+            Don&apos;t have an account?{" "}
+            <span
+              className="switch-auth-mode"
+              onClick={() => {
+                handleSignUpClick();
+              }}
+            >
+              Sign Up
+            </span>
+          </span>
           <span
             className="switch-auth-mode"
             onClick={() => {
-              handleSignUpClick();
+              handleForgotPassword();
             }}
           >
-            Sign Up
+            Forgot Password?
           </span>
         </p>
 

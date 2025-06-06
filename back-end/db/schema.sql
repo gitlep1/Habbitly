@@ -107,6 +107,14 @@ CREATE TABLE habbits (
   yearly_day_of_year_to_complete INTEGER DEFAULT NULL
 );
 
+DROP TABLE IF EXISTS habit_logs;
+CREATE TABLE habit_logs (
+  id UUID DEFAULT uuid_generate_v4() NOT NULL PRIMARY KEY,
+  habit_id UUID NOT NULL REFERENCES habbits(id) ON DELETE CASCADE,
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  log_date TIMESTAMPTZ NOT NULL
+);
+
 DROP TABLE IF EXISTS habit_history;
 CREATE TABLE habit_history (
   id UUID DEFAULT uuid_generate_v4() NOT NULL PRIMARY KEY,
