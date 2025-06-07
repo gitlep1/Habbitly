@@ -99,7 +99,7 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
     }
 
     if (name === "start_date" || name === "end_date") {
-      const newDate = value;
+      const newDate = new Date(value).toISOString();
       const otherDate =
         name === "start_date" ? habitData.end_date : habitData.start_date;
 
@@ -220,6 +220,8 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
       ...prevData,
       habit_frequency: prevData.habit_frequency.toLowerCase(),
     }));
+
+    console.log("Submitting habit data:", habitData);
 
     const tokenData = GetCookies("authToken");
 
