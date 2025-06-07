@@ -3,6 +3,13 @@
     width: 300px;
   }
 
+  .loading-skeleton {
+    width: 25em;
+    display: flex;
+    justify-self: center;
+    align-self: center;
+  }
+
   .insights-content {
     position: relative;
     z-index: 1;

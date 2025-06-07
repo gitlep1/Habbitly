@@ -79,7 +79,7 @@ export const HomepageLinks = ({
             Daily Summary
           </Button>
 
-          {/* <Button
+          <Button
             id="mobile-navbar-insight-button"
             className={`mobile-navbar-button ${
               themeState === "dark" ? "dark-button" : "light-button"
@@ -90,7 +90,7 @@ export const HomepageLinks = ({
             }}
           >
             Insights & Analytics
-          </Button> */}
+          </Button>
         </animated.div>
       )}
     </div>

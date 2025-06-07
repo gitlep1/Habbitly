@@ -1,34 +1,16 @@
-import "./Insights.scss";
-import { useContext, useEffect, useState } from "react";
-import { Image } from "react-bootstrap";
+import { useContext, useState, useEffect } from "react";
 import { parseISO, differenceInMinutes } from "date-fns";
-import Skeleton from "react-loading-skeleton";
 
-import { themeContext, habitContext } from "../../../CustomContexts/Contexts";
+import { themeContext } from "../../../CustomContexts/Contexts";
 import { GetCookies, SetCookies } from "../../../CustomFunctions/HandleCookies";
-
-import { HabitProgression } from "./HabitProgression";
-import { HabitDistribution } from "./HabitDistribution";
-import { HabitCompletionRate } from "./HabitCompletionRate";
-import { HabitSessionTime } from "./HabitSessionTime";
-
-import anthony from "../../../assets/images/insights-images/Anthony.png";
 
 const TIME_SPENT_COOKIE_NAME = "totalTimeSpentMinutes";
 const LAST_ACTIVITY_COOKIE_NAME = "lastActivityTimestamp";
 
-export const Insights = () => {
+export const HabitSessionTime = ({ userHabits }) => {
   const { themeState } = useContext(themeContext);
-  const { userHabits, getUserHabits } = useContext(habitContext);
+
   const [timeSpent, setTimeSpent] = useState(0);
-
-  useEffect(() => {
-    fetchAllHabits();
-  }, []); // eslint-disable-line
-
-  const fetchAllHabits = async () => {
-    await getUserHabits();
-  };
 
   useEffect(() => {
     let storedTime = parseInt(GetCookies(TIME_SPENT_COOKIE_NAME) || "0", 10);
@@ -89,34 +71,15 @@ export const Insights = () => {
   };
 
   return (
-    <section className="insights-container p-4 md:p-8 min-h-screen">
-      <div className="max-w-5xl mx-auto mt-[7em] md:mt-0">
-        <div className="flex flex-col sm:flex-row items-center justify-center space-x-4 mb-6">
-          <Image
-            src={anthony}
-            alt="Anthony"
-            className="anthony object-contain"
-          />
-          <div>
-            <h1 className="text-4xl font-bold">Insights & Analytics</h1>
-            <p className="text-gray-500 text-lg">Your statistics and trends</p>
-          </div>
+    <div className="p-6 rounded-2xl shadow-lg flex flex-col items-center justify-center">
+      <h2 className="text-xl font-semibold mb-4">Longest Session Time</h2>
+
+      <div className="relative w-32 h-32">
+        <div className="absolute inset-0 flex items-center justify-center text-2xl font-bold">
+          {formatTimeSpent(timeSpent)}
         </div>
-
-        <div className="insights-content grid gap-6 md:grid-cols-2">
-          {/* Habit Progression Chart */}
-          <HabitProgression userHabits={userHabits} />
-
-          {/* Time Spent */}
-          <HabitSessionTime userHabits={userHabits} />
-
-          {/* Habit Distribution */}
-          <HabitDistribution userHabits={userHabits} />
-
-          {/* Completion Rate */}
-          <HabitCompletionRate userHabits={userHabits} />
-        </div>
+        <div className="w-full h-full rounded-full border-[10px] border-orange-400 border-t-blue-700"></div>
       </div>
-    </section>
+    </div>
   );
 };

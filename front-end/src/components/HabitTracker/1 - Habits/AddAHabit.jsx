@@ -222,11 +222,6 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
       });
     }
 
-    habitData.start_date = dateWithLocalTimeZone(habitData.start_date);
-    if (habitData.end_date) {
-      habitData.end_date = dateWithLocalTimeZone(habitData.end_date);
-    }
-
     setHabitData((prevData) => ({
       ...prevData,
       habit_frequency: prevData.habit_frequency.toLowerCase(),
@@ -234,8 +229,15 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
 
     const tokenData = GetCookies("authToken");
 
+    const dataToSend = { ...habitData };
+
+    dataToSend.start_date = dateWithLocalTimeZone(dataToSend.start_date);
+    if (dataToSend.end_date) {
+      dataToSend.end_date = dateWithLocalTimeZone(dataToSend.end_date);
+    }
+
     await axios
-      .post(`${API}/habbits/create`, habitData, {
+      .post(`${API}/habbits/create`, dataToSend, {
         withCredentials: true,
         headers: {
           authorization: `Bearer ${tokenData}`,

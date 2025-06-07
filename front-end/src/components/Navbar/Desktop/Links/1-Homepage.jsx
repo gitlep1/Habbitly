@@ -74,7 +74,7 @@ export const HomepageLinks = ({
             Daily Summary
           </Button>
 
-          {/* <Button
+          <Button
             id="desktop-navbar-insight-button"
             className={`desktop-navbar-button`}
             onClick={() => {
@@ -83,7 +83,7 @@ export const HomepageLinks = ({
             }}
           >
             Insights & Analytics
-          </Button> */}
+          </Button>
         </animated.div>
       )}
     </div>
