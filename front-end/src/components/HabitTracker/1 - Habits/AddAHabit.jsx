@@ -171,6 +171,12 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
     });
   };
 
+  const dateWithLocalTimeZone = (dateString) => {
+    const [year, month, day] = dateString.split("-").map(Number);
+    const localNoon = new Date(year, month - 1, day, 12, 0, 0);
+    return localNoon.toISOString();
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -215,6 +221,13 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
         containerId: "toast-notify",
       });
     }
+
+    habitData.start_date = dateWithLocalTimeZone(habitData.start_date);
+
+    console.log(habitData.start_date);
+    console.log(
+      (habitData.start_date = new Date(habitData.start_date).toISOString())
+    );
 
     setHabitData((prevData) => ({
       ...prevData,
