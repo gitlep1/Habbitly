@@ -99,7 +99,7 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
     }
 
     if (name === "start_date" || name === "end_date") {
-      const newDate = new Date(value).toISOString();
+      const newDate = value;
       const otherDate =
         name === "start_date" ? habitData.end_date : habitData.start_date;
 
@@ -223,18 +223,14 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
     }
 
     habitData.start_date = dateWithLocalTimeZone(habitData.start_date);
-
-    console.log(habitData.start_date);
-    console.log(
-      (habitData.start_date = new Date(habitData.start_date).toISOString())
-    );
+    if (habitData.end_date) {
+      habitData.end_date = dateWithLocalTimeZone(habitData.end_date);
+    }
 
     setHabitData((prevData) => ({
       ...prevData,
       habit_frequency: prevData.habit_frequency.toLowerCase(),
     }));
-
-    console.log("Submitting habit data:", habitData);
 
     const tokenData = GetCookies("authToken");
 
