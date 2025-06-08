@@ -108,7 +108,7 @@ habbits.post("/create", requireAuth(), async (req, res) => {
     start_date: req.body.start_date,
     last_completed_on: req.body.last_completed_on || null,
     end_date: req.body.end_date || null,
-    is_active: req.body.is_active || true,
+    is_active: req.body.is_active,
     has_reached_end_date: req.body.has_reached_end_date || false,
     days_of_week_to_complete: req.body.days_of_week_to_complete ?? [],
     day_of_month_to_complete: req.body.day_of_month_to_complete ?? null,
@@ -117,6 +117,10 @@ habbits.post("/create", requireAuth(), async (req, res) => {
     yearly_day_of_year_to_complete:
       req.body.yearly_day_of_year_to_complete ?? null,
   };
+
+  if (!newHabbitData.is_active) {
+    newHabbitData.is_active = false;
+  }
 
   try {
     const createdHabbit = await createHabbit(newHabbitData);

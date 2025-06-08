@@ -95,9 +95,7 @@ export const ActiveHabit = () => {
   };
 
   const isHabitCompleted = (habit, now = new Date()) => {
-    const lastCompleted = habit.last_completed_on
-      ? new Date(habit.last_completed_on)
-      : null;
+    const lastCompleted = habit.log_date ? new Date(habit.log_date) : null;
 
     if (!lastCompleted) return false;
 
@@ -141,9 +139,7 @@ export const ActiveHabit = () => {
       const {
         habit_name,
         habit_task_description,
-        habit_task_completed,
         progress_percentage,
-        last_completed_on,
         end_date,
         current_streak,
         longest_streak,

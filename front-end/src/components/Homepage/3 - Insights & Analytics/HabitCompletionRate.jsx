@@ -15,4 +15,10 @@ export const HabitCompletionRate = ({ userHabits }) => {
       </div>
     );
   }
+
+  return (
+    <div className="p-6 rounded-2xl shadow-lg">
+      <h2 className="text-xl font-semibold mb-4">Habit Tasks Completion</h2>
+    </div>
+  );
 };
