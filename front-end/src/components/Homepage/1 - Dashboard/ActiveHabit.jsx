@@ -284,7 +284,7 @@ export const ActiveHabit = () => {
           </p>
           <p>
             <strong>Last Completed on:</strong>{" "}
-            {formatDate(selectedHabit?.last_completed_on)}
+            {formatDate(selectedHabit?.log_date)}
           </p>
         </Modal.Body>
       </Modal>
