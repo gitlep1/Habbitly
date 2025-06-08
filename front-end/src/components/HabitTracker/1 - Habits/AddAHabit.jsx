@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import { Modal, Button, Form } from "react-bootstrap";
 import axios from "axios";
 import { PropTypes } from "prop-types";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 
 import { habitContext } from "../../../CustomContexts/Contexts";
 import { GetCookies } from "../../../CustomFunctions/HandleCookies";
@@ -127,6 +128,26 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
           return;
         }
       }
+
+      const today = new Date();
+      const picked = new Date(newDate);
+      picked.setHours(0, 0, 0, 0);
+      today.setHours(0, 0, 0, 0);
+
+      const isFutureStart = picked > today;
+      const isPastEnd = name === "end_date" && picked < today;
+
+      setHabitData((prevData) => ({
+        ...prevData,
+        [name]: newDate,
+        is_active: isFutureStart || isPastEnd ? false : prevData.is_active,
+        has_reached_end_date: isPastEnd
+          ? true
+          : prevData.has_reached_end_date || isFutureStart
+          ? false
+          : prevData.has_reached_end_date,
+      }));
+      return;
     }
 
     if (name === "is_active" && checked) {
@@ -152,6 +173,53 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
       [name]: type === "checkbox" ? checked : value,
     }));
   };
+
+  const getHabitCheckboxStates = (habitData) => {
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+
+    const startDate = habitData.start_date
+      ? new Date(habitData.start_date)
+      : null;
+    const endDate = habitData.end_date ? new Date(habitData.end_date) : null;
+
+    if (startDate) startDate.setHours(0, 0, 0, 0);
+    if (endDate) endDate.setHours(0, 0, 0, 0);
+
+    const isBeforeStart = startDate && startDate > now;
+    const isAfterEnd = endDate && endDate < now;
+
+    const activeTooltip = isBeforeStart
+      ? "Can't set habit to active start date hasn't started yet"
+      : isAfterEnd
+      ? "Can't set habit to active end date has already passed"
+      : "";
+
+    const isActiveDisabled = isBeforeStart || isAfterEnd;
+
+    const isCompletedDisabled = isBeforeStart || isAfterEnd;
+    const completedTooltip = isAfterEnd
+      ? "Habit marked completed End Date has already passed"
+      : isBeforeStart
+      ? "Cannot mark completed Start Date hasn't started yet"
+      : "";
+
+    return {
+      isBeforeStart,
+      isAfterEnd,
+      isActiveDisabled,
+      activeTooltip,
+      completedTooltip,
+      isCompletedDisabled,
+    };
+  };
+
+  const {
+    isActiveDisabled,
+    activeTooltip,
+    completedTooltip,
+    isCompletedDisabled,
+  } = getHabitCheckboxStates(habitData);
 
   const handleDayOfWeekChange = (e) => {
     const day = e.target.value;
@@ -538,24 +606,48 @@ export const AddAHabit = ({ showAddModal, onHide }) => {
 
           <div className="flex justify-center gap-8 my-4">
             <Form.Group controlId="isActive">
-              <Form.Check
-                type="checkbox"
-                label="Check if active"
-                name="is_active"
-                checked={habitData.is_active}
-                onChange={handleInputChange}
-              />
+              <div
+                data-tooltip-id={isActiveDisabled ? "startDateTooltip" : ""}
+                data-tooltip-content={activeTooltip}
+                data-tooltip-place="top"
+              >
+                <Form.Check
+                  type="checkbox"
+                  label="Check if active"
+                  name="is_active"
+                  checked={habitData.is_active}
+                  onChange={handleInputChange}
+                  disabled={isActiveDisabled}
+                />
+              </div>
             </Form.Group>
 
+            <ReactTooltip
+              id="startDateTooltip"
+              disable={!isActiveDisabled || !activeTooltip}
+            />
+
             <Form.Group controlId="habitCompleted">
-              <Form.Check
-                type="checkbox"
-                label="Check if completed"
-                name="has_reached_end_date"
-                checked={habitData.has_reached_end_date}
-                onChange={handleInputChange}
-              />
+              <div
+                data-tooltip-id={isCompletedDisabled ? "endDateTooltip" : ""}
+                data-tooltip-content={completedTooltip}
+                data-tooltip-place="top"
+              >
+                <Form.Check
+                  type="checkbox"
+                  label="Check if completed"
+                  name="has_reached_end_date"
+                  checked={habitData.has_reached_end_date}
+                  onChange={handleInputChange}
+                  disabled={isCompletedDisabled}
+                />
+              </div>
             </Form.Group>
+
+            <ReactTooltip
+              id="endDateTooltip"
+              disable={!isCompletedDisabled || !completedTooltip}
+            />
           </div>
 
           <div className="flex justify-center gap-8 my-4">
