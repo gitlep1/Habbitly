@@ -86,8 +86,8 @@ export const Summary = () => {
     let completedCount = 0;
     let activeStreakCount = 0;
     habitsForToday.forEach((habit) => {
-      const wasCompletedToday = habit.last_completed_on
-        ? isSameDay(parseISO(habit.last_completed_on), today)
+      const wasCompletedToday = habit.log_date
+        ? isSameDay(parseISO(habit.log_date), today)
         : false;
 
       if (wasCompletedToday) {

@@ -160,8 +160,8 @@ export const ViewHabit = ({ habitData, show, onClose }) => {
               </p>
               <p>
                 <span className="font-bold">Last completed on:</span>{" "}
-                {habitData.last_completed_on
-                  ? formatDate(habitData.last_completed_on)
+                {habitData.log_date
+                  ? formatDate(habitData.log_date)
                   : "No completions yet"}
               </p>
               <p>
@@ -241,7 +241,7 @@ ViewHabit.propTypes = {
     progress_percentage: PropTypes.number,
     repetitions_per_frequency: PropTypes.number.isRequired,
     start_date: PropTypes.string,
-    last_completed_on: PropTypes.string,
+    log_date: PropTypes.string,
     end_date: PropTypes.string,
     is_active: PropTypes.bool.isRequired,
     has_reached_end_date: PropTypes.bool.isRequired,
