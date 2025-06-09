@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useCallback, useRef } from "react";
 import { Image, Modal } from "react-bootstrap";
 import { isSameDay, isSameWeek, isSameMonth, isSameYear } from "date-fns";
 import { useNavigate } from "react-router-dom";
@@ -16,10 +16,13 @@ import flamey4x from "../../../assets/images/Dashboard-images/flamey-4x.gif";
 const API = import.meta.env.VITE_PUBLIC_API_BASE;
 
 export const ActiveHabit = () => {
+  const completingHabits = useRef({});
   const navigate = useNavigate();
 
-  const { userHabits, getUserHabits } = useContext(habitContext);
+  const { userHabits, setUserHabits, getUserHabits } = useContext(habitContext);
   const activeHabits = userHabits.filter((habit) => habit.is_active === true);
+  console.log("Active Habits:", activeHabits);
+  console.log("All User Habits:", userHabits);
 
   const [quickLoading, setQuickLoading] = useState(false);
   const [initialLoad, setInitialLoad] = useState(true);
@@ -48,37 +51,95 @@ export const ActiveHabit = () => {
     } else if (userHabits.length > 0) {
       setInitialLoad(false);
     }
+    allUserHabits();
   }, [getUserHabits, userHabits, initialLoad]);
 
-  const handleQuickComplete = async (habitId) => {
+  const allUserHabits = async () => {
     const authToken = GetCookies("authToken");
 
-    const activeHabitData = activeHabits.find((habit) => habit.id === habitId);
-
-    const updatedHabitData = {
-      ...activeHabitData,
-      habit_task_completed: true,
-    };
-
-    setError("");
-    setQuickLoading(true);
-
     await axios
-      .put(`${API}/habbits/${habitId}`, updatedHabitData, {
+      .get(`${API}/habbits/user`, {
         headers: {
-          Authorization: `Bearer ${authToken}`,
+          authorization: `Bearer ${authToken}`,
         },
       })
-      .then(async (res) => {
-        await getUserHabits();
+      .then((res) => {
+        console.log("All user habits fetched successfully:", res.data.payload);
       })
       .catch((err) => {
-        setError(err?.response?.data?.error);
-      })
-      .finally(() => {
-        setQuickLoading(false);
+        console.error("Failed to fetch all user habits:", err);
       });
   };
+
+  const handleQuickComplete = useCallback(
+    async (habitId) => {
+      // Prevent multiple clicks for the same habit
+      if (completingHabits.current[habitId]) {
+        return;
+      }
+
+      const authToken = GetCookies("authToken");
+
+      // Find the habit from the current state BEFORE making changes
+      const habitToUpdate = userHabits.find((habit) => habit.id === habitId);
+
+      if (!habitToUpdate) {
+        setError("Habit not found in current state for completion.");
+        return;
+      }
+
+      // Store the original state for potential rollback
+      const originalHabitState = { ...habitToUpdate };
+
+      // Set a flag to indicate this habit is being completed
+      completingHabits.current[habitId] = true;
+      setQuickLoading(true);
+      setError("");
+
+      setUserHabits((prevHabits) =>
+        prevHabits.map((habit) =>
+          habit.id === habitId
+            ? {
+                ...habit,
+                habit_task_completed: true,
+                log_date: new Date().toISOString(),
+              }
+            : habit
+        )
+      );
+
+      const dataToSend = {
+        ...habitToUpdate,
+        habit_task_completed: true,
+      };
+
+      await axios
+        .put(`${API}/habbits/${habitId}`, dataToSend, {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        })
+        .then(async (res) => {
+          await getUserHabits();
+        })
+        .catch((err) => {
+          console.error("Failed to quick complete habit:", err);
+          setError(
+            err?.response?.data?.error || "Failed to quick complete habit."
+          );
+          setUserHabits((prevHabits) =>
+            prevHabits.map((habit) =>
+              habit.id === habitId ? originalHabitState : habit
+            )
+          );
+        })
+        .finally(() => {
+          setQuickLoading(false);
+          delete completingHabits.current[habitId];
+        });
+    },
+    [userHabits, getUserHabits, setUserHabits]
+  );
 
   const getFlameyGif = (checkProgress, hasEndDate) => {
     if (hasEndDate) {

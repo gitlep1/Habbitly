@@ -84,7 +84,9 @@ const GlobalContextProvider = ({ children }) => {
     <screenVersionContext.Provider value={screenVersion}>
       <userContext.Provider value={{ authUser, setAuthUser }}>
         <themeContext.Provider value={{ themeState, setThemeState }}>
-          <habitContext.Provider value={{ userHabits, getUserHabits }}>
+          <habitContext.Provider
+            value={{ userHabits, setUserHabits, getUserHabits }}
+          >
             <errorContext.Provider value={{ error, setError }}>
               <preferencesContext.Provider
                 value={{ preferences, updateSitePreferences }}

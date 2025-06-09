@@ -208,14 +208,14 @@ habbits.put("/:id", requireAuth(), async (req, res) => {
   const today = dayjs().startOf("day");
 
   if (wasJustCompletedNow) {
-    // If the habit was just completed now, update last_completed_on to today
-    updatedHabbitData.last_completed_on = today.toISOString();
+    // If the habit was just completed now, update log_date to today
+    updatedHabbitData.log_date = today.toISOString();
     // Increment total_tasks_completed when any habit is completed
     updatedHabbitData.total_tasks_completed =
       (previousHabit.total_tasks_completed || 0) + 1;
   } else {
-    // If not just completed, retain the previous last_completed_on
-    updatedHabbitData.last_completed_on = previousHabit.last_completed_on;
+    // If not just completed, retain the previous log_date
+    updatedHabbitData.log_date = previousHabit.log_date;
     // Also retain total_tasks_completed if not completed now
     updatedHabbitData.total_tasks_completed =
       previousHabit.total_tasks_completed || 0;
@@ -272,8 +272,8 @@ habbits.put("/:id", requireAuth(), async (req, res) => {
   let newCurrentStreak = previousHabit.current_streak || 0;
   let newLongestStreak = previousHabit.longest_streak || 0;
   let newMissedPeriodsCount = previousHabit.missed_periods_count || 0;
-  let newLastCompletedOn = previousHabit.last_completed_on
-    ? dayjs(previousHabit.last_completed_on)
+  let newLastCompletedOn = previousHabit.log_date
+    ? dayjs(previousHabit.log_date)
     : null;
 
   // Match my habit_frequency to what dayjs expects (EX: user puts "Daily" dayjs expects "day")
@@ -349,11 +349,11 @@ habbits.put("/:id", requireAuth(), async (req, res) => {
     if (newCurrentStreak > newLongestStreak) {
       newLongestStreak = newCurrentStreak;
     }
-    // Update last_completed_on to today if it was just completed otherwise set to previous day
-    updatedHabbitData.last_completed_on = today.toISOString();
+    // Update log_date to today if it was just completed otherwise set to previous day
+    updatedHabbitData.log_date = today.toISOString();
     updatedHabbitData.total_tasks_completed++;
   } else {
-    updatedHabbitData.last_completed_on = previousHabit.last_completed_on;
+    updatedHabbitData.log_date = previousHabit.log_date;
   }
 
   // Update the updatedHabbitData with the new streak values
