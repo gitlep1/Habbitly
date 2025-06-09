@@ -177,7 +177,7 @@ export const ViewHabit = ({ habitData, show, onClose }) => {
                 {habitData.is_active ? "Active" : "Paused"}
               </p>
               <p>
-                <span className="font-bold">Habit completed:</span>{" "}
+                <span className="font-bold">Habit fully completed:</span>{" "}
                 {habitData.has_reached_end_date ? (
                   <span
                     style={{

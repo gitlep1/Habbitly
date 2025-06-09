@@ -1,15 +1,12 @@
-import { useContext, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { parseISO, differenceInMinutes } from "date-fns";
 
-import { themeContext } from "../../../CustomContexts/Contexts";
 import { GetCookies, SetCookies } from "../../../CustomFunctions/HandleCookies";
 
 const TIME_SPENT_COOKIE_NAME = "totalTimeSpentMinutes";
 const LAST_ACTIVITY_COOKIE_NAME = "lastActivityTimestamp";
 
 export const HabitSessionTime = ({ userHabits }) => {
-  const { themeState } = useContext(themeContext);
-
   const [timeSpent, setTimeSpent] = useState(0);
 
   useEffect(() => {
@@ -61,7 +58,7 @@ export const HabitSessionTime = ({ userHabits }) => {
   }, []);
 
   const formatTimeSpent = (totalMinutes) => {
-    if (totalMinutes < 1) return "Less than a minute";
+    if (totalMinutes < 1) return "Less than 1m";
     const hours = Math.floor(totalMinutes / 60);
     const minutes = totalMinutes % 60;
     if (hours > 0) {

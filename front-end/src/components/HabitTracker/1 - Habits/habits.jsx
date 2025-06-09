@@ -131,7 +131,7 @@ export const Habits = () => {
   };
 
   return (
-    <div className="habit-tracker-container pl-4 pr-4 md:pl-6 md:pr-6 min-h-screen">
+    <div className="habit-tracker-container pl-4 pr-4 md:pl-8 md:pr-0 min-h-screen">
       <div className="max-w-7xl mx-auto mt-[7em] md:mt-0">
         <div className="top-section flex flex-col lg:flex-row items-center lg:items-start lg:justify-between mb-8 lg:mb-12 relative">
           <div className="rainbow-cloud-container relative flex-shrink-0 mb-6 lg:mb-0 lg:mr-8">
