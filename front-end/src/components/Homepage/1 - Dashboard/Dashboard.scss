@@ -178,7 +178,7 @@ $large-desktop: 1200px;
         .active-habits-data-container {
           display: flex;
           flex-direction: column;
-          max-height: 25em;
+          max-height: 30em;
           overflow: auto;
 
           @media screen and (min-width: $small-desktop) {

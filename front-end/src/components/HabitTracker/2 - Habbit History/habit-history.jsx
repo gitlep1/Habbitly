@@ -12,7 +12,7 @@ const API = import.meta.env.VITE_PUBLIC_API_BASE;
 
 export const HabitHistory = () => {
   const tokenData = GetCookies("authToken") || null;
-  const themeState = GetCookies("theme");
+  const themeState = GetCookies("theme") || "dark";
   const [history, setHistory] = useState([]);
 
   useEffect(() => {
@@ -50,7 +50,7 @@ export const HabitHistory = () => {
 
   return (
     <div className="habit-history-container min-h-screen min-w-screen">
-      <div className="max-w-7xl mx-auto mt-[8em] md:mt-0">
+      <div className="max-w-7xl mx-auto mt-[10em] md:mt-0">
         <div className="flex items-center justify-center text-3xl font-bold mb-6">
           <h1>Habit History</h1>
           <Image
@@ -63,7 +63,7 @@ export const HabitHistory = () => {
         {history.length > 0 ? (
           <>
             {/* // === DESKTOP/TABLET TABLE VIEW === \\ */}
-            <div className="d-none d-md-block">
+            <div className="d-none d-md-block pr-4 pl-4">
               <Table
                 striped
                 bordered
@@ -137,7 +137,7 @@ export const HabitHistory = () => {
             </div>
 
             {/* // === MOBILE STACKED CARD VIEW === \\ */}
-            <div className="d-block d-md-none">
+            <div className="d-block d-md-none pr-4 pl-4">
               {history.map((entry, index) => (
                 <div
                   key={entry.id}

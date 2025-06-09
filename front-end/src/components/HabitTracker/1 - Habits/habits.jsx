@@ -1,21 +1,34 @@
 import "./habits.scss";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef, useCallback } from "react";
 import { Image } from "react-bootstrap";
 import { Button } from "@mui/material";
-import { isSameDay, isSameWeek, isSameMonth, isSameYear } from "date-fns";
+import {
+  isSameDay,
+  isSameWeek,
+  isSameMonth,
+  isSameYear,
+  startOfDay,
+} from "date-fns";
+import axios from "axios";
 
 import { habitContext } from "../../../CustomContexts/Contexts";
+import { GetCookies } from "../../../CustomFunctions/HandleCookies";
+import { Loading } from "../../../CustomFunctions/Loading/Loading";
 
 import corey from "../../../assets/images/habit-tracker-images/Corey.png";
 
 import { AddAHabit } from "./AddAHabit";
 import { ViewHabit } from "./ViewHabit";
 
+const API = import.meta.env.VITE_PUBLIC_API_BASE;
+
 export const Habits = () => {
-  const { userHabits, getUserHabits } = useContext(habitContext);
+  const completingHabits = useRef({});
+  const { userHabits, setUserHabits, getUserHabits } = useContext(habitContext);
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [activeHabitId, setActiveHabitId] = useState(null);
+  const [completionIsLoading, setCompletionIsLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const [error, setError] = useState(null);
@@ -42,6 +55,51 @@ export const Habits = () => {
   const handleHabitClick = (id) => {
     setActiveHabitId(id);
   };
+
+  const handleQuickComplete = useCallback(
+    async (habitId) => {
+      if (completingHabits.current[habitId]) return;
+
+      const authToken = GetCookies("authToken");
+      const habitToUpdate = userHabits.find((habit) => habit.id === habitId);
+      const originalHabitState = { ...habitToUpdate };
+
+      completingHabits.current[habitId] = true;
+      setCompletionIsLoading(true);
+      setError("");
+
+      const today = startOfDay(new Date()).toISOString();
+
+      const dataToSend = {
+        ...habitToUpdate,
+        last_completed_on: today,
+      };
+
+      await axios
+        .put(`${API}/habbits/${habitId}`, dataToSend, {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        })
+        .then(async () => {
+          await getUserHabits();
+        })
+        .catch((err) => {
+          console.error("Failed to quick complete habit:", err);
+          setError(err?.response?.data?.error || "Failed to quick complete.");
+          setUserHabits((prev) =>
+            prev.map((habit) =>
+              habit.id === habitId ? originalHabitState : habit
+            )
+          );
+        })
+        .finally(() => {
+          setCompletionIsLoading(false);
+          delete completingHabits.current[habitId];
+        });
+    },
+    [userHabits, getUserHabits, setUserHabits]
+  );
 
   const isHabitCompleted = (habit, now = new Date()) => {
     const logDates = habit.log_dates || [];
@@ -73,8 +131,8 @@ export const Habits = () => {
   };
 
   return (
-    <div className="habit-tracker-container p-4 md:p-8 min-h-screen">
-      <div className="max-w-7xl mx-auto mt-[6em] md:mt-0">
+    <div className="habit-tracker-container pl-4 pr-4 md:pl-6 md:pr-6 min-h-screen">
+      <div className="max-w-7xl mx-auto mt-[7em] md:mt-0">
         <div className="top-section flex flex-col lg:flex-row items-center lg:items-start lg:justify-between mb-8 lg:mb-12 relative">
           <div className="rainbow-cloud-container relative flex-shrink-0 mb-6 lg:mb-0 lg:mr-8">
             <Image
@@ -132,7 +190,43 @@ export const Habits = () => {
                   <span>{habit_category}</span>
                 </div>
 
-                <h3 className="text-lg font-semibold mb-2">{habit_name}</h3>
+                <div className="habit-complete-icon-outer absolute top-2 left-2 rounded-circle">
+                  {isCompleted ? (
+                    <div
+                      className="habit-complete-icon-inner habit-completed"
+                      title="Habit Completed"
+                    >
+                      {completionIsLoading ? (
+                        <Loading message={""} />
+                      ) : (
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                        </svg>
+                      )}
+                    </div>
+                  ) : (
+                    <div
+                      className="habit-complete-icon-inner cursor-pointer"
+                      onClick={() => handleQuickComplete(id)}
+                      title="Quick Complete"
+                    >
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                  )}
+                </div>
+
+                <h3 className="habit-name text-lg font-semibold">
+                  {habit_name}
+                </h3>
 
                 <div className="flex flex-col gap-1 mb-4">
                   <p className="habit-description">{habit_task_description}</p>

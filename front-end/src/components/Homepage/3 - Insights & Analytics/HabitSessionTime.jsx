@@ -74,7 +74,7 @@ export const HabitSessionTime = ({ userHabits }) => {
     <div className="p-6 rounded-2xl shadow-lg flex flex-col items-center justify-center">
       <h2 className="text-xl font-semibold mb-4">Longest Session Time</h2>
 
-      <div className="relative w-32 h-32">
+      <div className="relative w-45 h-45">
         <div className="absolute inset-0 flex items-center justify-center text-2xl font-bold">
           {formatTimeSpent(timeSpent)}
         </div>

@@ -76,12 +76,11 @@ export const ActiveHabit = () => {
       setQuickLoading(true);
       setError("");
 
-      const today = startOfDay(new Date());
-      const clickedCompleteISO = today.toISOString();
+      const today = startOfDay(new Date()).toISOString();
 
       const dataToSend = {
         ...habitToUpdate,
-        last_completed_on: clickedCompleteISO,
+        last_completed_on: today,
       };
 
       await axios
