@@ -1,6 +1,12 @@
 import { useState, useEffect, useContext, useCallback, useRef } from "react";
 import { Image, Modal } from "react-bootstrap";
-import { isSameDay, isSameWeek, isSameMonth, isSameYear } from "date-fns";
+import {
+  isSameDay,
+  isSameWeek,
+  isSameMonth,
+  isSameYear,
+  startOfDay,
+} from "date-fns";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -21,8 +27,6 @@ export const ActiveHabit = () => {
 
   const { userHabits, setUserHabits, getUserHabits } = useContext(habitContext);
   const activeHabits = userHabits.filter((habit) => habit.is_active === true);
-  console.log("Active Habits:", activeHabits);
-  console.log("All User Habits:", userHabits);
 
   const [quickLoading, setQuickLoading] = useState(false);
   const [initialLoad, setInitialLoad] = useState(true);
@@ -51,25 +55,7 @@ export const ActiveHabit = () => {
     } else if (userHabits.length > 0) {
       setInitialLoad(false);
     }
-    allUserHabits();
   }, [getUserHabits, userHabits, initialLoad]);
-
-  const allUserHabits = async () => {
-    const authToken = GetCookies("authToken");
-
-    await axios
-      .get(`${API}/habbits/user`, {
-        headers: {
-          authorization: `Bearer ${authToken}`,
-        },
-      })
-      .then((res) => {
-        console.log("All user habits fetched successfully:", res.data.payload);
-      })
-      .catch((err) => {
-        console.error("Failed to fetch all user habits:", err);
-      });
-  };
 
   const handleQuickComplete = useCallback(
     async (habitId) => {
@@ -80,13 +66,7 @@ export const ActiveHabit = () => {
 
       const authToken = GetCookies("authToken");
 
-      // Find the habit from the current state BEFORE making changes
       const habitToUpdate = userHabits.find((habit) => habit.id === habitId);
-
-      if (!habitToUpdate) {
-        setError("Habit not found in current state for completion.");
-        return;
-      }
 
       // Store the original state for potential rollback
       const originalHabitState = { ...habitToUpdate };
@@ -96,21 +76,12 @@ export const ActiveHabit = () => {
       setQuickLoading(true);
       setError("");
 
-      setUserHabits((prevHabits) =>
-        prevHabits.map((habit) =>
-          habit.id === habitId
-            ? {
-                ...habit,
-                habit_task_completed: true,
-                log_date: new Date().toISOString(),
-              }
-            : habit
-        )
-      );
+      const today = startOfDay(new Date());
+      const clickedCompleteISO = today.toISOString();
 
       const dataToSend = {
         ...habitToUpdate,
-        habit_task_completed: true,
+        last_completed_on: clickedCompleteISO,
       };
 
       await axios
@@ -156,26 +127,32 @@ export const ActiveHabit = () => {
   };
 
   const isHabitCompleted = (habit, now = new Date()) => {
-    const lastCompleted = habit.log_date ? new Date(habit.log_date) : null;
+    const logDates = habit.log_dates || [];
 
-    if (!lastCompleted) return false;
-
-    switch (habit.habit_frequency) {
-      case "Daily":
-        return isSameDay(now, lastCompleted);
-
-      case "Weekly":
-        return isSameWeek(now, lastCompleted, { weekStartsOn: 1 });
-
-      case "Monthly":
-        return isSameMonth(now, lastCompleted);
-
-      case "Yearly":
-        return isSameYear(now, lastCompleted);
-
-      default:
-        return false;
+    if (!Array.isArray(logDates) || logDates.length === 0) {
+      return false;
     }
+
+    return logDates.some((log) => {
+      const completedDate = new Date(log);
+
+      switch (habit.habit_frequency) {
+        case "Daily":
+          return isSameDay(now, completedDate);
+
+        case "Weekly":
+          return isSameWeek(now, completedDate, { weekStartsOn: 1 });
+
+        case "Monthly":
+          return isSameMonth(now, completedDate);
+
+        case "Yearly":
+          return isSameYear(now, completedDate);
+
+        default:
+          return false;
+      }
+    });
   };
 
   const renderActiveHabits = () => {
@@ -345,7 +322,10 @@ export const ActiveHabit = () => {
           </p>
           <p>
             <strong>Last Completed on:</strong>{" "}
-            {formatDate(selectedHabit?.log_date)}
+            {selectedHabit?.log_dates &&
+              formatDate(
+                selectedHabit.log_dates[selectedHabit.log_dates.length - 1]
+              )}
           </p>
         </Modal.Body>
       </Modal>

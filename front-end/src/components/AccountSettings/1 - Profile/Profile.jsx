@@ -164,7 +164,7 @@ export const Profile = () => {
         });
       })
       .catch((error) => {
-        console.log({ error });
+        // console.log({ error });
         toast.error("Failed to update profile: " + error.message);
       })
       .finally(() => {

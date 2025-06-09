@@ -32,10 +32,13 @@ export const getAllHabbits = async () => {
 
 export const getUserHabbits = async (userId) => {
   const query = `
-    SELECT habbits.*, habit_logs.log_date
+    SELECT 
+      habbits.*,
+      COALESCE(json_agg(habit_logs.log_date ORDER BY habit_logs.log_date) FILTER (WHERE habit_logs.log_date IS NOT NULL), '[]') AS log_dates
     FROM habbits
     LEFT JOIN habit_logs ON habbits.id = habit_logs.habit_id
     WHERE habbits.user_id = $1
+    GROUP BY habbits.id;
   `;
   const userHabbits = await db.manyOrNone(query, [userId]);
   return userHabbits;
@@ -43,10 +46,13 @@ export const getUserHabbits = async (userId) => {
 
 export const getHabbitByID = async (id) => {
   const query = `
-    SELECT habbits.*, habit_logs.log_date
+    SELECT 
+      habbits.*,
+      COALESCE(json_agg(habit_logs.log_date ORDER BY habit_logs.log_date) FILTER (WHERE habit_logs.log_date IS NOT NULL), '[]') AS log_dates
     FROM habbits
     LEFT JOIN habit_logs ON habbits.id = habit_logs.habit_id
     WHERE habbits.id = $1
+    GROUP BY habbits.id;
   `;
   const habbit = await db.oneOrNone(query, [id]);
 

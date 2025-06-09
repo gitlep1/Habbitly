@@ -160,8 +160,10 @@ export const ViewHabit = ({ habitData, show, onClose }) => {
               </p>
               <p>
                 <span className="font-bold">Last completed on:</span>{" "}
-                {habitData.log_date
-                  ? formatDate(habitData.log_date)
+                {habitData?.log_dates
+                  ? formatDate(
+                      habitData?.log_dates[habitData?.log_dates.length - 1]
+                    )
                   : "No completions yet"}
               </p>
               <p>
@@ -189,6 +191,20 @@ export const ViewHabit = ({ habitData, show, onClose }) => {
                   "Not yet"
                 )}
               </p>
+              {habitData.log_dates?.length > 0 && (
+                <div className="mt-2">
+                  <span className="font-bold">Completion History:</span>
+                  <ul className="list-disc list-inside">
+                    {habitData.log_dates
+                      .slice()
+                      .reverse()
+                      .slice(0, 5)
+                      .map((date, index) => (
+                        <li key={index}>{formatDate(date)}</li>
+                      ))}
+                  </ul>
+                </div>
+              )}
             </>
           )}
         </Offcanvas.Body>
@@ -241,7 +257,7 @@ ViewHabit.propTypes = {
     progress_percentage: PropTypes.number,
     repetitions_per_frequency: PropTypes.number.isRequired,
     start_date: PropTypes.string,
-    log_date: PropTypes.string,
+    log_dates: PropTypes.arrayOf(PropTypes.string),
     end_date: PropTypes.string,
     is_active: PropTypes.bool.isRequired,
     has_reached_end_date: PropTypes.bool.isRequired,

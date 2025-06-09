@@ -129,7 +129,7 @@ export const Notifications = () => {
         setOriginalSettings(settings);
       })
       .catch((err) => {
-        console.log(err?.reponse?.data);
+        // console.log(err?.reponse?.data);
         toast.error("Failed to save notification settings. Please try again.", {
           containerId: "toast-notify",
         });

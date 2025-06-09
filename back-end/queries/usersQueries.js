@@ -81,10 +81,5 @@ export const checkUserCredentials = async (userData, checker) => {
   query += conditions.join(joiner);
 
   const userCredentials = await db.oneOrNone(query, params);
-  console.log(
-    `=== checkUserCredentials ${checker}`,
-    { userData, checker, userCredentials },
-    "==="
-  );
   return userCredentials;
 };

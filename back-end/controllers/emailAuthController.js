@@ -116,8 +116,6 @@ emailAuth.post("/forgot-password", async (req, res) => {
 
   const checkIfEmailExists = await checkUserCredentials(userEmailData, "email");
 
-  console.log("Check if email exists:", checkIfEmailExists);
-
   if (!checkIfEmailExists) {
     return res.status(404).json({ error: "Email not found." });
   }

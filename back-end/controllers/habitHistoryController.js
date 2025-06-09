@@ -18,7 +18,7 @@ history.get("/user", requireAuth(), async (req, res) => {
     const getAHabitHistory = await getHabitHistoryByUserId(decodedUserData.id);
 
     if (getAHabitHistory) {
-      console.log("=== GET habit history by user ID", getAHabitHistory, "===");
+      // console.log("=== GET habit history by user ID", getAHabitHistory, "===");
 
       res.status(200).json({ payload: getAHabitHistory });
     } else {
@@ -47,7 +47,7 @@ history.get("/:id", requireAuth(), async (req, res) => {
     const getAHabitHistory = await getHabitHistoryById(id);
 
     if (getAHabitHistory) {
-      console.log("=== GET habit history by ID", getAHabitHistory, "===");
+      // console.log("=== GET habit history by ID", getAHabitHistory, "===");
 
       res.status(200).json({ payload: getAHabitHistory });
     } else {
@@ -76,7 +76,7 @@ history.delete("/delete/:id", requireAuth(), async (req, res) => {
     const deletedHabitHistory = await deleteHabitHistoryByHabitId(id);
 
     if (deletedHabitHistory) {
-      console.log("=== DELETE habit history", deletedHabitHistory, "===");
+      // console.log("=== DELETE habit history", deletedHabitHistory, "===");
 
       res.status(200).json({ payload: deletedHabitHistory });
     } else {

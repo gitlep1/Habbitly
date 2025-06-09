@@ -24,7 +24,7 @@ import {
 images.get("/", requireAuth(), async (req, res) => {
   try {
     const allProfileImages = await getAllProfileImages();
-    console.log("=== GET all profile images", allProfileImages, "===");
+    // console.log("=== GET all profile images", allProfileImages, "===");
 
     if (allProfileImages) {
       res.status(200).json({ payload: allProfileImages });
@@ -43,7 +43,7 @@ images.get("/image/:id", requireAuth(), async (req, res) => {
 
   try {
     const getProfileImage = await getProfileImageByID(id);
-    console.log("=== GET profile image by ID", getProfileImage, "===");
+    // console.log("=== GET profile image by ID", getProfileImage, "===");
 
     if (getProfileImage) {
       if (getProfileImage.user_id !== decodedUserData.id) {
@@ -105,7 +105,7 @@ images.post(
       };
 
       const createdProfileImage = await createProfileImage(newProfileImageData);
-      console.log("=== POST new profile image", createdProfileImage, "===");
+      // console.log("=== POST new profile image", createdProfileImage, "===");
 
       if (createdProfileImage) {
         const updatedUser = {
@@ -120,7 +120,7 @@ images.post(
           checkIfUserExists.id,
           updatedUser
         );
-        console.log("=== PUT updated user", updatedUserResult, "===");
+        // console.log("=== PUT updated user", updatedUserResult, "===");
 
         if (updatedUserResult) {
           return res.status(200).json({ payload: updatedUserResult });
@@ -165,7 +165,7 @@ images.put(
         id,
         updatedProfileImageData
       );
-      console.log("=== PUT updated profile image", updatedProfileImage, "===");
+      // console.log("=== PUT updated profile image", updatedProfileImage, "===");
 
       if (updatedProfileImage) {
         res.status(200).json({ payload: updatedProfileImage });
@@ -195,7 +195,7 @@ images.delete("/delete/:id", requireAuth(), async (req, res) => {
     }
 
     const deletedProfileImage = await deleteProfileImage(id);
-    console.log("=== DELETE profile image", deletedProfileImage, "===");
+    // console.log("=== DELETE profile image", deletedProfileImage, "===");
 
     if (deletedProfileImage) {
       res.status(200).json({ payload: deletedProfileImage });

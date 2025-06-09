@@ -44,26 +44,32 @@ export const Habits = () => {
   };
 
   const isHabitCompleted = (habit, now = new Date()) => {
-    const lastCompleted = habit.log_date ? new Date(habit.log_date) : null;
+    const logDates = habit.log_dates || [];
 
-    if (!lastCompleted) return false;
-
-    switch (habit.habit_frequency) {
-      case "Daily":
-        return isSameDay(now, lastCompleted);
-
-      case "Weekly":
-        return isSameWeek(now, lastCompleted, { weekStartsOn: 1 });
-
-      case "Monthly":
-        return isSameMonth(now, lastCompleted);
-
-      case "Yearly":
-        return isSameYear(now, lastCompleted);
-
-      default:
-        return false;
+    if (!Array.isArray(logDates) || logDates.length === 0) {
+      return false;
     }
+
+    return logDates.some((log) => {
+      const completedDate = new Date(log);
+
+      switch (habit.habit_frequency) {
+        case "Daily":
+          return isSameDay(now, completedDate);
+
+        case "Weekly":
+          return isSameWeek(now, completedDate, { weekStartsOn: 1 });
+
+        case "Monthly":
+          return isSameMonth(now, completedDate);
+
+        case "Yearly":
+          return isSameYear(now, completedDate);
+
+        default:
+          return false;
+      }
+    });
   };
 
   return (
@@ -105,7 +111,7 @@ export const Habits = () => {
               repetitions_per_frequency,
               progress_percentage,
               start_date,
-              log_date,
+              log_dates,
               end_date,
               is_active,
               has_reached_end_date,

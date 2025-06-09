@@ -54,6 +54,8 @@ habbits.get("/user", requireAuth(), async (req, res) => {
   try {
     const userHabbits = await getUserHabbits(decodedUserData.id);
 
+    // console.log("=== GET user habbits", userHabbits, "===");
+
     if (userHabbits) {
       res.status(200).json({ payload: userHabbits });
     } else {
@@ -72,7 +74,7 @@ habbits.get("/:id", requireAuth(), async (req, res) => {
   try {
     const checkUser = await getUserByID(decodedUserData.id);
     const getHabbit = await getHabbitByID(id);
-    console.log("=== GET habbit by ID", getHabbit, "===");
+    // console.log("=== GET habbit by ID", getHabbit, "===");
 
     if (checkUser.id !== getHabbit.user_id) {
       return res
@@ -124,7 +126,7 @@ habbits.post("/create", requireAuth(), async (req, res) => {
 
   try {
     const createdHabbit = await createHabbit(newHabbitData);
-    console.log("=== POST habbit", createdHabbit, "===");
+    // console.log("=== POST habbit", createdHabbit, "===");
 
     if (!createdHabbit) {
       return res.status(404).json({ error: "habit not created" });
@@ -165,6 +167,7 @@ habbits.put("/:id", requireAuth(), async (req, res) => {
     habit_frequency: req.body.habit_frequency,
     repetitions_per_frequency: req.body.repetitions_per_frequency,
     start_date: req.body.start_date,
+    last_completed_on: req.body.last_completed_on || null,
     end_date: req.body.end_date || null,
     is_active: req.body.is_active || true,
     has_reached_end_date: req.body.has_reached_end_date || false,
@@ -201,21 +204,20 @@ habbits.put("/:id", requireAuth(), async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 
-  const wasJustCompletedNow =
-    updatedHabbitData.habit_task_completed &&
-    !previousHabit.habit_task_completed;
+  const markedAsCompleted = updatedHabbitData.last_completed_on;
 
   const today = dayjs().startOf("day");
 
-  if (wasJustCompletedNow) {
-    // If the habit was just completed now, update log_date to today
-    updatedHabbitData.log_date = today.toISOString();
+  if (markedAsCompleted) {
+    if (!updatedHabbitData.last_completed_on) {
+      updatedHabbitData.last_completed_on = today.toISOString();
+    }
     // Increment total_tasks_completed when any habit is completed
     updatedHabbitData.total_tasks_completed =
       (previousHabit.total_tasks_completed || 0) + 1;
   } else {
-    // If not just completed, retain the previous log_date
-    updatedHabbitData.log_date = previousHabit.log_date;
+    // If not just completed, retain the previous last_completed_on
+    updatedHabbitData.last_completed_on = previousHabit.last_completed_on;
     // Also retain total_tasks_completed if not completed now
     updatedHabbitData.total_tasks_completed =
       previousHabit.total_tasks_completed || 0;
@@ -223,7 +225,7 @@ habbits.put("/:id", requireAuth(), async (req, res) => {
 
   // === PROGRESS PERCENTAGE CALCULATION === \\
   if (updatedHabbitData.end_date) {
-    if (wasJustCompletedNow) {
+    if (markedAsCompleted) {
       const startDate = dayjs(updatedHabbitData.start_date);
       const endDate = dayjs(updatedHabbitData.end_date);
       const currentDate = dayjs();
@@ -272,8 +274,8 @@ habbits.put("/:id", requireAuth(), async (req, res) => {
   let newCurrentStreak = previousHabit.current_streak || 0;
   let newLongestStreak = previousHabit.longest_streak || 0;
   let newMissedPeriodsCount = previousHabit.missed_periods_count || 0;
-  let newLastCompletedOn = previousHabit.log_date
-    ? dayjs(previousHabit.log_date)
+  let newLastCompletedOn = previousHabit.last_completed_on
+    ? dayjs(previousHabit.last_completed_on)
     : null;
 
   // Match my habit_frequency to what dayjs expects (EX: user puts "Daily" dayjs expects "day")
@@ -311,7 +313,7 @@ habbits.put("/:id", requireAuth(), async (req, res) => {
   }
 
   // 2. Handle the current completion
-  if (wasJustCompletedNow) {
+  if (markedAsCompleted) {
     // A. Check if the habit was already completed in the "current period"
     // This handles repetitions_per_frequency > 1 or multiple quick completes in a day/week
     let alreadyCompletedInCurrentPeriod = false;
@@ -326,7 +328,7 @@ habbits.put("/:id", requireAuth(), async (req, res) => {
     }
 
     /** 
-      "wasJustCompletedNow" means the user has satisfied the habit's requirement for the current period (ex: once for daily, or repetitions_per_frequency times)
+      "markedAsCompleted" means the user has satisfied the habit's requirement for the current period (ex: once for daily, or repetitions_per_frequency times)
     */
 
     if (!alreadyCompletedInCurrentPeriod) {
@@ -349,11 +351,13 @@ habbits.put("/:id", requireAuth(), async (req, res) => {
     if (newCurrentStreak > newLongestStreak) {
       newLongestStreak = newCurrentStreak;
     }
-    // Update log_date to today if it was just completed otherwise set to previous day
-    updatedHabbitData.log_date = today.toISOString();
+    // Update last_completed_on to today if it was just completed otherwise set to previous day
+    if (!updatedHabbitData.last_completed_on) {
+      updatedHabbitData.last_completed_on = today.toISOString();
+    }
     updatedHabbitData.total_tasks_completed++;
   } else {
-    updatedHabbitData.log_date = previousHabit.log_date;
+    updatedHabbitData.last_completed_on = previousHabit.last_completed_on;
   }
 
   // Update the updatedHabbitData with the new streak values
@@ -397,7 +401,7 @@ habbits.put("/:id", requireAuth(), async (req, res) => {
       const habitLogData = {
         habit_id: updatedHabbit.id,
         user_id: decodedUserData.id,
-        log_date: dayjs().toISOString(),
+        log_date: updatedHabbitData.last_completed_on,
       };
 
       await createHabitLog(habitLogData);
@@ -435,7 +439,7 @@ habbits.delete("/:id", requireAuth(), async (req, res) => {
     }
 
     const deletedHabbit = await deleteHabbit(id);
-    console.log("=== DELETE habbit", deletedHabbit, "===");
+    // console.log("=== DELETE habbit", deletedHabbit, "===");
 
     if (!deletedHabbit) {
       return res.status(404).json({ error: "Habbit not deleted" });

@@ -38,7 +38,7 @@ export const createTransporter = async () => {
     }
 
     const accessToken = accessTokenResponse.token;
-    console.log("✅ createTransporter -> Access Token Retrieved/Refreshed");
+    // console.log("✅ createTransporter -> Access Token Retrieved/Refreshed");
 
     const transporter = createTransport({
       service: "gmail",
@@ -54,7 +54,7 @@ export const createTransporter = async () => {
     });
 
     await transporter.verify();
-    console.log("✅ Transporter successfully verified");
+    // console.log("✅ Transporter successfully verified");
 
     return transporter;
   } catch (error) {

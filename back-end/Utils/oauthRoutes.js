@@ -58,7 +58,7 @@ oauthRouter.get("/oauth2callback", async (req, res) => {
     oAuth2Client.setCredentials(tokens);
     await fs.writeFile(TEMP_TOKEN_PATH, JSON.stringify(tokens));
 
-    console.log("✅ Tokens acquired and saved temporarily:", tokens);
+    // console.log("✅ Tokens acquired and saved temporarily:", tokens);
 
     res.send(`
       <h1>Authorization successful!</h1>

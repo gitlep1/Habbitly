@@ -4,26 +4,28 @@ export const AggregateLogDates = (userHabits, view = "weekly") => {
   const dateCounts = new Map();
 
   userHabits.forEach((habit) => {
-    if (!habit.log_date) return;
+    if (!habit.log_dates || habit.log_dates.length === 0) return;
 
-    const date = parseISO(habit.log_date);
-    let key = "";
+    habit.log_dates.forEach((logDate) => {
+      const date = parseISO(logDate);
+      let key = "";
 
-    switch (view) {
-      case "weekly":
-        key = format(date, "EEE"); // ex: Mon
-        break;
-      case "monthly":
-        key = format(date, "d"); // ex: 15 (day of month)
-        break;
-      case "yearly":
-        key = format(date, "MMM"); // ex: Jan
-        break;
-      default:
-        key = format(date, "yyyy-MM-dd"); // fallback full date
-    }
+      switch (view) {
+        case "weekly":
+          key = format(date, "EEE"); // ex: Mon
+          break;
+        case "monthly":
+          key = format(date, "d"); // ex: 15
+          break;
+        case "yearly":
+          key = format(date, "MMM"); // ex: Jan
+          break;
+        default:
+          key = format(date, "yyyy-MM-dd"); // fallback full date
+      }
 
-    dateCounts.set(key, (dateCounts.get(key) || 0) + 1);
+      dateCounts.set(key, (dateCounts.get(key) || 0) + 1);
+    });
   });
 
   // Fill in empty data points for consistency

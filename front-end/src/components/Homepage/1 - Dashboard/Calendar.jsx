@@ -1,12 +1,24 @@
 import { useState, useEffect, useCallback, useContext } from "react";
-import { Modal } from "react-bootstrap";
+import { Modal, Button } from "react-bootstrap";
 import { Button as MUIButton } from "@mui/material";
 import { Calendar as ReactCalendar } from "react-calendar";
-import { format, isSameDay, parseISO } from "date-fns";
+import {
+  format,
+  isSameDay,
+  parseISO,
+  isAfter,
+  isBefore,
+  startOfDay,
+} from "date-fns";
+import { toast } from "react-toastify";
 
 import { processHabitsForCalendarLogic } from "./calendar-functions/processHabitsForCalendar";
 
 import { habitContext } from "../../../CustomContexts/Contexts";
+import { GetCookies } from "../../../CustomFunctions/HandleCookies";
+import axios from "axios";
+
+const API = import.meta.env.VITE_PUBLIC_API_BASE;
 
 export const Calendar = () => {
   const { userHabits, getUserHabits } = useContext(habitContext);
@@ -53,7 +65,6 @@ export const Calendar = () => {
       try {
         await getUserHabits();
       } catch (err) {
-        console.error("Error fetching all habits:", err);
         setError("Failed to load all habits.");
       } finally {
         setLoading(false);
@@ -76,26 +87,22 @@ export const Calendar = () => {
 
   const getTileContent = useCallback(
     ({ date, view }) => {
-      if (view === "month") {
-        const formattedDate = format(date, "yyyy-MM-dd");
-        const relevantHabits =
-          processedHabitDataByDate.get(formattedDate) || [];
+      if (!view === "month") return;
 
-        if (relevantHabits.length === 0) {
-          return null;
-        }
+      const formattedDate = format(date, "yyyy-MM-dd");
+      const relevantHabits = processedHabitDataByDate.get(formattedDate) || [];
 
-        const allCompletedOnDate = relevantHabits.every(
-          (habit) => habit.log_date && isSameDay(date, parseISO(habit.log_date))
-        );
+      if (relevantHabits.length === 0) return null;
 
-        if (allCompletedOnDate) {
-          return <StarSVG />;
-        } else if (relevantHabits.length > 0) {
-          return <KebabMenuSVG />;
-        }
+      const allCompletedOnDate = relevantHabits.every((habit) =>
+        habit?.log_dates.some((logDate) => isSameDay(date, parseISO(logDate)))
+      );
+
+      if (allCompletedOnDate) {
+        return <StarSVG />;
       }
-      return null;
+
+      return <KebabMenuSVG />;
     },
     [processedHabitDataByDate]
   );
@@ -120,27 +127,77 @@ export const Calendar = () => {
     setHabitsForSelectedDateInModal([]);
   }, []);
 
+  const handleQuickComplete = async (habitId) => {
+    const authToen = GetCookies("authToken");
+    const habitToUpdate = userHabits.find((habit) => habit.id === habitId);
+
+    const today = startOfDay(new Date());
+    const clickedDate = startOfDay(selectedDate);
+
+    if (isAfter(clickedDate, today)) {
+      return toast.info("You can't mark future dates as complete.", {
+        containerId: "toast-notify",
+      });
+    }
+
+    const clickedDateISO = clickedDate.toISOString();
+
+    const dataToSend = {
+      ...habitToUpdate,
+      last_completed_on: clickedDateISO,
+    };
+
+    await axios
+      .put(`${API}/habbits/${habitId}`, dataToSend, {
+        headers: {
+          Authorization: `Bearer ${authToen}`,
+        },
+      })
+      .then(async (res) => {
+        await getUserHabits();
+      })
+      .catch((err) => {
+        return toast.error("Failed to update habit completion.", {
+          containerId: "toast-notify",
+        });
+      });
+  };
+
   const renderHabitTasksInModal = useCallback(() => {
     if (habitsForSelectedDateInModal.length > 0) {
       return (
         <ul className="modal-habit-list list-unstyled">
-          {habitsForSelectedDateInModal.map((habit) => (
-            <li key={habit.id} className="modal-habit-item mb-2">
-              <h5 className="text-center mb-1">{habit.habit_name}</h5>
-              <p className="text-center">{habit.habit_task_description}</p>
-              {habit.log_date &&
-                selectedDate &&
-                isSameDay(selectedDate, parseISO(habit.log_date)) && (
+          {habitsForSelectedDateInModal.map((habit) => {
+            const completedOnSelectedDate = habit?.log_dates?.some(
+              (logDate) => {
+                return isSameDay(selectedDate, parseISO(logDate));
+              }
+            );
+
+            return (
+              <li key={habit.id} className="modal-habit-item mb-2">
+                <h5 className="text-center mb-1">{habit.habit_name}</h5>
+                <p className="text-center">{habit.habit_task_description}</p>
+                <Button
+                  variant="dark"
+                  onClick={() => {
+                    handleQuickComplete(habit.id);
+                  }}
+                >
+                  Complete
+                </Button>
+                {completedOnSelectedDate && (
                   <p className="text-success text-center">Completed!</p>
                 )}
-            </li>
-          ))}
+              </li>
+            );
+          })}
         </ul>
       );
     } else {
       return <p className="text-center">No active habits for this day.</p>;
     }
-  }, [habitsForSelectedDateInModal, selectedDate]);
+  }, [habitsForSelectedDateInModal, selectedDate]); // eslint-disable-line
 
   return (
     <div className="calendar-container">

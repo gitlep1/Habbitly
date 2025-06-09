@@ -47,10 +47,10 @@ app.use(json());
 app.use(urlencoded({ extended: true }));
 
 if (process.env.ALLOW_OAUTH_SETUP === "true") {
-  console.log("✅ OAuth setup routes are ENABLED.");
+  // console.log("✅ OAuth setup routes are ENABLED.");
   app.use("/oauth", oauthRouter);
 } else {
-  console.log("OAuth setup routes are DISABLED.");
+  // console.log("OAuth setup routes are DISABLED.");
 }
 
 // === Account Routes === \\
@@ -116,12 +116,6 @@ const server = createServer(app);
 if (process.env.NODE_ENV !== "test") {
   server.listen(PORT, () => {
     console.log(`✅ Habbitly is running on port ${PORT}`);
-
-    if (process.env.ALLOW_OAUTH_SETUP === "true") {
-      console.log(
-        `Maps to http://localhost:${PORT}/oauth/authorize to perform initial Google OAuth authorization.`
-      );
-    }
   });
 }
 
