@@ -1,8 +1,8 @@
 import "./Desktop.scss";
 import { useState, useEffect, useContext, useRef } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button, Image } from "react-bootstrap";
 import { useSpring, animated } from "react-spring";
-import { useLocation } from "react-router-dom";
 import { IoIosSunny } from "react-icons/io";
 import { FaMoon } from "react-icons/fa";
 import { MdArrowForwardIos } from "react-icons/md";
@@ -21,6 +21,7 @@ import { HabitTrackerLinks } from "./Links/2-HabitTracker";
 import { AccountSettingsLinks } from "./Links/3-AccountSettings";
 
 export default function Desktop() {
+  const navigate = useNavigate();
   const location = useLocation();
 
   const { themeState, setThemeState } = useContext(themeContext);
@@ -154,11 +155,7 @@ export default function Desktop() {
           <Image src={StellyAngry} className="desktop-navbar-logo" />
         </div>
 
-        <div
-          className={`desktop-navbar-links ${
-            showDropdown.length === 3 ? "navbar-links-scrollable" : null
-          }`}
-        >
+        <div className="desktop-navbar-links">
           <HomepageLinks
             handleButtonToggle={handleButtonToggle}
             showDropdown={showDropdown}
@@ -180,8 +177,18 @@ export default function Desktop() {
 
         {userData && (
           <div className="navbar-username">
-            <Image src={userData.profileimg} className="navbar-profile-image" />
-            <h1>{userData.username}</h1>
+            <h3>Logged in as:</h3>
+            <span>
+              <Image
+                src={userData.profileimg}
+                className="navbar-profile-image hover:cursor-pointer"
+                alt="User Profile"
+                onClick={() => {
+                  navigate("/profile");
+                }}
+              />
+              <h1>{userData.username}</h1>
+            </span>
           </div>
         )}
 

@@ -1,8 +1,8 @@
 import "./Mobile.scss";
 import { useState, useEffect, useContext, useRef } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button, Image } from "react-bootstrap";
 import { useSpring, animated } from "react-spring";
-import { useLocation } from "react-router-dom";
 import { IoIosSunny } from "react-icons/io";
 import { FaMoon } from "react-icons/fa";
 
@@ -19,6 +19,7 @@ import { HabitTrackerLinks } from "./Links/2-HabitTracker";
 import { AccountSettingsLinks } from "./Links/3-AccountSettings";
 
 export default function Mobile() {
+  const navigate = useNavigate();
   const location = useLocation();
 
   const { themeState, setThemeState } = useContext(themeContext);
@@ -183,7 +184,12 @@ export default function Mobile() {
 
         {userData && (
           <div className="navbar-username">
-            <Image src={userData.profileimg} className="navbar-profile-image" />
+            <Image
+              src={userData.profileimg}
+              className="navbar-profile-image"
+              alt="User Profile"
+              onClick={() => navigate("/profile")}
+            />
             <h1>{userData.username}</h1>
           </div>
         )}

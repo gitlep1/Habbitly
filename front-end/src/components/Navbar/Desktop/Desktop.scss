@@ -117,10 +117,6 @@
       overflow: auto;
     }
 
-    .navbar-links-scrollable {
-      height: 70%;
-    }
-
     .desktop-navbar-link-container {
       display: flex;
       text-align: center;
@@ -238,7 +234,10 @@
     }
 
     .navbar-username {
+      position: relative;
+      top: 3em;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
 
@@ -246,9 +245,15 @@
         color: var(--text-color);
       }
 
+      span {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5em;
+      }
+
       .navbar-profile-image {
         width: 50px;
-        margin-right: 0.5em;
       }
     }
 
