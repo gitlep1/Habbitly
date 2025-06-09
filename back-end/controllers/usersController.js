@@ -131,9 +131,14 @@ users.post(
         last_online: createdUser.last_online,
       };
 
-      const registeredCount = await getRegisteredCount();
-      const newCount = registeredCount?.count + 1;
-      await updateRegisteredCount(newCount, registeredCount.id);
+      try {
+        const registeredCount = await getRegisteredCount();
+        const newCount = registeredCount?.count + 1;
+        await updateRegisteredCount(newCount, registeredCount.id);
+      } catch (error) {
+        console.error("Error updating registered count:", error);
+        res.status(200).json({ payload: userData, token: createdToken });
+      }
 
       res.status(200).json({ payload: userData, token: createdToken });
     } catch (error) {
