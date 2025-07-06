@@ -49,8 +49,6 @@ app.use(urlencoded({ extended: true }));
 if (process.env.ALLOW_OAUTH_SETUP === "true") {
   // console.log("✅ OAuth setup routes are ENABLED.");
   app.use("/oauth", oauthRouter);
-} else {
-  // console.log("OAuth setup routes are DISABLED.");
 }
 
 // === Account Routes === \\
